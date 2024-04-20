@@ -1,0 +1,25 @@
+#title-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  width: 30rem;
+  padding: 1.5rem 1.5rem 8.5rem 1.5rem;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+#title-screen h1 {
+  font-size: 3rem;
+  margin: 1rem;
+}
+
+#title-screen form {
+  width: 100%;
+}
+
+#title-screen form input {
+  width: 100%;
+  box-sizing: border-box;
+}
