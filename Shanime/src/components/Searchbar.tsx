@@ -1,17 +1,23 @@
-import { getAnimeSearch } from "../apiUtils";
+import { getAnimeSearch } from "../utils/api";
 import { useState } from "react";
 
 function Searchbar() {
   const [query, setQuery] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     console.log(getAnimeSearch(query));
   }
 
   return (
-    <form spellCheck='false' onSubmit={(e) => handleSubmit(e)}>
-      <input placeholder='Search' value={query} onChange={(e) => setQuery(e.target.value)} />
+    <form spellCheck='false' onSubmit={(e) => {
+      e.preventDefault();
+      handleSubmit();
+    }}>
+      <input placeholder='Search'
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        autoFocus
+      />
     </form>
   )
 }
