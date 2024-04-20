@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: center;
   margin: auto;
-  width: 30rem;
+  max-width: 30rem;
   padding: 1.5rem 1.5rem 8.5rem 1.5rem;
   height: 100vh;
   box-sizing: border-box;
