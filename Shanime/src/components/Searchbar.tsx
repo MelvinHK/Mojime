@@ -5,7 +5,8 @@ function Searchbar() {
   const [query, setQuery] = useState("");
 
   const handleSubmit = async () => {
-    console.log(getAnimeSearch(query));
+    const results = await getAnimeSearch(query);
+    console.log(results);
   }
 
   return (

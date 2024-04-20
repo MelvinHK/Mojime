@@ -3,7 +3,12 @@ import { ANIME } from "@consumet/extensions";
 const provider = new ANIME.Gogoanime();
 
 export const getAnimeSearch = async (query: string) => {
-  const results = await provider.search(query);
-  return results;
+  try {
+    const results = await provider.search(query);
+    
+    return results;
+  } catch (error) {
+    console.log(error);
+  }
 }
 
