@@ -12,10 +12,16 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --input-pad: 0.6em 1.2em;
-  --white: #ffffffde;
-  --blue: #646cff;
+  --pad-y: 0.6rem;
+  --pad-x: 1.2rem;
+  --pad: var(--pad-y) var(--pad-x);
+
+  --white: #eeeeee;
+  --gray: #353535;
   --black: #1a1a1a;
+  --blue: #646cff;
+
+  --b-radius: 8px;
 }
 
 body {
@@ -33,10 +39,10 @@ a:hover {
 }
 
 button {
-  border-radius: 8px;
+  border-radius: var(--b-radius);
   border: 1px solid transparent;
   padding: var(--input-pad);
-  font-size: 1em;
+  font-size: 1rem;
   font-weight: 500;
   font-family: inherit;
   background-color: var(--black);
@@ -54,15 +60,12 @@ button:focus-visible {
 }
 
 input {
-  border-radius: 8px;
+  border-radius: var(--b-radius);
   border: 1px solid transparent;
   font-family: inherit;
-  padding: var(--input-pad);
-  font-size: 1em;
+  padding: var(--pad);
+  font-size: 1rem;
   outline: none;
-  transition: border 0.25s;
-}
-
-input:focus {
-  border: 1px solid var(--white);
+  background-color: var(--black);
+  color: inherit;
 }

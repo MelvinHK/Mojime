@@ -1,11 +1,12 @@
+@import url(index.css);
+
 #title-screen {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   margin: auto;
   max-width: 30rem;
-  padding: 1.5rem 1.5rem 8.5rem 1.5rem;
+  padding: 1.5rem;
   height: 100vh;
   box-sizing: border-box;
 }
@@ -22,4 +23,43 @@
 #title-screen form input {
   width: 100%;
   box-sizing: border-box;
+}
+
+#search-results {
+  position: absolute;
+  width: inherit;
+  box-sizing: border-box;
+  left: 0;
+  margin: 0;
+  background-color: var(--black);
+  border-bottom-right-radius: var(--b-radius);
+  border-bottom-left-radius: var(--b-radius);
+  list-style: none;
+  padding: var(--pad-y) var(--pad-x) 0 var(--pad-x) 
+}
+
+#search-results:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  background: var(--gray);
+  height: 1px;
+  width: calc(100% - var(--pad-x) * 2);
+}
+
+#search-results li {
+  padding-bottom: var(--pad-y);
+}
+
+.flat-bottom-br {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.relative {
+  position: relative;
+}
+
+.w-100 {
+  width: 100%;
 }
