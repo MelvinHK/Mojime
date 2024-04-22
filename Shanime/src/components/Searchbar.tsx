@@ -7,10 +7,10 @@ function Searchbar() {
   const [resultsList, setResultsList] = useState<IAnimeResult[]>();
 
   const handleSubmit = async () => {
-    const results = await getAnimeSearch(query, 1);
+    const search = await getAnimeSearch(query, 1);
 
     setResultsList(
-      results?.results
+      search?.results
         .filter(result => result.subOrDub === "sub")
     );
   }
