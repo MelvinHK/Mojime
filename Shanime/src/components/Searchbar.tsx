@@ -26,17 +26,14 @@ function Searchbar() {
           onChange={(e) => setQuery(e.target.value)}
           autoFocus
         />
-        {resultsList && <div className="relative w-100">
-          <ul id='search-results'>
-            {resultsList.map(result =>
-              <li key={result.id}>
-                {result.title as string}
-              </li>
-            )}
-          </ul>
-        </div>}
       </form>
-
+      {resultsList && <ul id='search-results'>
+        {resultsList.map(result =>
+          <li key={result.id}>
+            {result.title as string}
+          </li>
+        )}
+      </ul>}
     </>
   )
 }

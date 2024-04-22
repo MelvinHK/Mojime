@@ -7,7 +7,7 @@
   margin: auto;
   max-width: 30rem;
   padding: 1.5rem;
-  height: 100vh;
+  height: 100%;
   box-sizing: border-box;
 }
 
@@ -26,29 +26,29 @@
 }
 
 #search-results {
-  position: absolute;
-  width: inherit;
+  position: relative;
+  width: 100%;
   box-sizing: border-box;
-  left: 0;
   margin: 0;
   background-color: var(--black);
   border-bottom-right-radius: var(--b-radius);
   border-bottom-left-radius: var(--b-radius);
   list-style: none;
-  padding: var(--pad-y) var(--pad-x) 0 var(--pad-x) 
+  padding: calc(var(--pad-y)/2) 0 calc(var(--pad-y)/2) 0;
 }
 
 #search-results:before {
   content: "";
   position: absolute;
   top: 0;
-  background: var(--gray);
+  left: var(--pad-x);
   height: 1px;
   width: calc(100% - var(--pad-x) * 2);
+  background: var(--gray);
 }
 
 #search-results li {
-  padding-bottom: var(--pad-y);
+  padding: calc(var(--pad-y)/2) var(--pad-x);
 }
 
 .flat-bottom-br {
