@@ -9,8 +9,10 @@ function Searchbar() {
   const handleSubmit = async () => {
     const results = await getAnimeSearch(query, 1);
 
-    console.log(results?.results);
-    setResultsList(results?.results);
+    setResultsList(
+      results?.results
+        .filter(result => result.subOrDub === "sub")
+    );
   }
 
   return (
@@ -27,13 +29,20 @@ function Searchbar() {
           autoFocus
         />
       </form>
-      {resultsList && <ul id='search-results'>
-        {resultsList.map(result =>
-          <li key={result.id}>
-            {result.title as string}
-          </li>
-        )}
-      </ul>}
+      {resultsList &&
+        <ul id='search-results'>
+          {resultsList.map(result =>
+            <li key={result.id}>
+              {result.title as string}
+            </li>
+          )}
+          {resultsList.length === 0 &&
+            <li className="col-gray">
+              No results
+            </li>
+          }
+        </ul>
+      }
     </>
   )
 }

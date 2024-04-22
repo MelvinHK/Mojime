@@ -63,3 +63,7 @@
 .w-100 {
   width: 100%;
 }
+
+.col-gray {
+  color: var(--gray);
+}
