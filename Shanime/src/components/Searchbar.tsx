@@ -31,13 +31,13 @@ function Searchbar() {
       </form>
       {resultsList &&
         <ul id='search-results'>
-          {resultsList.map(result =>
-            <li key={result.id}>
-              {result.title as string}
-            </li>
-          )}
-          {resultsList.length === 0 &&
-            <li className="col-gray">
+          {resultsList.length !== 0 ?
+            resultsList.map(result =>
+              <li key={result.id}>
+                {result.title as string}
+              </li>
+            ) :
+            < li className="col-gray">
               No results
             </li>
           }
