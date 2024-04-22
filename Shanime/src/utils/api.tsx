@@ -11,4 +11,3 @@ export const getAnimeSearch = async (query: string, page: number) => {
     console.log(error);
   }
 }
-
