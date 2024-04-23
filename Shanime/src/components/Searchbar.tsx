@@ -28,6 +28,7 @@ function Searchbar() {
     setHasNextPage(search?.hasNextPage);
   }
 
+  // Search results' up/down-key selection.
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!resultsList) return
@@ -64,9 +65,9 @@ function Searchbar() {
       <form spellCheck='false' onSubmit={(e) => handleSubmit(e)}>
         <input
           className={resultsList ? 'flat-bottom-br' : ''}
-          placeholder='Search'
           value={query}
           onChange={(e) => handleInputChange(e)}
+          placeholder='Search'
           autoFocus
         />
       </form>
@@ -92,7 +93,10 @@ function Searchbar() {
 
 function Result({ result, isSelected }: { result: IAnimeResult, isSelected: boolean }) {
   return (
-    <li className={isSelected ? 'selected' : ''} onClick={() => console.log(result.id)}>
+    <li
+      className={isSelected ? 'selected' : ''}
+      onClick={() => console.log(result.id)}
+    >
       {typeof result.title === 'string' ?
         result.title :
         result.title.romaji || result.title.english}
