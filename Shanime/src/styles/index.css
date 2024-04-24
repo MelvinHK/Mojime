@@ -41,31 +41,20 @@ a:hover {
 button {
   border-radius: var(--b-radius);
   border: 1px solid transparent;
-  padding: var(--input-pad);
+  padding: var(--pad);
   font-size: 1rem;
-  font-weight: 500;
   font-family: inherit;
-  background-color: var(--black);
+  background-color: var(--gray);
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-
-button:hover {
-  border-color: var(--white);
-}
-
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
 }
 
 input {
   border-radius: var(--b-radius);
-  border: 1px solid transparent;
+  border: none;
+  outline: none;
   font-family: inherit;
   padding: var(--pad);
   font-size: 1rem;
-  outline: none;
   background-color: var(--gray);
   color: inherit;
 }

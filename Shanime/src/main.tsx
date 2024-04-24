@@ -9,8 +9,9 @@ import {
 
 import Home from './pages/Home.tsx';
 
-import './index.css'
-import './main.css'
+import './styles/index.css'
+import './styles/components.css'
+import './styles/attributes.css'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
