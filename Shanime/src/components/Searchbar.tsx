@@ -61,10 +61,9 @@ function Searchbar() {
   }, [resultsList, selectedIndex])
 
   return (
-    <>
+    <div className="wrapper">
       <form spellCheck='false' onSubmit={(e) => handleSubmit(e)}>
         <input
-          className={resultsList ? 'flat-bottom-br' : ''}
           value={query}
           onChange={(e) => handleInputChange(e)}
           placeholder='Search'
@@ -87,7 +86,7 @@ function Searchbar() {
           }
         </ul>
       }
-    </>
+    </div>
   )
 }
 
