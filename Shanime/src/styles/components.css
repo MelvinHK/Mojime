@@ -43,16 +43,6 @@
   background: var(--white);
 }
 
-#search-results::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: var(--pad-x);
-  height: 1px;
-  width: calc(100% - var(--pad-x) * 2);
-  background: var(--white);
-}
-
 #search-results li {
   padding: calc(var(--pad-y)/2) var(--pad-x);
 }

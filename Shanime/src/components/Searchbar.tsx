@@ -1,6 +1,6 @@
 import { getAnimeSearch } from "../utils/api";
 import { useState, useEffect, useRef } from "react";
-import { IAnimeResult } from "@consumet/extensions";
+import { IAnimeResult, ISearch } from "@consumet/extensions";
 
 function Searchbar() {
   const [query, setQuery] = useState<string>("");
@@ -11,23 +11,35 @@ function Searchbar() {
 
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
 
-  const [resultsCache, setResultsCache] = useState<any>();
+  const [resultsCache, setResultsCache] = useState<ISearch<IAnimeResult>[]>([]);
 
   const searchbarRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLUListElement>(null);
   const pageButtonsRef = useRef<HTMLDivElement>(null);
 
+  // Need to differentiate for a new search
   const handleSearch = async (page: number) => {
-    try {
-      const search = await getAnimeSearch(query, page);
+    if (resultsCache[page - 1]) {
+      const cached = resultsCache[page - 1];
 
-      setResultsList(
-        search?.results
-          .filter(result => result.subOrDub === "sub")
+      setResultsList(cached.results
+        .filter(result => result.subOrDub === "sub")
       );
+      setCurrentPage(cached.currentPage as number);
+      setHasNextPage(cached.hasNextPage);
 
+    } else try {
+      const search = await getAnimeSearch(query, page);
+      const results = search?.results
+        .filter(result => result.subOrDub === "sub")
+
+      setResultsList(results);
       setCurrentPage(search.currentPage as number);
       setHasNextPage(search.hasNextPage);
+
+      if (!resultsCache[page - 1])
+        setResultsCache([...resultsCache, search])
+
     } catch (error) {
       alert("Error: Unable to fetch results... Try again later.")
     }
@@ -98,8 +110,7 @@ function Searchbar() {
           autoFocus
         />
       </form>
-      {
-        resultsList &&
+      {resultsList && <>
         <ul
           id='search-results'
           ref={resultsRef}
@@ -117,30 +128,31 @@ function Searchbar() {
             </li>
           }
         </ul>
-      }
-
-      <div
-        className="flex"
-        ref={pageButtonsRef}
-      >
-        {hasNextPage &&
-          <button
-            onClick={() => (
-              handleSearch(currentPage + 1)
-            )}
-          >
-            Next Page
-          </button>
-        }
-        {currentPage > 1 &&
-          <button
-            onClick={() => (
-              handleSearch(currentPage - 1)
-            )}>
-            Prev Page
-          </button>
-        }
-      </div>
+        <div
+          id="page-nav"
+          className="relative flex fl-end"
+          ref={pageButtonsRef}
+        >
+          {currentPage > 1 &&
+            <button
+              className="mr-auto"
+              onClick={() => (
+                handleSearch(currentPage - 1)
+              )}>
+              Prev Page
+            </button>
+          }
+          {hasNextPage &&
+            <button
+              onClick={() => (
+                handleSearch(currentPage + 1)
+              )}
+            >
+              Next Page
+            </button>
+          }
+        </div>
+      </>}
     </div >
   )
 }
