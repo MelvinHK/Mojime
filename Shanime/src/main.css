@@ -15,6 +15,11 @@
   margin: 1rem;
 }
 
+#title-screen form input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
 .wrapper {
   border-radius: var(--b-radius);
   background-color: var(--gray);

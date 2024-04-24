@@ -39,14 +39,14 @@ function Searchbar() {
       switch (e.key) {
         case 'ArrowUp':
           e.preventDefault();
-          index = (index - 1 + total) % (total);
+          index = (index - 1 + total + 1) % (total + 1);
           break;
         case 'ArrowDown':
           e.preventDefault();
-          index = (index + 1) % (total);
+          index = (index + 1) % (total + 1);
           break;
         case 'Enter':
-          if (selectedIndex != -1) {
+          if (selectedIndex != -1 && selectedIndex < resultsList.length) {
             e.preventDefault();
             console.log(resultsList[index].id);
           }
