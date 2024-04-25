@@ -12,7 +12,7 @@ function Searchbar() {
   // For when using the up/down key to select search results.
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
 
-  // Cache results for when navigating pages.
+  // 1. Cache results for when navigating pages.
   const [searchCache, setSearchCache] = useState<ISearch<IAnimeResult>[]>([]);
 
   const searchbarRef = useRef<HTMLInputElement>(null);
@@ -24,7 +24,7 @@ function Searchbar() {
       const search = await getAnimeSearch(query, page);
       updateSearchResults(search);
 
-      // Page === 1 implies a new search, so if a cache exists, it is removed.
+      // 2. Page === 1 implies a new search, so if a cache exists, it is removed.
       setSearchCache(page === 1 && searchCache ?
         [search] :
         [...searchCache, search]
