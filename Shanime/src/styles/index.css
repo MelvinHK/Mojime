@@ -40,7 +40,7 @@ a:hover {
 
 button {
   border-radius: var(--b-radius);
-  border: 1px solid transparent;
+  border: none;
   padding: var(--pad);
   font-size: 1rem;
   font-family: inherit;

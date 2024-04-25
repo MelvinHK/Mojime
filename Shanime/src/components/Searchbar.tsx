@@ -56,24 +56,19 @@ function Searchbar() {
       const total = resultsList.length;
       let index = selectedIndex;
 
-      switch (e.key) {
-        case 'ArrowUp':
-          e.preventDefault();
-          index = (index - 1 + total + 1) % (total + 1);
-          searchbarRef?.current?.focus();
-          break;
-        case 'ArrowDown':
-          e.preventDefault();
-          index = (index + 1) % (total + 1);
-          searchbarRef?.current?.focus();
-          break;
-        case 'Enter':
-          if (selectedIndex != -1 && selectedIndex < total) {
-            e.preventDefault();
-            console.log(resultsList[index].id);
-          }
-          break;
+      if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        searchbarRef?.current?.focus();
+
+        index = e.key === 'ArrowUp' ?
+          (index - 1 + total + 1) % (total + 1) :
+          (index + 1) % (total + 1);
+          
+      } else if (e.key === 'Enter' && selectedIndex !== -1 && selectedIndex < total) {
+        e.preventDefault();
+        console.log(resultsList[index].id);
       }
+
       setSelectedIndex(index);
     }
 
