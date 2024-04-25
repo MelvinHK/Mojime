@@ -93,7 +93,6 @@ function Searchbar() {
 
   useEffect(() => {
     setSelectedIndex(-1);
-    searchbarRef?.current?.focus();
   }, [resultsList])
 
   return (
