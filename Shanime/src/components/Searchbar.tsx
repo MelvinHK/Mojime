@@ -97,7 +97,6 @@ function Searchbar() {
         handleSearch(1)
       )}>
         <input
-          id="searchbar"
           className="w-100 b-box"
           ref={searchbarRef}
           value={query}
