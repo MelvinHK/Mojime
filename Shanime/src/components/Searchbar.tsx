@@ -9,40 +9,45 @@ function Searchbar() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [hasNextPage, setHasNextPage] = useState<boolean | undefined>(false);
 
+  // For when using the up/down key to select search results.
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
 
-  const [resultsCache, setResultsCache] = useState<ISearch<IAnimeResult>[]>([]);
+  // Cache results for when navigating pages.
+  const [searchCache, setSearchCache] = useState<ISearch<IAnimeResult>[]>([]);
 
   const searchbarRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLUListElement>(null);
   const pageButtonsRef = useRef<HTMLDivElement>(null);
 
-  // Need to differentiate for a new search
   const handleSearch = async (page: number) => {
-    if (resultsCache[page - 1]) {
-      const cached = resultsCache[page - 1];
-
-      setResultsList(cached.results
-        .filter(result => result.subOrDub === "sub")
-      );
-      setCurrentPage(cached.currentPage as number);
-      setHasNextPage(cached.hasNextPage);
-
-    } else try {
+    try {
       const search = await getAnimeSearch(query, page);
-      const results = search?.results
-        .filter(result => result.subOrDub === "sub")
+      updateSearchResults(search);
 
-      setResultsList(results);
-      setCurrentPage(search.currentPage as number);
-      setHasNextPage(search.hasNextPage);
-
-      if (!resultsCache[page - 1])
-        setResultsCache([...resultsCache, search])
-
+      // Page === 1 implies a new search, so if a cache exists, it is removed.
+      setSearchCache(page === 1 && searchCache ?
+        [search] :
+        [...searchCache, search]
+      );
     } catch (error) {
       alert("Error: Unable to fetch results... Try again later.")
     }
+  }
+
+  const handlePageButton = (page: number) => {
+    if (searchCache[page - 1]) {
+      updateSearchResults(searchCache[page - 1]);
+    } else {
+      handleSearch(page);
+    }
+  }
+
+  const updateSearchResults = (search: ISearch<IAnimeResult>) => {
+    setResultsList(search.results
+      .filter(result => result.subOrDub === "sub")
+    );
+    setCurrentPage(search.currentPage as number);
+    setHasNextPage(search.hasNextPage);
   }
 
   // Search results' up/down-key selection.
@@ -72,7 +77,6 @@ function Searchbar() {
           }
           break;
       }
-
       setSelectedIndex(index);
     }
 
@@ -83,29 +87,31 @@ function Searchbar() {
   useEffect(() => {
     if (!resultsList) return;
 
-    if (selectedIndex >= 0 && selectedIndex < resultsList.length - 1)
+    if (selectedIndex >= 0 && selectedIndex < resultsList.length - 1) {
       resultsRef.current?.children[selectedIndex].scrollIntoView(false);
-
-    else if (selectedIndex === resultsList.length - 1)
+    } else if (selectedIndex === resultsList.length - 1) {
       pageButtonsRef.current?.scrollIntoView();
-
+    }
   }, [selectedIndex])
 
   useEffect(() => {
     setSelectedIndex(-1);
     searchbarRef?.current?.focus();
-  }, [query, resultsList])
+  }, [resultsList])
 
   return (
     <div className="wrapper">
       <form spellCheck='false' onSubmit={(e) => (
         e.preventDefault(),
-        handleSearch(currentPage)
+        handleSearch(1)
       )}>
         <input
           ref={searchbarRef}
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={(e) => (
+            setSelectedIndex(-1),
+            setQuery(e.target.value)
+          )}
           placeholder='Search'
           autoFocus
         />
@@ -137,7 +143,7 @@ function Searchbar() {
             <button
               className="mr-auto"
               onClick={() => (
-                handleSearch(currentPage - 1)
+                handlePageButton(currentPage - 1)
               )}>
               Prev Page
             </button>
@@ -145,7 +151,7 @@ function Searchbar() {
           {hasNextPage &&
             <button
               onClick={() => (
-                handleSearch(currentPage + 1)
+                handlePageButton(currentPage + 1)
               )}
             >
               Next Page
