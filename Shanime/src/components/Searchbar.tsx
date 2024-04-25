@@ -91,12 +91,14 @@ function Searchbar() {
   }, [resultsList])
 
   return (
-    <div className="wrapper">
+    <div className="wrapper w-100">
       <form spellCheck='false' onSubmit={(e) => (
         e.preventDefault(),
         handleSearch(1)
       )}>
         <input
+          id="searchbar"
+          className="w-100 b-box"
           ref={searchbarRef}
           value={query}
           onChange={(e) => (
@@ -127,7 +129,7 @@ function Searchbar() {
         </ul>
         <div
           id="page-nav"
-          className="relative flex fl-end"
+          className="flex fl-end"
           ref={pageButtonsRef}
         >
           {currentPage > 1 &&
@@ -151,7 +153,7 @@ function Searchbar() {
         </div>
       </>}
     </div >
-  )
+  );
 }
 
 function Result({ result, isSelected }: { result: IAnimeResult, isSelected: boolean }) {
@@ -164,7 +166,7 @@ function Result({ result, isSelected }: { result: IAnimeResult, isSelected: bool
         result.title :
         result.title.romaji || result.title.english}
     </li>
-  )
+  );
 }
 
-export default Searchbar
+export default Searchbar;

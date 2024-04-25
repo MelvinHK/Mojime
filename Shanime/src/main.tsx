@@ -8,15 +8,17 @@ import {
 } from 'react-router-dom';
 
 import Home from './pages/Home.tsx';
+import Watch from './pages/Watch.tsx';
 
 import './styles/index.css'
 import './styles/components.css'
 import './styles/attributes.css'
 
 const router = createBrowserRouter(
-  createRoutesFromElements(
+  createRoutesFromElements(<>
     <Route path='/' element={<Home />} />
-  )
+    <Route path='/watch' element={<Watch />} />
+  </>)
 );
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

@@ -14,10 +14,26 @@
   justify-content: flex-end;
 }
 
+.fl-j-center {
+  justify-content: center;
+}
+
+.fl-a-center {
+  align-items: center;
+}
+
+.m-auto {
+  margin: auto;
+}
+
 .ml-auto {
   margin-left: auto;
 }
 
 .mr-auto {
   margin-right: auto;
+}
+
+.b-box {
+  box-sizing: border-box;
 }
