@@ -25,10 +25,7 @@ function Searchbar() {
       updateSearchResults(search);
 
       // 2. Page === 1 implies a new search, so if a cache exists, it is removed.
-      setSearchCache(page === 1 && searchCache ?
-        [search] :
-        [...searchCache, search]
-      );
+      setSearchCache(page === 1 ? [search] : [...searchCache, search]);
     } catch (error) {
       alert("Error: Unable to fetch results... Try again later.")
     }
