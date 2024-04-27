@@ -26,7 +26,7 @@ function Searchbar() {
       const search = await getAnimeSearch(query, page);
       updateSearchResults(search);
 
-      // 2. Page === 1 implies a new search; remove existing cache
+      // 2. Page === 1 implies a new search; remove existing cache.
       setSearchCache(page === 1 ? [search] : [...searchCache, search]);
       if (page === 1) setPageNavQuery(searchBarQuery);
 
@@ -111,7 +111,7 @@ function Searchbar() {
           autoFocus
         />
       </form>
-      {(currentPage > 1 || hasNextPage) &&
+      {(currentPage > 1 || hasNextPage) && // Redundant condition in order to style page-nav.
         <div id="page-nav">
           {currentPage > 1 &&
             <button
