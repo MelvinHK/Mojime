@@ -26,9 +26,10 @@ function Searchbar() {
       const search = await getAnimeSearch(query, page);
       updateSearchResults(search);
 
-      // 2. Page === 1 implies a new search, so if a cache exists, it is removed.
+      // 2. Page === 1 implies a new search; remove existing cache
       setSearchCache(page === 1 ? [search] : [...searchCache, search]);
-      setPageNavQuery(page === 1 ? query : pageNavQuery);
+      if (page === 1) setPageNavQuery(searchBarQuery);
+
     } catch (error) {
       alert("Error: Unable to fetch results... Try again later.")
     }
