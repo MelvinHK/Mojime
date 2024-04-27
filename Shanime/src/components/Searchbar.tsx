@@ -42,9 +42,10 @@ function Searchbar() {
   }
 
   const updateSearchResults = (search: ISearch<IAnimeResult>) => {
-    setResultsList(search.results
-      .filter(result => result.subOrDub === "sub")
-    );
+    const list = search.results
+      .filter(result => result.subOrDub === "sub"); // There exists an edge case where if the list has no "sub" anime, no results will show. 
+
+    setResultsList(list);
     setCurrentPage(search.currentPage as number);
     setHasNextPage(search.hasNextPage);
   }
@@ -150,7 +151,7 @@ function Searchbar() {
                 isSelected={index === selectedIndex}
               />
             ) :
-            <li>
+            <li id="no-results">
               No results
             </li>
           }

@@ -34,7 +34,8 @@
   align-items: center;
 }
 
-#search-results:before, #page-nav:before {
+#search-results:before,
+#page-nav:before {
   content: "";
   position: absolute;
   top: 0;
@@ -48,7 +49,7 @@
   padding: calc(var(--pad-y)/2) var(--pad-x);
 }
 
-#search-results li:hover,
+#search-results li:hover:not(#no-results),
 .selected {
   cursor: default;
   background-color: rgb(82, 82, 82);
