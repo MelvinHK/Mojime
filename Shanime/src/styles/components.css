@@ -12,6 +12,7 @@
 #title-screen h1 {
   font-size: 2.5rem;
   margin: 0 0 1rem 0;
+  font-weight: normal;
 }
 
 .wrapper {
@@ -27,14 +28,20 @@
   padding: calc(var(--pad-y)/2) 0;
 }
 
-#search-results:before {
+#page-nav {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+#search-results:before, #page-nav:before {
   content: "";
   position: absolute;
   top: 0;
   left: var(--pad-x);
   height: 1px;
   width: calc(100% - var(--pad-x) * 2);
-  background: var(--white);
+  background: gray;
 }
 
 #search-results li {
@@ -59,13 +66,17 @@
 
 #header {
   position: absolute;
-  display: flex;
   width: 100%;
-  align-items: flex-start;
-  gap: 1rem;
 }
 
 #header h1 {
-  margin-top: -0.35rem;
-  margin-bottom: 0;
+  font-weight: normal;
+  position: absolute;
+  right: 0;
+  margin: 0.3rem var(--pad-x) 0 0;
+  font-size: 1.5rem;
+}
+
+#header input {
+  padding-right: 3rem;
 }

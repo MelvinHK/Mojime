@@ -3,11 +3,13 @@ import { useState, useEffect, useRef } from "react";
 import { IAnimeResult, ISearch } from "@consumet/extensions";
 
 function Searchbar() {
-  const [query, setQuery] = useState<string>("");
+  const [searchBarQuery, setSearchbarQuery] = useState<string>("");
+  const [pageNavQuery, setPageNavQuery] = useState<string>("");
 
   const [resultsList, setResultsList] = useState<IAnimeResult[]>();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [hasNextPage, setHasNextPage] = useState<boolean | undefined>(false);
+  const [isListVisible, setIsListVisible] = useState<boolean>(false);
 
   // For when using the up/down key to select search results.
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
@@ -17,15 +19,15 @@ function Searchbar() {
 
   const searchbarRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLUListElement>(null);
-  const pageButtonsRef = useRef<HTMLDivElement>(null);
 
-  const handleSearch = async (page: number) => {
+  const handleSearch = async (query: string, page: number) => {
     try {
       const search = await getAnimeSearch(query, page);
       updateSearchResults(search);
 
       // 2. Page === 1 implies a new search, so if a cache exists, it is removed.
       setSearchCache(page === 1 ? [search] : [...searchCache, search]);
+      setPageNavQuery(page === 1 ? query : pageNavQuery);
     } catch (error) {
       alert("Error: Unable to fetch results... Try again later.")
     }
@@ -35,7 +37,7 @@ function Searchbar() {
     if (searchCache[page - 1]) {
       updateSearchResults(searchCache[page - 1]);
     } else {
-      handleSearch(page);
+      handleSearch(pageNavQuery, page);
     }
   }
 
@@ -63,7 +65,7 @@ function Searchbar() {
         index = e.key === 'ArrowUp' ?
           (index - 1 + total + 1) % (total + 1) :
           (index + 1) % (total + 1);
-          
+
       } else if (e.key === 'Enter' && selectedIndex !== -1 && selectedIndex < total) {
         e.preventDefault();
         console.log(resultsList[index].id);
@@ -79,11 +81,9 @@ function Searchbar() {
   useEffect(() => {
     if (!resultsList) return;
 
-    if (selectedIndex >= 0 && selectedIndex < resultsList.length - 1) {
+    if (selectedIndex >= 0 && selectedIndex < resultsList.length)
       resultsRef.current?.children[selectedIndex].scrollIntoView(false);
-    } else if (selectedIndex === resultsList.length - 1) {
-      pageButtonsRef.current?.scrollIntoView();
-    }
+
   }, [selectedIndex])
 
   useEffect(() => {
@@ -91,23 +91,52 @@ function Searchbar() {
   }, [resultsList])
 
   return (
-    <div className="wrapper w-100">
-      <form spellCheck='false' onSubmit={(e) => (
-        e.preventDefault(),
-        handleSearch(1)
-      )}>
+    <div className='wrapper w-100'>
+      <form
+        className='flex'
+        spellCheck='false'
+        onSubmit={(e) => (
+          e.preventDefault(),
+          handleSearch(searchBarQuery, 1)
+        )}>
         <input
           className="w-100 b-box"
           ref={searchbarRef}
-          value={query}
+          value={searchBarQuery}
           onChange={(e) => (
             setSelectedIndex(-1),
-            setQuery(e.target.value)
+            setSearchbarQuery(e.target.value)
           )}
           placeholder='Search'
           autoFocus
         />
       </form>
+      {(currentPage > 1 || hasNextPage) &&
+        <div id="page-nav">
+          {currentPage > 1 &&
+            <button
+              className="mr-auto"
+              onClick={() => (
+                handlePageButton(currentPage - 1)
+              )}>
+              {`\u{2190}`} Prev.
+            </button>
+          }
+          <div className="abs-center">
+            ⊶⊰⋇⊱⊷
+          </div>
+          {hasNextPage &&
+            <button
+              className="ml-auto"
+              onClick={() => (
+                handlePageButton(currentPage + 1)
+              )}
+            >
+              Next {`\u{2192}`}
+            </button>
+          }
+        </div>
+      }
       {resultsList && <>
         <ul
           id='search-results'
@@ -126,30 +155,6 @@ function Searchbar() {
             </li>
           }
         </ul>
-        <div
-          id="page-nav"
-          className="flex fl-end"
-          ref={pageButtonsRef}
-        >
-          {currentPage > 1 &&
-            <button
-              className="mr-auto"
-              onClick={() => (
-                handlePageButton(currentPage - 1)
-              )}>
-              Prev Page
-            </button>
-          }
-          {hasNextPage &&
-            <button
-              onClick={() => (
-                handlePageButton(currentPage + 1)
-              )}
-            >
-              Next Page
-            </button>
-          }
-        </div>
       </>}
     </div >
   );

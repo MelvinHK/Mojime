@@ -12,7 +12,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --pad-y: 0.6rem;
+  --pad-y: 0.8rem;
   --pad-x: 1.2rem;
   --pad: var(--pad-y) var(--pad-x);
 
@@ -46,6 +46,7 @@ button {
   font-family: inherit;
   background-color: var(--gray);
   cursor: pointer;
+  color: inherit;
 }
 
 input {

@@ -2,6 +2,17 @@
   position: relative;
 }
 
+.absolute {
+  position: absolute;
+}
+
+.abs-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 .w-100 {
   width: 100%;
 }
@@ -16,6 +27,10 @@
 
 .fl-j-center {
   justify-content: center;
+}
+
+.fl-js-center {
+  justify-self: center;
 }
 
 .fl-a-center {
@@ -34,6 +49,15 @@
   margin-right: auto;
 }
 
+.ml-50 {
+  margin-left: 50%;
+}
+
 .b-box {
   box-sizing: border-box;
+}
+
+.gray {
+  color: gray;
+  filter:saturate(0);
 }
