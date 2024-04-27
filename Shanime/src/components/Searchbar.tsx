@@ -69,7 +69,7 @@ function Searchbar() {
           (index - 1 + total + 1) % (total + 1) :
           (index + 1) % (total + 1);
 
-      } else if (e.key === 'Enter' && selectedIndex !== -1 && selectedIndex < total) {
+      } else if (e.key === 'Enter' && resultsList.hasOwnProperty(selectedIndex)) {
         e.preventDefault();
         console.log(resultsList[index].id);
       }
@@ -82,11 +82,8 @@ function Searchbar() {
   }, [resultsList, selectedIndex])
 
   useEffect(() => {
-    if (!resultsList) return;
-
-    if (selectedIndex >= 0 && selectedIndex < resultsList.length)
+    if (resultsList?.hasOwnProperty(selectedIndex))
       resultsRef.current?.children[selectedIndex].scrollIntoView(false);
-
   }, [selectedIndex])
 
   useEffect(() => {
