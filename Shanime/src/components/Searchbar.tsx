@@ -4,7 +4,6 @@ import { IAnimeResult, ISearch } from "@consumet/extensions";
 
 function Searchbar() {
   const [searchBarQuery, setSearchbarQuery] = useState<string>("");
-  const [pageNavQuery, setPageNavQuery] = useState<string>("");
 
   const [resultsList, setResultsList] = useState<IAnimeResult[]>();
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -14,8 +13,10 @@ function Searchbar() {
   // For when using the up/down key to select search results.
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
 
-  // 1. Cache results for when navigating pages.
+  // 1a. Cache results for when navigating back & forth between results with pages.
   const [searchCache, setSearchCache] = useState<ISearch<IAnimeResult>[]>([]);
+  // 1b. Store initial searchbar query in case it is edited before page navigation.
+  const [pageNavQuery, setPageNavQuery] = useState<string>("");
 
   const searchbarRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLUListElement>(null);
