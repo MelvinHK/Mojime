@@ -25,6 +25,7 @@ function Searchbar() {
     try {
       const search = await getAnimeSearch(query, page);
       updateSearchResults(search);
+      console.log(search)
 
       // 2. Page === 1 implies a new search; remove existing cache.
       setSearchCache(page === 1 ? [search] : [...searchCache, search]);
