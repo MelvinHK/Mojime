@@ -2,8 +2,11 @@ import { getAnimeSearch } from "../utils/api";
 import { useState, useEffect, useRef } from "react";
 import { IAnimeResult, ISearch } from "@consumet/extensions";
 
+type SubOrDub = "sub" | "dub";
+
 function Searchbar() {
   const [searchBarQuery, setSearchbarQuery] = useState<string>("");
+  const [subOrDub, setSubOrDub] = useState<SubOrDub>("sub");
 
   const [resultsList, setResultsList] = useState<IAnimeResult[]>();
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -46,7 +49,7 @@ function Searchbar() {
 
   const updateSearchResults = (search: ISearch<IAnimeResult>) => {
     const list = search.results
-      .filter(result => result.subOrDub === "sub"); // There exists an edge case where if the list has no "sub" anime, no results will show. 
+      .filter(result => result.subOrDub === subOrDub); // There exists an edge case where if the list has no "sub" anime, no results will show. 
 
     setResultsList(list);
     setCurrentPage(search.currentPage as number);
@@ -84,7 +87,8 @@ function Searchbar() {
 
   useEffect(() => {
     if (resultsList?.hasOwnProperty(selectedIndex))
-      resultsRef.current?.children[selectedIndex].scrollIntoView(false);
+      resultsRef.current?.children[selectedIndex]
+        .scrollIntoView(selectedIndex === resultsList.length - 1);
   }, [selectedIndex])
 
   useEffect(() => {
@@ -167,9 +171,7 @@ function Result({ result, isSelected }: { result: IAnimeResult, isSelected: bool
       className={isSelected ? 'selected' : ''}
       onClick={() => console.log(result.id)}
     >
-      {typeof result.title === 'string' ?
-        result.title :
-        result.title.romaji || result.title.english}
+      {result.id}
     </li>
   );
 }
