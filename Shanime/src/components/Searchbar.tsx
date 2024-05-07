@@ -13,7 +13,7 @@ function Searchbar() {
   const [hasNextPage, setHasNextPage] = useState<boolean | undefined>(false);
   const [isListVisible, setIsListVisible] = useState<boolean>(false);
 
-  // For when using the up/down key to select search results.
+  // Up/Down key search result selection.
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
 
   // 1a. Cache results for when navigating back & forth between results with pages.
@@ -49,7 +49,7 @@ function Searchbar() {
 
   const updateSearchResults = (search: ISearch<IAnimeResult>) => {
     const list = search.results
-      .filter(result => result.subOrDub === subOrDub); // There exists an edge case where if the list has no "sub" anime, no results will show. 
+      .filter(result => result.subOrDub === subOrDub);
 
     setResultsList(list);
     setCurrentPage(search.currentPage as number);
@@ -155,8 +155,8 @@ function Searchbar() {
                 isSelected={index === selectedIndex}
               />
             ) :
-            <li id="no-results">
-              No results
+            <li className="no-results">
+              No results {currentPage > 1 && `(${subOrDub === "sub" ? "Dub" : "Dub"} results hidden)`}
             </li>
           }
         </ul>
@@ -171,7 +171,7 @@ function Result({ result, isSelected }: { result: IAnimeResult, isSelected: bool
       className={isSelected ? 'selected' : ''}
       onClick={() => console.log(result.id)}
     >
-      {result.id}
+      {result.title as string}
     </li>
   );
 }

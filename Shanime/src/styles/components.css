@@ -49,7 +49,7 @@
   padding: calc(var(--pad-y)/2) var(--pad-x);
 }
 
-#search-results li:hover:not(#no-results),
+#search-results li:hover:not(.no-results),
 .selected {
   cursor: default;
   background-color: rgb(82, 82, 82);
