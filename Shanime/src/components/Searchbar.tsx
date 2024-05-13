@@ -1,17 +1,15 @@
-import { getAnimeSearch } from "../utils/api";
+import { getAnimeSearch } from "../utils/provider";
 import { useState, useEffect, useRef } from "react";
 import { IAnimeResult, ISearch } from "@consumet/extensions";
+import useClickAway from "../utils/hooks/useClickAway";
 
-type SubOrDub = "sub" | "dub";
 
 function Searchbar() {
   const [searchBarQuery, setSearchbarQuery] = useState<string>("");
-  const [subOrDub, setSubOrDub] = useState<SubOrDub>("sub");
 
   const [resultsList, setResultsList] = useState<IAnimeResult[]>();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [hasNextPage, setHasNextPage] = useState<boolean | undefined>(false);
-  const [isListVisible, setIsListVisible] = useState<boolean>(false);
 
   // Up/Down key search result selection.
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
@@ -24,11 +22,17 @@ function Searchbar() {
   const searchbarRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLUListElement>(null);
 
+  const searchContainer = useRef<HTMLDivElement>(null);
+  const [showDropdown, setShowDropdown] = useState<boolean>(true);
+
+  useClickAway(searchContainer.current, setShowDropdown);
+
   const handleSearch = async (query: string, page: number) => {
+    if (!query.trim()) return;
+
     try {
       const search = await getAnimeSearch(query, page);
       updateSearchResults(search);
-      console.log(search)
 
       // 2. Page === 1 implies a new search; remove existing cache.
       setSearchCache(page === 1 ? [search] : [...searchCache, search]);
@@ -49,7 +53,7 @@ function Searchbar() {
 
   const updateSearchResults = (search: ISearch<IAnimeResult>) => {
     const list = search.results
-      .filter(result => result.subOrDub === subOrDub);
+      .filter(result => result.subOrDub === "sub");
 
     setResultsList(list);
     setCurrentPage(search.currentPage as number);
@@ -86,9 +90,10 @@ function Searchbar() {
   }, [resultsList, selectedIndex])
 
   useEffect(() => {
-    if (resultsList?.hasOwnProperty(selectedIndex))
+    if (resultsList?.hasOwnProperty(selectedIndex)) {
       resultsRef.current?.children[selectedIndex]
         .scrollIntoView(selectedIndex === resultsList.length - 1);
+    }
   }, [selectedIndex])
 
   useEffect(() => {
@@ -96,70 +101,78 @@ function Searchbar() {
   }, [resultsList])
 
   return (
-    <div className='wrapper w-100'>
+    <div
+      className='wrapper w-100'
+      ref={searchContainer}
+    >
       <form
         className='flex'
         spellCheck='false'
         onSubmit={(e) => (
           e.preventDefault(),
           handleSearch(searchBarQuery, 1)
-        )}>
+        )}
+      >
         <input
           className="w-100 b-box"
           ref={searchbarRef}
           value={searchBarQuery}
           onChange={(e) => (
             setSelectedIndex(-1),
-            setSearchbarQuery(e.target.value)
+            setSearchbarQuery(e.target.value),
+            setShowDropdown(e.target.value.length > 0)
           )}
           placeholder='Search'
+          onFocus={() => setShowDropdown(true)}
           autoFocus
         />
       </form>
-      {(currentPage > 1 || hasNextPage) && // Redundant condition in order to style page-nav.
-        <div id="page-nav">
-          {currentPage > 1 &&
-            <button
-              className="mr-auto"
-              onClick={() => (
-                handlePageButton(currentPage - 1)
-              )}>
-              {`\u{2190}`} Prev.
-            </button>
-          }
-          <div className="abs-center">
-            ⊶⊰⋇⊱⊷
+      {showDropdown && <>
+        {(currentPage > 1 || hasNextPage) &&
+          <div id="page-nav">
+            {currentPage > 1 &&
+              <button
+                className="mr-auto"
+                onClick={() => (
+                  handlePageButton(currentPage - 1)
+                )}>
+                {`\u{2190}`} Prev.
+              </button>
+            }
+            <div className="abs-center">
+              {`\u{22B6}\u{22B0}\u{22C7}\u{22B1}\u{22B7}`}
+            </div>
+            {hasNextPage &&
+              <button
+                className="ml-auto"
+                onClick={() => (
+                  handlePageButton(currentPage + 1)
+                )}
+              >
+                Next {`\u{2192}`}
+              </button>
+            }
           </div>
-          {hasNextPage &&
-            <button
-              className="ml-auto"
-              onClick={() => (
-                handlePageButton(currentPage + 1)
-              )}
-            >
-              Next {`\u{2192}`}
-            </button>
-          }
-        </div>
-      }
-      {resultsList && <>
-        <ul
-          id='search-results'
-          ref={resultsRef}
-        >
-          {resultsList.length !== 0 ?
-            resultsList.map((result, index) =>
-              <Result
-                key={result.id}
-                result={result}
-                isSelected={index === selectedIndex}
-              />
-            ) :
-            <li className="no-results">
-              No results {currentPage > 1 && `(${subOrDub === "sub" ? "Dub" : "Dub"} results hidden)`}
-            </li>
-          }
-        </ul>
+        }
+        {resultsList && <>
+          <ul
+            id='search-results'
+            ref={resultsRef}
+          >
+            {resultsList.length !== 0 ?
+              resultsList.map((result, index) =>
+                <Result
+                  key={result.id}
+                  result={result}
+                  isSelected={index === selectedIndex}
+                />
+              ) :
+              <li className="no-results">
+                No results
+              </li>
+            }
+          </ul>
+        </>}
       </>}
     </div >
   );

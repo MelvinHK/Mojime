@@ -1,4 +1,4 @@
-import Gogoanime from "./gogoanime";
+import Gogoanime from "./scraper";
 
 const provider = new Gogoanime();
 
