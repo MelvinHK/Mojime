@@ -25,7 +25,9 @@ function Searchbar() {
   const searchContainer = useRef<HTMLDivElement>(null);
   const [showDropdown, setShowDropdown] = useState<boolean>(true);
 
-  useClickAway(searchContainer.current, setShowDropdown);
+  useClickAway(searchContainer.current, () => {
+    setShowDropdown(false);
+  });
 
   const handleSearch = async (query: string, page: number) => {
     if (!query.trim()) return;
@@ -58,6 +60,14 @@ function Searchbar() {
     setResultsList(list);
     setCurrentPage(search.currentPage as number);
     setHasNextPage(search.hasNextPage);
+  }
+
+  const clearSearchResults = () => {
+    setResultsList(undefined);
+    setCurrentPage(1);
+    setHasNextPage(false);
+    setSearchCache([]);
+    setPageNavQuery("");
   }
 
   // Search results' up/down-key selection.
@@ -100,6 +110,12 @@ function Searchbar() {
     setSelectedIndex(-1);
   }, [resultsList])
 
+  useEffect(() => {
+    if (!showDropdown && (!pageNavQuery.includes(searchBarQuery) || searchBarQuery.length === 0)) {
+      clearSearchResults();
+    }
+  }, [showDropdown])
+
   return (
     <div
       className='wrapper w-100'
@@ -124,7 +140,6 @@ function Searchbar() {
           )}
           placeholder='Search'
           onFocus={() => setShowDropdown(true)}
-          autoFocus
         />
       </form>
       {showDropdown && <>
@@ -172,6 +187,12 @@ function Searchbar() {
               </li>
             }
           </ul>
+          <button
+            id="close-results"
+            onClick={() => setShowDropdown(false)}
+          >
+            Close
+          </button>
         </>}
       </>}
     </div >

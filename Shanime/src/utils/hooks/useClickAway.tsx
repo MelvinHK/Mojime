@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
 
-const useClickAway = (ref: HTMLElement | null, onClickAway: (condition: boolean) => void) => {
+const useClickAway = (ref: HTMLElement | null, onClickAway: () => void) => {
   useEffect(() => {
     const handleDocumentClick = (e: MouseEvent) => {
-        onClickAway(!!ref?.contains(e.target as Node));
+      if (!ref?.contains(e.target as Node))
+        onClickAway();
     };
 
     document.addEventListener('mousedown', handleDocumentClick);
