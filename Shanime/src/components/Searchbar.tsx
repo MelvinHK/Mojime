@@ -1,4 +1,4 @@
-import { getAnimeSearch } from "../utils/provider";
+import { getAnimeSearch } from "../utils/anime/provider";
 import { useState, useEffect, useRef } from "react";
 import { IAnimeResult, ISearch } from "@consumet/extensions";
 import useClickAway from "../utils/hooks/useClickAway";
@@ -118,12 +118,13 @@ function Searchbar() {
 
   return (
     <div
-      className='wrapper w-100'
+      id="searchbar"
       ref={searchContainer}
     >
       <form
         className='flex'
         spellCheck='false'
+        autoComplete="off"
         onSubmit={(e) => (
           e.preventDefault(),
           handleSearch(searchBarQuery, 1)
@@ -142,34 +143,34 @@ function Searchbar() {
           onFocus={() => setShowDropdown(true)}
         />
       </form>
-      {showDropdown && <>
-        {(currentPage > 1 || hasNextPage) &&
-          <div id="page-nav">
-            {currentPage > 1 &&
-              <button
-                className="mr-auto"
-                onClick={() => (
-                  handlePageButton(currentPage - 1)
-                )}>
-                {`\u{2190}`} Prev.
-              </button>
-            }
-            <div className="abs-center">
-              {`\u{22B6}\u{22B0}\u{22C7}\u{22B1}\u{22B7}`}
+      {resultsList && showDropdown &&
+        <div id="dropdown">
+          {(currentPage > 1 || hasNextPage) &&
+            <div id="page-nav">
+              {currentPage > 1 &&
+                <button
+                  className="mr-auto"
+                  onClick={() => (
+                    handlePageButton(currentPage - 1)
+                  )}>
+                  {`\u{2190}`} Prev.
+                </button>
+              }
+              <div className="abs-center">
+                {`\u{22B6}\u{22B0}\u{22C7}\u{22B1}\u{22B7}`}
+              </div>
+              {hasNextPage &&
+                <button
+                  className="ml-auto"
+                  onClick={() => (
+                    handlePageButton(currentPage + 1)
+                  )}
+                >
+                  Next {`\u{2192}`}
+                </button>
+              }
             </div>
-            {hasNextPage &&
-              <button
-                className="ml-auto"
-                onClick={() => (
-                  handlePageButton(currentPage + 1)
-                )}
-              >
-                Next {`\u{2192}`}
-              </button>
-            }
-          </div>
-        }
-        {resultsList && <>
+          }
           <ul
             id='search-results'
             ref={resultsRef}
@@ -193,8 +194,8 @@ function Searchbar() {
           >
             Close
           </button>
-        </>}
-      </>}
+        </div>
+      }
     </div >
   );
 }

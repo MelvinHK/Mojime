@@ -1,12 +1,24 @@
 @import url(index.css);
 
+:root {
+  --searchbar-width: 28rem;
+}
+
+@media (max-width: 480px) {
+  :root {
+    --searchbar-width: 100%;
+  }
+}
+
+/* HOME PAGE */
+
 #title-screen {
   display: flex;
   flex-direction: column;
   align-items: center;
   margin: auto;
-  max-width: 28rem;
-  height: 100%;
+  max-width: var(--searchbar-width);
+  height: calc(100vh - var(--pad-y) * 4);
 }
 
 #title-screen h1 {
@@ -15,10 +27,30 @@
   font-weight: normal;
 }
 
-.wrapper {
-  border-radius: var(--b-radius);
-  background-color: var(--gray);
+#greeting {
+  padding: var(--pad-y);
+  margin: auto;
+}
+
+/* SEARCH BAR */
+
+#searchbar {
+  position: relative;
+  width: var(--searchbar-width);
+}
+
+#searchbar form, #searchbar input {
   width: inherit;
+  z-index: 1;
+}
+
+#dropdown {
+  position: absolute;
+  background-color: var(--gray);
+  border-radius: var(--b-radius);
+  width: inherit;
+  padding-top: calc(var(--pad-y) + 1rem);
+  margin-top: calc(-1 * (var(--pad-y) + 1rem));
 }
 
 #search-results {
@@ -63,28 +95,10 @@
   outline: none;
 }
 
-#header-wrapper {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  max-width: 28rem;
-  margin: auto;
-  height: 2.35rem;
-}
+/* HEADER */
 
 #header {
-  position: absolute;
   width: 100%;
-}
-
-#header h1 {
-  font-weight: normal;
-  position: absolute;
-  right: 0;
-  margin: 0.3rem var(--pad-x) 0 0;
-  font-size: 1.5rem;
-}
-
-#header input {
-  padding-right: 3rem;
+  display: flex;
+  justify-content: center;
 }

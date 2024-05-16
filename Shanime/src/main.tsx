@@ -17,7 +17,7 @@ import './styles/attributes.css'
 const router = createBrowserRouter(
   createRoutesFromElements(<>
     <Route path='/' element={<Home />} />
-    <Route path='/watch' element={<Watch />} />
+    <Route path='/watch/:id' element={<Watch />} />
   </>)
 );
 

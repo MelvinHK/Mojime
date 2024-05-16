@@ -16,9 +16,9 @@
   --pad-x: 1.2rem;
   --pad: var(--pad-y) var(--pad-x);
 
-  --white: #eeeeee;
+  --white: rgb(238, 238, 238);
   --gray: #353535;
-  --black: #1a1a1a;
+  --black: rgb(26, 26, 26);
   --blue: #646cff;
 
   --b-radius: 8px;
