@@ -1,7 +1,7 @@
 @import url(index.css);
 
 :root {
-  --searchbar-width: 28rem;
+  --searchbar-width: 35rem;
 }
 
 @media (max-width: 480px) {
