@@ -14,7 +14,7 @@ function Searchbar() {
   // Up/Down key search result selection.
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
 
-  // 1a. Cache results for when navigating back & forth between results with pages.
+  // 1a. Cache results for when navigating back & forth between result pages.
   const [searchCache, setSearchCache] = useState<ISearch<IAnimeResult>[]>([]);
   // 1b. Store initial searchbar query in case it is edited before page navigation.
   const [pageNavQuery, setPageNavQuery] = useState<string>("");
@@ -47,7 +47,9 @@ function Searchbar() {
 
   const handlePageButton = (page: number) => {
     if (searchCache[page - 1]) {
-      updateSearchResults(searchCache[page - 1]);
+      // Funny hack; need to setTimeout due to a race condition with useClickAway 
+      // when the buttons become hidden upon reaching the first/last page.
+      setTimeout(() => updateSearchResults(searchCache[page - 1]), 1);
     } else {
       handleSearch(pageNavQuery, page);
     }
@@ -143,34 +145,34 @@ function Searchbar() {
           onFocus={() => setShowDropdown(true)}
         />
       </form>
-      {resultsList && showDropdown &&
+      {resultsList && showDropdown && (
         <div id="dropdown">
-          {(currentPage > 1 || hasNextPage) &&
-            <div id="page-nav">
-              {currentPage > 1 &&
-                <button
-                  className="mr-auto"
-                  onClick={() => (
-                    handlePageButton(currentPage - 1)
-                  )}>
-                  {`\u{2190}`} Prev.
-                </button>
-              }
+          <div id="page-nav">
+            {currentPage > 1 && (
+              <button
+                className="mr-auto"
+                onClick={() => (
+                  handlePageButton(currentPage - 1)
+                )}>
+                {`\u{2190}`} Prev.
+              </button>
+            )}
+            {(currentPage > 1 || hasNextPage) && (
               <div className="abs-center">
                 {`\u{22B6}\u{22B0}\u{22C7}\u{22B1}\u{22B7}`}
               </div>
-              {hasNextPage &&
-                <button
-                  className="ml-auto"
-                  onClick={() => (
-                    handlePageButton(currentPage + 1)
-                  )}
-                >
-                  Next {`\u{2192}`}
-                </button>
-              }
-            </div>
-          }
+            )}
+            {hasNextPage && (
+              <button
+                className="ml-auto"
+                onClick={() => (
+                  handlePageButton(currentPage + 1)
+                )}
+              >
+                Next {`\u{2192}`}
+              </button>
+            )}
+          </div>
           <ul
             id='search-results'
             ref={resultsRef}
@@ -195,7 +197,7 @@ function Searchbar() {
             Close
           </button>
         </div>
-      }
+      )}
     </div >
   );
 }

@@ -39,9 +39,9 @@
   width: var(--searchbar-width);
 }
 
-#searchbar form, #searchbar input {
+#searchbar form,
+#searchbar input {
   width: inherit;
-  z-index: 1;
 }
 
 #dropdown {
@@ -49,8 +49,26 @@
   background-color: var(--gray);
   border-radius: var(--b-radius);
   width: inherit;
-  padding-top: calc(var(--pad-y) + 1rem);
-  margin-top: calc(-1 * (var(--pad-y) + 1rem));
+}
+
+#dropdown::before {
+  z-index: -1;
+  position: absolute;
+  padding-top: 1rem;
+  margin-top: -1rem;
+  content: "";
+  height: 10px;
+  width: inherit;
+  background-color: var(--gray);
+}
+
+#dropdown::after {
+  position: absolute;
+  content: "";
+  bottom: 0;
+  margin-bottom: -1.5rem;
+  height: 0.1px;
+  width: 0.1px;
 }
 
 #search-results {

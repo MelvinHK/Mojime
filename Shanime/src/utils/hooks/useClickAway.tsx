@@ -7,9 +7,9 @@ const useClickAway = (ref: HTMLElement | null, onClickAway: () => void) => {
         onClickAway();
     };
 
-    document.addEventListener('mousedown', handleDocumentClick);
+    document.addEventListener('click', handleDocumentClick);
 
-    return () => document.removeEventListener('mousedown', handleDocumentClick);
+    return () => document.removeEventListener('click', handleDocumentClick);
   }, [ref, onClickAway]);
 };
 
