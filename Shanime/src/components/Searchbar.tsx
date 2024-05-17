@@ -1,8 +1,7 @@
-import { getAnimeSearch } from "../utils/provider";
+import { getSearch } from "../utils/provider";
 import { useState, useEffect, useRef } from "react";
 import { IAnimeResult, ISearch } from "@consumet/extensions";
 import useClickAway from "../utils/hooks/useClickAway";
-
 
 function Searchbar() {
   const [searchBarQuery, setSearchbarQuery] = useState<string>("");
@@ -30,15 +29,15 @@ function Searchbar() {
   });
 
   const handleSearch = async (query: string, page: number) => {
-    if (!query.trim()) return;
+    if (!query.trim()) { return };
 
     try {
-      const search = await getAnimeSearch(query, page);
+      const search = await getSearch(query, page);
       updateSearchResults(search);
 
       // 2. Page === 1 implies a new search; remove existing cache.
       setSearchCache(page === 1 ? [search] : [...searchCache, search]);
-      if (page === 1) setPageNavQuery(searchBarQuery);
+      if (page === 1) { setPageNavQuery(searchBarQuery) };
 
     } catch (error) {
       alert("Error: Unable to fetch results... Try again later.")
@@ -47,7 +46,7 @@ function Searchbar() {
 
   const handlePageButton = (page: number) => {
     if (searchCache[page - 1]) {
-      // Funny hack; need to setTimeout due to a race condition with useClickAway 
+      // Funny hack; need to setTimeout possibly due to a race condition with useClickAway 
       // when the buttons become hidden upon reaching the first/last page.
       setTimeout(() => updateSearchResults(searchCache[page - 1]), 1);
     } else {
@@ -72,24 +71,33 @@ function Searchbar() {
     setPageNavQuery("");
   }
 
-  // Search results' up/down-key selection.
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (!resultsList || e.key === 'Tab')
-        return setSelectedIndex(-1);
+      if (e.key === '/' && !showDropdown) {
+        e.preventDefault();
+        searchbarRef?.current?.focus();
+        return;
+      }
+
+      if (e.key === 'Escape' && showDropdown) {
+        setShowDropdown(false);
+        searchbarRef?.current?.blur();
+        return;
+      }
+
+      if (!resultsList) {
+        return;
+      }
 
       const total = resultsList.length;
       let index = selectedIndex;
 
-      if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+      if (['ArrowUp', 'ArrowDown'].includes(e.key) && showDropdown) {
         e.preventDefault();
         searchbarRef?.current?.focus();
-
-        index = e.key === 'ArrowUp' ?
-          (index - 1 + total + 1) % (total + 1) :
-          (index + 1) % (total + 1);
-
-      } else if (e.key === 'Enter' && resultsList.hasOwnProperty(selectedIndex)) {
+        index = e.key === 'ArrowUp' ? (index + total) % (total + 1) : (index + 1) % (total + 1);
+      }
+      else if (e.key === 'Enter' && resultsList.hasOwnProperty(selectedIndex)) {
         e.preventDefault();
         console.log(resultsList[index].id);
       }
@@ -99,24 +107,20 @@ function Searchbar() {
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [resultsList, selectedIndex])
+  }, [resultsList, selectedIndex, showDropdown]);
 
   useEffect(() => {
     if (resultsList?.hasOwnProperty(selectedIndex)) {
       resultsRef.current?.children[selectedIndex]
         .scrollIntoView(selectedIndex === resultsList.length - 1);
     }
-  }, [selectedIndex])
-
-  useEffect(() => {
-    setSelectedIndex(-1);
-  }, [resultsList])
+  }, [selectedIndex]);
 
   useEffect(() => {
     if (!showDropdown && (!pageNavQuery.includes(searchBarQuery) || searchBarQuery.length === 0)) {
       clearSearchResults();
     }
-  }, [showDropdown])
+  }, [showDropdown]);
 
   return (
     <div
@@ -143,6 +147,7 @@ function Searchbar() {
           )}
           placeholder='Search'
           onFocus={() => setShowDropdown(true)}
+          onBlur={() => setSelectedIndex(-1)}
         />
       </form>
       {resultsList && showDropdown && (
@@ -151,10 +156,9 @@ function Searchbar() {
             {currentPage > 1 && (
               <button
                 className="mr-auto"
-                onClick={() => (
-                  handlePageButton(currentPage - 1)
-                )}>
-                {`\u{2190}`} Prev.
+                onClick={() => handlePageButton(currentPage - 1)}
+              >
+                &lt; Prev.
               </button>
             )}
             {(currentPage > 1 || hasNextPage) && (
@@ -165,11 +169,9 @@ function Searchbar() {
             {hasNextPage && (
               <button
                 className="ml-auto"
-                onClick={() => (
-                  handlePageButton(currentPage + 1)
-                )}
+                onClick={() => handlePageButton(currentPage + 1)}
               >
-                Next {`\u{2192}`}
+                Next &gt;
               </button>
             )}
           </div>

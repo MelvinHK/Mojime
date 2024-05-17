@@ -1,3 +1,8 @@
+html,
+body {
+  margin: 0;
+}
+
 :root {
   font-family: monospace;
   line-height: 1.5;
@@ -24,8 +29,8 @@
   --b-radius: 8px;
 }
 
-body {
-  margin: 1.5rem;
+* {
+  box-sizing: border-box;
 }
 
 a {

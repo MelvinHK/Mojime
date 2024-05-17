@@ -12,24 +12,18 @@
 
 /* HOME PAGE */
 
-#title-screen {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: auto;
-  max-width: var(--searchbar-width);
-  height: calc(100vh - var(--pad-y) * 4);
-}
-
-#title-screen h1 {
-  font-size: 2.5rem;
-  margin: 0 0 1rem 0;
-  font-weight: normal;
-}
-
 #greeting {
-  padding: var(--pad-y);
   margin: auto;
+  padding-bottom: 5rem;
+}
+
+/* HEADER */
+
+#header {
+  padding: 1.5rem;
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
 /* SEARCH BAR */
@@ -111,12 +105,4 @@
   cursor: default;
   background-color: rgb(82, 82, 82);
   outline: none;
-}
-
-/* HEADER */
-
-#header {
-  width: 100%;
-  display: flex;
-  justify-content: center;
 }
