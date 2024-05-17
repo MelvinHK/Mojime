@@ -66,7 +66,7 @@ function Searchbar() {
     setHasNextPage(search.hasNextPage);
   }
 
-  const resetStates = () => {
+  const resetSearchbar = () => {
     setSearchbarQuery("");
     setResultsList(undefined);
     setCurrentPage(1);
@@ -108,7 +108,7 @@ function Searchbar() {
       if (e.key === 'Enter' && resultsList.hasOwnProperty(selectedIndex)) {
         e.preventDefault();
         navigate(`/${resultsList[index].id}-episode-1`);
-        resetStates();
+        resetSearchbar();
         searchbarRef?.current?.blur();
         return;
       }
@@ -127,7 +127,7 @@ function Searchbar() {
 
   useEffect(() => {
     if (!showDropdown && (!pageNavQuery.includes(searchBarQuery) || searchBarQuery.length === 0)) {
-      resetStates();
+      resetSearchbar();
     }
   }, [showDropdown]);
 
@@ -172,7 +172,7 @@ function Searchbar() {
             )}
             {(currentPage > 1 || hasNextPage) && (
               <div className="abs-center">
-                {`\u{22B6}\u{22B0}\u{22C7}\u{22B1}\u{22B7}`}
+                {`\u{22B6}\u{22B0} ${currentPage} \u{22B1}\u{22B7}`}
               </div>
             )}
             {hasNextPage && (
@@ -195,7 +195,7 @@ function Searchbar() {
                   className={selectedIndex === index ? 'selected' : ''}
                   onClick={() => (
                     navigate(`/${resultsList[index].id}-episode-1`),
-                    resetStates()
+                    resetSearchbar()
                   )}
                 >
                   {result.title as string}
