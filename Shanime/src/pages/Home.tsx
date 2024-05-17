@@ -1,14 +1,14 @@
 function Home() {
   return (
     <p id="greeting">
-      {greetings[Math.floor(Math.random() * greetings.length)]}
+      {kaomojis[Math.floor(Math.random() * kaomojis.length)]}
     </p>
   )
 }
 
 export default Home;
 
-const greetings: string[] = [
+const kaomojis: string[] = [
   "(*・ω・)ﾉ",
   "(￣▽￣)ノ",
   "(°▽°)/",
