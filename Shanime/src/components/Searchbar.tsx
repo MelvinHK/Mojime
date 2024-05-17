@@ -76,6 +76,15 @@ function Searchbar() {
     setShowDropdown(false);
   }
 
+  const handleNavigate = (index: number) => {
+    if (resultsList) {
+      setSearchbarQuery(resultsList[index].title as string);
+      setShowDropdown(false);
+      navigate(`/${resultsList[index].id}-episode-1`);
+      searchbarRef?.current?.blur();
+    }
+  }
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === '/' && !showDropdown) {
@@ -107,9 +116,7 @@ function Searchbar() {
 
       if (e.key === 'Enter' && resultsList.hasOwnProperty(selectedIndex)) {
         e.preventDefault();
-        navigate(`/${resultsList[index].id}-episode-1`);
-        setShowDropdown(false);
-        searchbarRef?.current?.blur();
+        handleNavigate(index);
         return;
       }
     }
@@ -126,7 +133,7 @@ function Searchbar() {
   }, [selectedIndex]);
 
   useEffect(() => {
-    if (!showDropdown && (!pageNavQuery.includes(searchBarQuery) || searchBarQuery.length === 0)) {
+    if (!showDropdown && searchBarQuery.length === 0) {
       resetSearchbar();
     }
   }, [showDropdown]);
@@ -193,10 +200,7 @@ function Searchbar() {
                 <li
                   key={result.id}
                   className={selectedIndex === index ? 'selected' : ''}
-                  onClick={() => (
-                    navigate(`/${resultsList[index].id}-episode-1`),
-                    setShowDropdown(false)
-                  )}
+                  onClick={() => handleNavigate(index)}
                 >
                   {result.title as string}
                 </li>
@@ -213,7 +217,8 @@ function Searchbar() {
             Close
           </button>
         </div>
-      )}
+      )
+      }
     </div >
   );
 }
