@@ -2,6 +2,7 @@ import { getSearch } from "../utils/provider";
 import { useState, useEffect, useRef } from "react";
 import { IAnimeResult, ISearch } from "@consumet/extensions";
 import useClickAway from "../utils/hooks/useClickAway";
+import { useNavigate } from "react-router-dom";
 
 function Searchbar() {
   const [searchBarQuery, setSearchbarQuery] = useState<string>("");
@@ -22,7 +23,9 @@ function Searchbar() {
   const resultsRef = useRef<HTMLUListElement>(null);
 
   const searchContainer = useRef<HTMLDivElement>(null);
-  const [showDropdown, setShowDropdown] = useState<boolean>(true);
+  const [showDropdown, setShowDropdown] = useState<boolean>(false);
+
+  const navigate = useNavigate();
 
   useClickAway(searchContainer.current, () => {
     setShowDropdown(false);
@@ -63,12 +66,14 @@ function Searchbar() {
     setHasNextPage(search.hasNextPage);
   }
 
-  const clearSearchResults = () => {
+  const resetStates = () => {
+    setSearchbarQuery("");
     setResultsList(undefined);
     setCurrentPage(1);
     setHasNextPage(false);
     setSearchCache([]);
     setPageNavQuery("");
+    setShowDropdown(false);
   }
 
   useEffect(() => {
@@ -96,13 +101,17 @@ function Searchbar() {
         e.preventDefault();
         searchbarRef?.current?.focus();
         index = e.key === 'ArrowUp' ? (index + total) % (total + 1) : (index + 1) % (total + 1);
-      }
-      else if (e.key === 'Enter' && resultsList.hasOwnProperty(selectedIndex)) {
-        e.preventDefault();
-        console.log(resultsList[index].id);
+        setSelectedIndex(index);
+        return;
       }
 
-      setSelectedIndex(index);
+      if (e.key === 'Enter' && resultsList.hasOwnProperty(selectedIndex)) {
+        e.preventDefault();
+        navigate(`/${resultsList[index].id}-episode-1`);
+        resetStates();
+        searchbarRef?.current?.blur();
+        return;
+      }
     }
 
     document.addEventListener('keydown', handleKeyDown);
@@ -118,7 +127,7 @@ function Searchbar() {
 
   useEffect(() => {
     if (!showDropdown && (!pageNavQuery.includes(searchBarQuery) || searchBarQuery.length === 0)) {
-      clearSearchResults();
+      resetStates();
     }
   }, [showDropdown]);
 
@@ -181,11 +190,16 @@ function Searchbar() {
           >
             {resultsList.length !== 0 ?
               resultsList.map((result, index) =>
-                <Result
+                <li
                   key={result.id}
-                  result={result}
-                  isSelected={index === selectedIndex}
-                />
+                  className={selectedIndex === index ? 'selected' : ''}
+                  onClick={() => (
+                    navigate(`/${resultsList[index].id}-episode-1`),
+                    resetStates()
+                  )}
+                >
+                  {result.title as string}
+                </li>
               ) :
               <li className="no-results">
                 No results
@@ -201,17 +215,6 @@ function Searchbar() {
         </div>
       )}
     </div >
-  );
-}
-
-function Result({ result, isSelected }: { result: IAnimeResult, isSelected: boolean }) {
-  return (
-    <li
-      className={isSelected ? 'selected' : ''}
-      onClick={() => console.log(result.id)}
-    >
-      {result.title as string}
-    </li>
   );
 }
 
