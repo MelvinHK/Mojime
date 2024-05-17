@@ -108,7 +108,7 @@ function Searchbar() {
       if (e.key === 'Enter' && resultsList.hasOwnProperty(selectedIndex)) {
         e.preventDefault();
         navigate(`/${resultsList[index].id}-episode-1`);
-        resetSearchbar();
+        setShowDropdown(false);
         searchbarRef?.current?.blur();
         return;
       }
@@ -195,7 +195,7 @@ function Searchbar() {
                   className={selectedIndex === index ? 'selected' : ''}
                   onClick={() => (
                     navigate(`/${resultsList[index].id}-episode-1`),
-                    resetSearchbar()
+                    setShowDropdown(false)
                   )}
                 >
                   {result.title as string}

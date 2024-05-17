@@ -1,10 +1,7 @@
-import Header from "../components/Header";
-
-function Watch() { // Add clickAway listener for searchbar first
+function Watch() {
   return (
-    <div className="content">
-      <Header />
-    </div>
+    <>
+    </>
   );
 }
 

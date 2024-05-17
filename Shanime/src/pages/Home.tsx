@@ -1,14 +1,9 @@
-import Header from "../components/Header";
-
 function Home() {
   return (
-    <div className="content">
-      <Header />
-      <p id="greeting">
-        {greetings[Math.floor(Math.random() * greetings.length)]}
-      </p>
-    </div>
-  );
+    <p id="greeting">
+      {greetings[Math.floor(Math.random() * greetings.length)]}
+    </p>
+  )
 }
 
 export default Home;
