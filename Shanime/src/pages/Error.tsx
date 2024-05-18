@@ -1,17 +1,27 @@
-import { useRouteError } from "react-router-dom"
+import { useRouteError, isRouteErrorResponse } from "react-router-dom"
 
 export default function Error() {
   const error = useRouteError();
   console.log(error);
 
+  const errorMessage = () => {
+    if (isRouteErrorResponse(error)) {
+      return (
+        <p className="txt-center">
+          {error.status} {error.data}
+        </p>
+      );
+    } else {
+      return (
+        <p>Unknown Error</p>
+      );
+    }
+  }
+
   return (
     <div className="content fl-j-center">
       <p>!!{`(っ °Д °;)っ`}</p>
-      <p className="txt-center">
-        Error {error.status}:
-        <br></br>
-        {error.error.message}
-      </p>
+      {errorMessage()}
       <a href="/">Home</a>
     </div>
   );
