@@ -20,7 +20,7 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Root />,
-    errorElement: <Root rootErrorOutlet={<Error />} />,
+    errorElement: <Root rootErrorOutlet={<Error />} />, // errorElement passed as a prop in order to maintain page layout.
     children: [
       {
         index: true,
