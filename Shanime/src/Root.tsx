@@ -1,15 +1,15 @@
 import { Outlet } from "react-router-dom";
 import Header from "./components/Header";
 
-interface IRootRoute {
-  outlet?: any;
+interface RootProps {
+  rootErrorOutlet?: JSX.Element;
 }
 
-function Root(props: IRootRoute) {
+function Root(props: RootProps) {
   return (
     <div className="content">
       <Header />
-      {props.outlet || <Outlet />}
+      {props.rootErrorOutlet || <Outlet />}
     </div>
   );
 }
