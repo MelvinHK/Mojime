@@ -1,13 +1,28 @@
 import { ANIME } from "@consumet/extensions"
+import { json } from "react-router-dom";
 
 const provider = new ANIME.Gogoanime();
 
-// Switch to AniList or something better. Some results have empty titles such as Oshi No Ko.
 export const getSearch = async (query: string, page: number) => {
-  const results = await provider.search(query, page);
-  return results;
+  try {
+    const results = await provider.search(query, page);
+    return results;
+  } catch (error) {
+    throw error;
+  }
 }
 
 export const getEpisode = async (id: string) => {
-  // provider.fetchEpisodeSources
+  try {
+    const episodes = await provider.fetchEpisodeSources(id);
+    return episodes;
+  } catch (error) {
+    throw json(
+      "Error: Episode not Found",
+      {
+        status: 404,
+        statusText: "Not Found"
+      }
+    );
+  }
 }

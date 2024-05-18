@@ -1,4 +1,4 @@
-import { useRouteError, isRouteErrorResponse } from "react-router-dom"
+import { useRouteError, isRouteErrorResponse, Link } from "react-router-dom"
 
 export default function Error() {
   const error = useRouteError();
@@ -22,7 +22,7 @@ export default function Error() {
     <div className="content fl-j-center">
       <p>!!{`(っ °Д °;)っ`}</p>
       {errorMessage()}
-      <a href="/">Home</a>
+      <Link to="/">Home</Link>
     </div>
   );
 }

@@ -153,7 +153,7 @@ export default function Searchbar() {
         )}
       >
         <input
-          className="w-100 b-box"
+          className="w-100"
           ref={searchbarRef}
           value={searchBarQuery}
           onChange={(e) => (

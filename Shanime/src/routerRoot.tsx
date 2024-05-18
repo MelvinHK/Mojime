@@ -14,19 +14,25 @@ import './styles/index.css'
 import './styles/components.css'
 import './styles/attributes.css'
 
+import { getEpisode } from './utils/provider.tsx';
+
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Root />,
-    errorElement: <Error />,
+    errorElement: <Root outlet={<Error />} />,
     children: [
       {
-        path: "/",
-        element: <Home />,
+        index: true,
+        element: <Home />
       },
       {
-        path: "/:id",
-        element: <Watch />
+        path: "/:episodeID",
+        element: <Watch />,
+        errorElement: <Error />,
+        loader: async ({ params }) => {
+          return getEpisode(params.episodeID as string)
+        }
       }
     ]
   }
