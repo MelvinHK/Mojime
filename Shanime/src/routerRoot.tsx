@@ -5,9 +5,10 @@ import {
   RouterProvider
 } from 'react-router-dom';
 
-import Root from './pages/Root.tsx';
+import Root from './Root.tsx';
 import Home from './pages/Home.tsx';
 import Watch from './pages/Watch.tsx';
+import Error from './pages/Error.tsx';
 
 import './styles/index.css'
 import './styles/components.css'
@@ -17,6 +18,7 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Root />,
+    errorElement: <Error />,
     children: [
       {
         path: "/",

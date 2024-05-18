@@ -1,12 +1,10 @@
-function Home() {
+export default function Home() {
   return (
     <p id="greeting">
       {kaomojis[Math.floor(Math.random() * kaomojis.length)]}
     </p>
   )
 }
-
-export default Home;
 
 const kaomojis: string[] = [
   "(*・ω・)ﾉ",

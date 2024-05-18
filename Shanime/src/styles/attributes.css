@@ -53,6 +53,14 @@
   margin-right: auto;
 }
 
+.mt-auto {
+  margin-top: auto;
+}
+
+.mb-auto {
+  margin-bottom: auto;
+}
+
 .ml-50 {
   margin-left: 50%;
 }
@@ -61,7 +69,6 @@
   box-sizing: border-box;
 }
 
-.gray {
-  color: gray;
-  filter:saturate(0);
+.txt-center {
+  text-align: center;
 }

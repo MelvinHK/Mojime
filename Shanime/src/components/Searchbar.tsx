@@ -4,7 +4,7 @@ import { IAnimeResult, ISearch } from "@consumet/extensions";
 import useClickAway from "../utils/hooks/useClickAway";
 import { useNavigate } from "react-router-dom";
 
-function Searchbar() {
+export default function Searchbar() {
   const [searchBarQuery, setSearchbarQuery] = useState<string>("");
 
   const [resultsList, setResultsList] = useState<IAnimeResult[]>();
@@ -222,5 +222,3 @@ function Searchbar() {
     </div >
   );
 }
-
-export default Searchbar;
