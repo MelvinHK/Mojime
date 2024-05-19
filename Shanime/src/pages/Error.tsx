@@ -1,5 +1,7 @@
 import { useRouteError, isRouteErrorResponse, Link } from "react-router-dom"
 
+// All route errors, which are thrown to routes' loader in RouterRoot.tsx, are handled here.
+
 export default function Error() {
   const error = useRouteError();
   console.log(error);
