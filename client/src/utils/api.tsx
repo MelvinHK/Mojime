@@ -15,10 +15,10 @@ export const getAnime = async (id: string) => {
     return results.data;
   } catch (error) {
     throw new Response(
-      "Error: Anime not Found",
+      "Error: Not Found",
       {
         status: 404,
-        statusText: `Page not found`,
+        statusText: `Anime/Episode not found`,
       }
     );
   }
@@ -30,10 +30,10 @@ export const getEpisode = async (id: string, episodeNo: string) => {
     return results.data;
   } catch (error) {
     throw new Response(
-      "Error: Episode not Found",
+      "Error: Not Found",
       {
         status: 404,
-        statusText: 'Page not found'
+        statusText: 'Anime/Episode not found'
       }
     );
   }
