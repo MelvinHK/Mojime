@@ -34,17 +34,12 @@ export default function Searchbar() {
   const handleSearch = async (query: string, page: number) => {
     if (!query.trim()) { return };
 
-    try {
-      const search = await getSearch(query, page);
-      updateSearchResults(search);
+    const search = await getSearch(query, page);
+    updateSearchResults(search);
 
-      // 2. Page === 1 implies a new search; remove existing cache.
-      setSearchCache(page === 1 ? [search] : [...searchCache, search]);
-      if (page === 1) { setPageNavQuery(searchBarQuery) };
-
-    } catch (error) {
-      alert("Error: Unable to fetch results... Try again later.")
-    }
+    // 2. Page === 1 implies a new search; remove existing cache.
+    setSearchCache(page === 1 ? [search] : [...searchCache, search]);
+    if (page === 1) { setPageNavQuery(searchBarQuery) };
   }
 
   const handlePageButton = (page: number) => {

@@ -6,7 +6,7 @@ export const getSearch = async (query: string, page: number) => {
     const results = await axios.get(`/api/search/${query}/page/${page}`);
     return results.data;
   } catch (error) {
-    throw error;
+    alert(`Error: Unable to fetch results... Try again later.`);
   }
 }
 
