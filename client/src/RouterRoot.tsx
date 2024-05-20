@@ -14,7 +14,7 @@ import './styles/index.css'
 import './styles/components.css'
 import './styles/attributes.css'
 
-import { getEpisode } from './utils/provider.tsx';
+import { getEpisode } from './utils/api.tsx';
 
 const router = createBrowserRouter([
   {

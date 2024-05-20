@@ -1,4 +1,4 @@
-import { getSearch } from "../utils/provider";
+import { getSearch } from "../utils/api";
 import { useState, useEffect, useRef } from "react";
 import { IAnimeResult, ISearch } from "@consumet/extensions";
 import useClickAway from "../utils/hooks/useClickAway";

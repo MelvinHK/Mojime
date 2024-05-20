@@ -1,12 +1,10 @@
-import { ANIME } from "@consumet/extensions"
 import { json } from "react-router-dom";
-
-const provider = new ANIME.Gogoanime();
+import axios from "axios";
 
 export const getSearch = async (query: string, page: number) => {
   try {
-    const results = await provider.search(query, page);
-    return results;
+    const results = await axios.get(`/api/search/${query}/page/${page}`);
+    return results.data;
   } catch (error) {
     throw error;
   }
@@ -14,8 +12,9 @@ export const getSearch = async (query: string, page: number) => {
 
 export const getEpisode = async (id: string) => {
   try {
-    const episodes = await provider.fetchEpisodeSources(id);
-    return episodes;
+    const results = await axios.get(`/api/episode/${id}`);
+    console.log(results.data);
+    return results.data;
   } catch (error) {
     throw json(
       "Error: Episode not Found",
