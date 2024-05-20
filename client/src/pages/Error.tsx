@@ -1,4 +1,4 @@
-import { useRouteError, isRouteErrorResponse } from "react-router-dom"
+import { useRouteError, isRouteErrorResponse, Link } from "react-router-dom"
 
 interface ErrorProps {
   error?: any;
@@ -29,7 +29,7 @@ const Error: React.FC<ErrorProps> = ({ error }) => {
     <div className="content fl-j-center">
       <p>!!{`(っ °Д °;)っ`}</p>
       {errorMessage()}
-      <a href="/">Home</a>
+      <Link to="/">Home</Link>
     </div>
   );
 }
