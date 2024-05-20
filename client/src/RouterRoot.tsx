@@ -5,16 +5,14 @@ import {
   RouterProvider
 } from 'react-router-dom';
 
+import Error from './pages/Error.tsx';
 import Root from './Root.tsx';
 import Home from './pages/Home.tsx';
 import Watch from './pages/Watch.tsx';
-import Error from './pages/Error.tsx';
 
 import './styles/index.css'
 import './styles/components.css'
 import './styles/attributes.css'
-
-import { getEpisode } from './utils/api.tsx';
 
 const router = createBrowserRouter([
   {
@@ -27,12 +25,8 @@ const router = createBrowserRouter([
         element: <Home />
       },
       {
-        path: "/:episodeID",
-        element: <Watch />,
-        errorElement: <Error />,
-        loader: async ({ params }) => {
-          return getEpisode(params.episodeID as string);
-        }
+        path: "/:animeId/:episodeNo",
+        element: <Watch />
       }
     ]
   }

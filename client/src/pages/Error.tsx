@@ -1,22 +1,27 @@
-import { useRouteError, isRouteErrorResponse, Link } from "react-router-dom"
+import { useRouteError, isRouteErrorResponse } from "react-router-dom"
 
-// All route errors, which are thrown to routes' loader in RouterRoot.tsx, are handled here.
+interface ErrorProps {
+  error?: any;
+}
 
-export default function Error() {
-  const error = useRouteError();
-  console.log(error);
+const Error: React.FC<ErrorProps> = ({ error }) => {
+  const routeError = useRouteError();
 
   const errorMessage = () => {
-    if (isRouteErrorResponse(error)) {
+    if (isRouteErrorResponse(routeError)) {
       return (
         <p className="txt-center">
-          {error.status} {error.data}
+          {routeError.status} {routeError.data}
         </p>
+      );
+    } else if (error.status) {
+      return (
+        <p>{error.status} Error: {error.statusText}</p>
       );
     } else {
       return (
-        <p>Unknown Error</p>
-      );
+        <p>Unknown Error: I'm not sure what went wrong!!!</p>
+      )
     }
   }
 
@@ -24,7 +29,9 @@ export default function Error() {
     <div className="content fl-j-center">
       <p>!!{`(っ °Д °;)っ`}</p>
       {errorMessage()}
-      <Link to="/">Home</Link>
+      <a href="/">Home</a>
     </div>
   );
 }
+
+export default Error;

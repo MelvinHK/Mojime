@@ -75,7 +75,7 @@ export default function Searchbar() {
     if (resultsList) {
       setSearchbarQuery(resultsList[index].title as string);
       setShowDropdown(false);
-      navigate(`/${resultsList[index].id}-episode-1`);
+      navigate(`/${resultsList[index].id}/1`);
       searchbarRef?.current?.blur();
     }
   }
@@ -128,10 +128,10 @@ export default function Searchbar() {
   }, [selectedIndex]);
 
   useEffect(() => {
-    if (!showDropdown && searchBarQuery.length === 0) {
+    if (searchBarQuery.length === 0) {
       resetSearchbar();
     }
-  }, [showDropdown]);
+  }, [searchBarQuery]);
 
   return (
     <div

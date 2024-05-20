@@ -29,6 +29,10 @@
   display: flex;
 }
 
+.gap {
+  gap: 1rem;
+}
+
 .fl-end {
   justify-content: flex-end;
 }
@@ -67,4 +71,8 @@
 
 .txt-center {
   text-align: center;
+}
+
+.typo-ul {
+  text-decoration: red wavy underline;
 }
