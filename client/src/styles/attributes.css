@@ -14,6 +14,10 @@
   position: absolute;
 }
 
+.r-0 {
+  right: 0;
+}
+
 .abs-center {
   position: absolute;
   top: 50%;
@@ -73,6 +77,6 @@
   text-align: center;
 }
 
-.typo-ul {
-  text-decoration: red wavy underline;
+.bg-none {
+  background-color: transparent;
 }

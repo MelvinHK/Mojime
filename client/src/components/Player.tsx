@@ -25,14 +25,19 @@ export default function Player() {
       }
     }
 
-    setEpisodeData(undefined);
     fetchEpisode();
   }, [animeId, episodeNo])
 
-  if (episodeData)
-    return (
-      <>
-        <p>Episode loaded</p>
-      </>
-    );
+  return (
+    <div id="player-container">
+      <div id="player-ratio">
+        <div id="iframe">
+          {episodeData &&
+            <p>Episode loaded</p>
+          }
+        </div>
+      </div>
+    </div>
+
+  );
 }

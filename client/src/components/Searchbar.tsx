@@ -139,7 +139,7 @@ export default function Searchbar() {
       ref={searchContainer}
     >
       <form
-        className='flex'
+        className='flex fl-a-center'
         spellCheck='false'
         autoComplete="off"
         onSubmit={(e) => (
@@ -160,6 +160,15 @@ export default function Searchbar() {
           onFocus={() => setShowDropdown(true)}
           onBlur={() => setSelectedIndex(-1)}
         />
+        {searchBarQuery.trim() && (
+          <button
+            type="button"
+            className="absolute r-0 bg-none"
+            onClick={() => setSearchbarQuery("")}
+          >
+            &#x2715;
+          </button>
+        )}
       </form>
       {resultsList && showDropdown && (
         <div id="dropdown">
@@ -190,7 +199,7 @@ export default function Searchbar() {
             id='search-results'
             ref={resultsRef}
           >
-            {resultsList.length !== 0 ?
+            {resultsList.length !== 0 ? (
               resultsList.map((result, index) =>
                 <li
                   key={result.id}
@@ -199,11 +208,11 @@ export default function Searchbar() {
                 >
                   {result.title as string}
                 </li>
-              ) :
+              )) : (
               <li className="no-results">
                 No results
               </li>
-            }
+            )}
           </ul>
           <button
             id="close-results"

@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useErrorBoundary } from "react-error-boundary";
 import { useEffect, useState } from "react";
 
@@ -8,21 +8,28 @@ import { getAnime } from "../utils/api";
 import Player from "../components/Player";
 
 export default function Watch() {
-  const [animeInfo, setAnimeInfo] = useState<IAnimeInfo>();
+  const location = useLocation();
+  const { animeState } = location.state || {};
 
-  const { animeId } = useParams();
-  const { episodeNo } = useParams();
+  const [animeInfo, setAnimeInfo] = useState<IAnimeInfo>(animeState);
+
+  const { animeId, episodeNo } = useParams();
+  const episodeNumber = Number(episodeNo);
 
   const navigate = useNavigate();
 
   const { showBoundary } = useErrorBoundary();
 
+  const handleEpisodeNavigate = (ep: number) => {
+    navigate(`/${animeId}/${ep}`, { state: { animeState: animeInfo } });
+  }
+
   useEffect(() => {
-    if (!animeId) return;
+    if (!animeId || animeInfo) return;
 
     const fetchAnime = async () => {
       try {
-        const data = await getAnime(animeId)
+        const data = await getAnime(animeId);
         setAnimeInfo(data);
       } catch (error) {
         showBoundary(error);
@@ -30,21 +37,26 @@ export default function Watch() {
     }
 
     fetchAnime();
-  }, [animeId])
+  }, [])
 
   return (
     <>
       <Player />
-      {animeInfo && (animeInfo.id === animeId) && (
+      {animeInfo && (
         <>
           <p>{animeInfo.title as string}</p>
-          <p>Episode {episodeNo} / {animeInfo?.totalEpisodes}</p>
+          <p>Episode {episodeNo} / {animeInfo.totalEpisodes ?? "?"}</p>
           <div className="flex gap fl-a-center">
-            <button onClick={() => navigate(`/${animeId}/${Number(episodeNo) - 1}`)}>
+            <button
+              onClick={() => handleEpisodeNavigate(episodeNumber - 1)}
+              disabled={episodeNumber <= 1}
+            >
               &lt; Prev.
             </button>
-
-            <button onClick={() => (navigate(`/${animeId}/${Number(episodeNo) + 1}`))}>
+            <button
+              onClick={() => handleEpisodeNavigate(episodeNumber + 1)}
+              disabled={episodeNumber >= (animeInfo.totalEpisodes ?? episodeNumber + 1)}
+            >
               Next &gt;
             </button>
           </div>

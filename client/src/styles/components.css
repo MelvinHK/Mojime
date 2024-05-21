@@ -24,6 +24,7 @@
   display: flex;
   justify-content: center;
   width: 100%;
+  z-index: 99;
 }
 
 /* SEARCH BAR */
@@ -105,4 +106,31 @@
   cursor: default;
   background-color: rgb(82, 82, 82);
   outline: none;
+}
+
+/* PLAYER */
+
+#player-container {
+  width: 60rem;
+  max-width: 100%;
+}
+
+#player-ratio {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  padding-top: 56.25%;
+  /* 16:9 Aspect Ratio (divide 9 by 16 = 0.5625) */
+  border: 1px var(--gray) solid;
+  border-radius: var(--b-radius);
+}
+
+#iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
 }

@@ -63,6 +63,15 @@ button {
   color: inherit;
 }
 
+button:active {
+  background-color: brightness(0.5);
+}
+
+button:disabled {
+  opacity: .25;
+  cursor: not-allowed;
+}
+
 input {
   border-radius: var(--b-radius);
   border: none;

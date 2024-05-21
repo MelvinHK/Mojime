@@ -25,7 +25,7 @@ const router = createBrowserRouter([
         element: <Home />
       },
       {
-        path: "/:animeId/:episodeNo",
+        path: ":animeId/:episodeNo",
         element: <Watch />
       }
     ]
