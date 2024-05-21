@@ -46,6 +46,7 @@
   width: inherit;
 }
 
+/* Hides border radii between searchbar and dropdown */
 #dropdown::before {
   z-index: -1;
   position: absolute;
@@ -57,6 +58,7 @@
   background-color: var(--gray);
 }
 
+/* Psuedo bottom margin */
 #dropdown::after {
   position: absolute;
   content: "";
@@ -79,15 +81,15 @@
   align-items: center;
 }
 
+/* Dropdown line accent */
 #search-results:before,
 #page-nav:before {
   content: "";
   position: absolute;
   top: 0;
   left: var(--pad-x);
-  height: 1px;
   width: calc(100% - var(--pad-x) * 2);
-  background: gray;
+  border-top: 1px solid gray;
 }
 
 #close-results {
@@ -113,6 +115,8 @@
 #player-container {
   width: 60rem;
   max-width: 100%;
+  border: 1px var(--gray) solid;
+  border-radius: var(--b-radius);
 }
 
 #player-ratio {
@@ -121,8 +125,6 @@
   width: 100%;
   padding-top: 56.25%;
   /* 16:9 Aspect Ratio (divide 9 by 16 = 0.5625) */
-  border: 1px var(--gray) solid;
-  border-radius: var(--b-radius);
 }
 
 #iframe {

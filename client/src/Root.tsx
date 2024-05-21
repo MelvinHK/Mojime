@@ -4,7 +4,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import Error from "./pages/Error";
 
 interface RootProps {
-  rootErrorOutlet?: JSX.Element;
+  routeError?: JSX.Element;
 }
 
 function Root(props: RootProps) {
@@ -13,7 +13,7 @@ function Root(props: RootProps) {
   return (
     <div className="content">
       <Header />
-      {props.rootErrorOutlet ||
+      {props.routeError || 
         <ErrorBoundary
           key={location.pathname}
           FallbackComponent={Error}

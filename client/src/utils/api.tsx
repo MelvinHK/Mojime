@@ -24,9 +24,9 @@ export const getAnime = async (id: string) => {
   }
 }
 
-export const getEpisode = async (id: string, episodeNo: string) => {
+export const getEpisode = async (id: string) => {
   try {
-    const results = await axios.get(`/api/anime/${id}/episode/${episodeNo}`);
+    const results = await axios.get(`/api/episode/${id}`);
     return results.data;
   } catch (error) {
     throw new Response(

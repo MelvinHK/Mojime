@@ -1,40 +1,38 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import { getEpisode } from "../utils/api";
 
 import { useErrorBoundary } from "react-error-boundary";
+import { ISource, IVideo } from "@consumet/extensions";
 
-export default function Player() {
-  const [episodeData, setEpisodeData] = useState();
+interface PlayerProps {
+  episodeId?: string;
+}
 
-  const { animeId } = useParams();
-  const { episodeNo } = useParams();
+export default function Player(props: PlayerProps) {
+  const [sources, setSources] = useState<IVideo[]>();
 
   const { showBoundary } = useErrorBoundary();
 
   useEffect(() => {
-    if (!animeId || !episodeNo) return;
+    if (!props.episodeId) return;
 
     const fetchEpisode = async () => {
       try {
-        const data = await getEpisode(animeId, episodeNo);
-        console.log("Episode fetched.")
-        setEpisodeData(data);
+        const data: ISource = await getEpisode(props.episodeId as string);
+        setSources(data.sources);
       } catch (error) {
         showBoundary(error);
       }
     }
 
     fetchEpisode();
-  }, [animeId, episodeNo])
+  }, [props.episodeId])
 
   return (
     <div id="player-container">
       <div id="player-ratio">
         <div id="iframe">
-          {episodeData &&
-            <p>Episode loaded</p>
-          }
+          <p>{sources?.find(src => src.quality === "720p")?.url}</p>
         </div>
       </div>
     </div>

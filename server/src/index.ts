@@ -7,6 +7,7 @@ const port = process.env.PORT || 3001;
 
 const provider = new ANIME.Gogoanime();
 
+// SEARCH
 app.get('/api/search/:query/page/:pageNumber', async (req, res, next) => {
   try {
     const response = await provider.search(req.params.query, Number(req.params.pageNumber));
@@ -17,6 +18,7 @@ app.get('/api/search/:query/page/:pageNumber', async (req, res, next) => {
   }
 });
 
+// ANIME INFO
 app.get('/api/anime/:animeId', async (req, res, next) => {
   try {
     const response = await provider.fetchAnimeInfo(req.params.animeId);
@@ -27,10 +29,10 @@ app.get('/api/anime/:animeId', async (req, res, next) => {
   }
 });
 
-app.get('/api/anime/:animeId/episode/:episodeNo', async (req, res, next) => {
+// EPISODE
+app.get('/api/episode/:episodeId', async (req, res, next) => {
   try {
-    const id = `${req.params.animeId}-episode-${req.params.episodeNo}`
-    const response = await provider.fetchEpisodeSources(id);
+    const response = await provider.fetchEpisodeSources(req.params.episodeId);
     const data = response;
     res.json(data);
   } catch (error) {

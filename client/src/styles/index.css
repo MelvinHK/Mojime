@@ -69,7 +69,7 @@ button:active {
 
 button:disabled {
   opacity: .25;
-  cursor: not-allowed;
+  cursor: default;
 }
 
 input {
@@ -81,4 +81,24 @@ input {
   font-size: 1rem;
   background-color: var(--gray);
   color: inherit;
+}
+
+input[type="number"] {
+  width: auto;
+  background-color: transparent;
+  padding: 0;
+  margin: 0;
+  border-radius: 0;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
 }
