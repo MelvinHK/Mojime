@@ -1,11 +1,12 @@
 /*************************************************************************************************
  * Slider
  *************************************************************************************************/
+@import url(../index.css);
 
- .slider {
+.slider {
   display: inline-flex;
   align-items: center;
-  width: 100%;
+  width: calc(100% - calc(var(--pad-x)*2));
   height: 40px;
   position: relative;
   contain: layout style;
@@ -15,7 +16,7 @@
   user-select: none;
   touch-action: none;
   /** Prevent thumb flowing out of slider (15px = thumb width). */
-  margin: 0 calc(15px / 2);
+  margin: 0 var(--pad-x);
   -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
@@ -30,8 +31,6 @@
 
 .track {
   position: absolute;
-  display: flex;
-  align-items: center;
   width: 100%;
   height: 3px;
   top: 50%;
@@ -43,7 +42,8 @@
 }
 
 .trackFill {
-  z-index: 2; /** above track and track progress. */
+  z-index: 2;
+  /** above track and track progress. */
   background-color: var(--media-brand);
   width: var(--slider-fill, 0%);
   will-change: width;
@@ -66,9 +66,10 @@
   transform: translate(-50%, -50%) translateZ(0);
   pointer-events: none;
   will-change: left;
-  z-index: 2; /** above track fill. */
+  z-index: 2;
+  /** above track fill. */
 }
 
-[data-active] > .thumb {
+[data-active]>.thumb {
   opacity: 1;
 }

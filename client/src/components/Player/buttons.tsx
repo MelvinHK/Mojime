@@ -23,6 +23,7 @@ export function Play() {
 
 export function Fullscreen() {
   const isActive = useMediaState('fullscreen');
+
   return (
     <FullscreenButton className={`fullscreen-button ${buttonStyles.button}`}>
       {isActive ? <FullscreenExitIcon /> : <FullscreenIcon />}

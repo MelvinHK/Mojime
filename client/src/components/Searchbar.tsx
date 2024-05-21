@@ -157,6 +157,7 @@ export default function Searchbar() {
             setSearchbarQuery(e.target.value)
           )}
           placeholder='Search'
+          onClick={() => setShowDropdown(true)}
           onFocus={() => setShowDropdown(true)}
           onBlur={() => setSelectedIndex(-1)}
         />
