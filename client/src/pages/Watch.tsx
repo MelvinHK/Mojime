@@ -58,7 +58,7 @@ export default function Watch() {
         "Error: Not Found",
         {
           status: 404,
-          statusText: `Anime/Episode not found`,
+          statusText: `Anime/Episode not found`
         }
       );
     }
@@ -98,7 +98,7 @@ export default function Watch() {
       <div className="flex gap fl-a-center">
         <button
           onClick={() => handleEpisodeNavigate(episodeNumber - 1)}
-          disabled={animeInfo.episodes?.map(ep => ep.id).indexOf(`${animeId}-episode-${episodeNo}`) === 0}
+          disabled={episodeNumber === 1}
         >
           &lt; Prev.
         </button>

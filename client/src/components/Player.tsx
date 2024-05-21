@@ -4,12 +4,15 @@ import { getEpisode } from "../utils/api";
 import { useErrorBoundary } from "react-error-boundary";
 import { ISource, IVideo } from "@consumet/extensions";
 
+import { MediaPlayer, MediaProvider } from '@vidstack/react';
+
 interface PlayerProps {
   episodeId?: string;
 }
 
 export default function Player(props: PlayerProps) {
   const [sources, setSources] = useState<IVideo[]>();
+  const [qualities, setQualities] = useState<(string | undefined)[]>();
 
   const { showBoundary } = useErrorBoundary();
 
@@ -20,6 +23,7 @@ export default function Player(props: PlayerProps) {
       try {
         const data: ISource = await getEpisode(props.episodeId as string);
         setSources(data.sources);
+        setQualities(data.sources.map(src => src.quality));
       } catch (error) {
         showBoundary(error);
       }
@@ -32,10 +36,16 @@ export default function Player(props: PlayerProps) {
     <div id="player-container">
       <div id="player-ratio">
         <div id="iframe">
-          <p>{sources?.find(src => src.quality === "720p")?.url}</p>
+          <MediaPlayer
+            src={sources?.find(src => src.quality === "720p")?.url}
+            className="player"
+            playsInline
+          >
+            <MediaProvider />
+          </MediaPlayer>
         </div>
       </div>
-    </div>
+    </div >
 
   );
 }
