@@ -5,6 +5,7 @@ import { useErrorBoundary } from "react-error-boundary";
 import { ISource, IVideo } from "@consumet/extensions";
 
 import { MediaPlayer, MediaProvider } from '@vidstack/react';
+import '@vidstack/react/player/styles/base.css';
 
 interface PlayerProps {
   episodeId?: string;
@@ -38,8 +39,6 @@ export default function Player(props: PlayerProps) {
         <div id="iframe">
           <MediaPlayer
             src={sources?.find(src => src.quality === "720p")?.url}
-            className="player"
-            playsInline
           >
             <MediaProvider />
           </MediaPlayer>

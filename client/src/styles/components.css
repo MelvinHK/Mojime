@@ -136,8 +136,3 @@
   width: 100%;
   height: 100%;
 }
-
-.player {
-  font-family: inherit;
-  border-radius: var(--b-radius);
-}
