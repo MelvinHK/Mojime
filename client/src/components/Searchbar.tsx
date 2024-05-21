@@ -59,6 +59,7 @@ export default function Searchbar() {
     setResultsList(list);
     setCurrentPage(search.currentPage as number);
     setHasNextPage(search.hasNextPage);
+    setShowDropdown(true);
   }
 
   const resetSearchbar = () => {
@@ -153,22 +154,12 @@ export default function Searchbar() {
           value={searchBarQuery}
           onChange={(e) => (
             setSelectedIndex(-1),
-            setSearchbarQuery(e.target.value),
-            setShowDropdown(e.target.value.length > 0)
+            setSearchbarQuery(e.target.value)
           )}
           placeholder='Search'
           onFocus={() => setShowDropdown(true)}
           onBlur={() => setSelectedIndex(-1)}
         />
-        {searchBarQuery.trim() && (
-          <button
-            type="button"
-            className="absolute r-0 bg-none"
-            onClick={() => setSearchbarQuery("")}
-          >
-            &#x2715;
-          </button>
-        )}
       </form>
       {resultsList && showDropdown && (
         <div id="dropdown">

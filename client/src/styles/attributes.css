@@ -14,10 +14,6 @@
   position: absolute;
 }
 
-.r-0 {
-  right: 0;
-}
-
 .abs-center {
   position: absolute;
   top: 50%;
@@ -75,8 +71,4 @@
 
 .txt-center {
   text-align: center;
-}
-
-.bg-none {
-  background-color: transparent;
 }

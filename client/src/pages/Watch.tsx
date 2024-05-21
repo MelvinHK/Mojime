@@ -37,7 +37,7 @@ export default function Watch() {
     }
 
     fetchAnime();
-  }, [])
+  }, [animeId, animeInfo])
 
   return (
     <>
