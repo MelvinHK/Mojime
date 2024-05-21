@@ -46,6 +46,7 @@ export default function Player(props: PlayerProps) {
             src={sources?.find(src => src.quality === "720p")?.url}
             crossOrigin
             playsInline
+            autoPlay
           >
             <MediaProvider />
             <VideoLayout />
