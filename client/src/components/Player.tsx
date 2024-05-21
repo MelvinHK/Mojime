@@ -4,7 +4,11 @@ import { getEpisode } from "../utils/api";
 import { useErrorBoundary } from "react-error-boundary";
 import { ISource, IVideo } from "@consumet/extensions";
 
+import styles from '../styles/player/player.module.css';
+
 import { MediaPlayer, MediaProvider } from '@vidstack/react';
+
+import { VideoLayout } from './Player/video-layout';
 import '@vidstack/react/player/styles/base.css';
 
 interface PlayerProps {
@@ -38,9 +42,13 @@ export default function Player(props: PlayerProps) {
       <div id="player-ratio">
         <div id="iframe">
           <MediaPlayer
+            className={`${styles.player} player`}
             src={sources?.find(src => src.quality === "720p")?.url}
+            crossOrigin
+            playsInline
           >
             <MediaProvider />
+            <VideoLayout />
           </MediaPlayer>
         </div>
       </div>
