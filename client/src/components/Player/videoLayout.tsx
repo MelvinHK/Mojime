@@ -4,7 +4,7 @@ import { Controls, Gesture } from '@vidstack/react';
 
 import * as Buttons from './buttons';
 import * as Sliders from './sliders'
-import { TimeGroup } from './time-group';
+import { TimeGroup } from './timeGroup';
 
 export function VideoLayout() {
   return (
@@ -16,8 +16,8 @@ export function VideoLayout() {
         <Controls.Group className={styles.controlsGroup}>
           <Buttons.Play />
           <TimeGroup />
-          <Buttons.Seek seconds={30}/>
-          <Buttons.Seek seconds={90}/>
+          <Buttons.Seek seconds={25}/>
+          <Buttons.Seek seconds={85}/>
           <div className={styles.spacer} />
           <Buttons.Fullscreen />
         </Controls.Group>

@@ -8,7 +8,7 @@ import styles from '../styles/player/player.module.css';
 
 import { MediaPlayer, MediaProvider } from '@vidstack/react';
 
-import { VideoLayout } from './Player/video-layout';
+import { VideoLayout } from './Player/videoLayout';
 import '@vidstack/react/player/styles/base.css';
 
 interface PlayerProps {
