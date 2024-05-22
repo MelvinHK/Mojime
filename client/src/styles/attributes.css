@@ -96,3 +96,12 @@
 .ul-hover:hover, .ul-hover:hover > form > input {
   text-decoration: underline;
 }
+
+.txt-dec-none {
+  color: inherit;
+  text-decoration: none;
+}
+
+.txt-dec-none:hover {
+  text-decoration: none;
+}

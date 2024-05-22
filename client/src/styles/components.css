@@ -116,7 +116,14 @@
 #player-container {
   width: 60rem;
   max-width: 100%;
-  border: 1px var(--gray) solid;
+  background-color: var(--gray);
+}
+
+@media (max-width: 480px) {
+  #player-container {
+    width: 100vw;
+    max-width: 100vw;
+  }
 }
 
 #player-ratio {

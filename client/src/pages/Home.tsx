@@ -2,23 +2,16 @@ import useIsMobile from "../utils/hooks/useIsMobile";
 
 export default function Home() {
 
-  const isMobile = useIsMobile();
-
   return (
     <>
       <p id="greeting">
-        {kaomojis[Math.floor(Math.random() * kaomojis.length)]}
-        {isMobile && (
-          <p>
-            Tap any where to search
-          </p>
-        )}
+        {homeKaomojis[Math.floor(Math.random() * homeKaomojis.length)]}
       </p>
     </>
   )
 }
 
-const kaomojis: string[] = [
+const homeKaomojis: string[] = [
   "(*・ω・)ﾉ",
   "(￣▽￣)ノ",
   "(°▽°)/",
