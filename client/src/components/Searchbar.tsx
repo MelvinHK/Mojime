@@ -170,7 +170,7 @@ export default function Searchbar() {
                 className="mr-auto"
                 onClick={() => handlePageButton(currentPage - 1)}
               >
-                &lt; Prev.
+                &lt; Prev
               </button>
             )}
             {(currentPage > 1 || hasNextPage) && (

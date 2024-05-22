@@ -77,7 +77,7 @@ export default function Watch() {
           onClick={() => handleEpisodeNavigate(episodeNumber - 1)}
           disabled={episodeNumber === 1}
         >
-          &lt; Prev.
+          &lt; Prev
         </button>
         <div
           className="flex fl-a-center ul-hover"
