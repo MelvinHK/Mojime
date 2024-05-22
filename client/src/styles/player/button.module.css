@@ -43,6 +43,7 @@
 .seek {
   background-color: transparent;
   margin-left: calc(-1 * var(--pad-x));
+  text-decoration: underline;
 }
 
 .quality {
