@@ -40,17 +40,18 @@ export default function Player(props: PlayerProps) {
   return (
     <div id="player-container">
       <div id="player-ratio">
-        <div id="iframe">
-          <MediaPlayer
-            className={`${styles.player} player`}
-            src={sources?.find(src => src.quality === "720p")?.url}
-            crossOrigin
-            playsInline
-            autoPlay
-          >
-            <MediaProvider />
-            <VideoLayout />
-          </MediaPlayer>
+        <div id="player-wrapper">
+          {sources && (
+            <MediaPlayer
+              className={`${styles.player} player`}
+              src={sources?.find(src => src.quality === "720p")?.url}
+              playsInline
+              autoPlay
+            >
+              <MediaProvider />
+              <VideoLayout />
+            </MediaPlayer>
+          )}
         </div>
       </div>
     </div >

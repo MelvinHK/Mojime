@@ -30,7 +30,7 @@
 }
 
 .gap {
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .fl-end {
@@ -67,6 +67,10 @@
 
 .ml-50 {
   margin-left: 50%;
+}
+
+.mb-1p5r {
+  margin-bottom: 1.5rem;
 }
 
 .txt-center {

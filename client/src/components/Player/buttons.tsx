@@ -15,7 +15,7 @@ import {
 export function Play() {
   const isPaused = useMediaState('paused');
   return (
-    <PlayButton className={`play-button ${buttonStyles.button}`}>
+    <PlayButton className={`play-button ${buttonStyles.button} ${buttonStyles.mobile}`}>
       {isPaused ? <PlayIcon /> : <PauseIcon />}
     </PlayButton>
   );

@@ -97,12 +97,14 @@ export default function Watch() {
       </div>
       <div className="flex gap fl-a-center">
         <button
+          className="mb-1p5r"
           onClick={() => handleEpisodeNavigate(episodeNumber - 1)}
           disabled={episodeNumber === 1}
         >
           &lt; Prev.
         </button>
         <button
+          className="mb-1p5r"
           onClick={() => handleEpisodeNavigate(episodeNumber + 1)}
           disabled={episodeNumber >= (animeInfo.totalEpisodes ?? episodeNumber + 1)}
         >

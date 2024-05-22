@@ -2,7 +2,7 @@
  * Buttons
  *************************************************************************************************/
 
- .button {
+.button {
   display: inline-flex;
   position: relative;
   justify-content: center;
@@ -29,12 +29,23 @@
   display: none;
 }
 
-.button > svg {
+.button>svg {
   width: 80%;
   height: 80%;
   border-radius: 2px;
 }
 
-.button[data-focus] > svg {
+.button[data-focus]>svg {
   box-shadow: var(--focus-ring);
+}
+
+@media (max-width: 1024px) {
+  .mobile {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+  }
 }

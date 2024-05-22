@@ -7,13 +7,12 @@
   flex-direction: column;
   position: absolute;
   inset: 0;
-  width: calc(100% + max(env(safe-area-inset-left), env(safe-area-inset-right)));
-  margin-left: calc(-1 * env(safe-area-inset-left));
-  opacity: 0;
+  width: 100%;
+  display: none;
 }
 
 .controls[data-visible] {
-  opacity: 1;
+  display: flex;
   background-image: linear-gradient(to bottom,
       transparent,
       80%,
@@ -66,6 +65,12 @@
 .gesture[action='seek:10'] {
   left: unset;
   right: 0;
+}
+
+.gesture[action='seek:-10'],
+.gesture[action='seek:10'] {
+  width: 20%;
+  z-index: 1;
 }
 
 /* Remove toggle to pause on touch. */

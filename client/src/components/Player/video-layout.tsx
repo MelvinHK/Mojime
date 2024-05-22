@@ -7,6 +7,8 @@ import * as Sliders from './sliders'
 import { TimeGroup } from './time-group';
 
 export function VideoLayout() {
+
+
   return (
     <>
       <Gestures />
@@ -41,16 +43,6 @@ function Gestures() {
         className={styles.gesture}
         event="pointerup"
         action="toggle:controls"
-      />
-      <Gesture
-        className={styles.gesture}
-        event="dblpointerup"
-        action="seek:-10"
-      />
-      <Gesture
-        className={styles.gesture}
-        event="dblpointerup"
-        action="seek:10"
       />
     </>
   );
