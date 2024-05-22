@@ -80,3 +80,7 @@
 .inline {
   display: inline;
 }
+
+.bg-c-none {
+  background-color: transparent;
+}

@@ -3,6 +3,7 @@ import buttonStyles from '../../styles/player/button.module.css';
 import {
   FullscreenButton,
   PlayButton,
+  SeekButton,
   useMediaState,
 } from '@vidstack/react';
 import {
@@ -28,5 +29,20 @@ export function Fullscreen() {
     <FullscreenButton className={`fullscreen-button ${buttonStyles.button}`}>
       {isActive ? <FullscreenExitIcon /> : <FullscreenIcon />}
     </FullscreenButton>
+  );
+}
+
+interface SeekProps {
+  seconds?: number;
+}
+
+export function Seek(props: SeekProps) {
+  return (
+    <SeekButton
+      seconds={props.seconds}
+      className={buttonStyles.seek}
+    >
+      +{props.seconds}s
+    </SeekButton>
   );
 }

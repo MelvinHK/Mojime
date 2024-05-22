@@ -2,6 +2,8 @@
  * Buttons
  *************************************************************************************************/
 
+@import url('../index.css');
+
 .button {
   display: inline-flex;
   position: relative;
@@ -10,7 +12,6 @@
   width: 40px;
   height: 40px;
   color: white;
-  border-radius: 8px;
   cursor: pointer;
   /* Resets. */
   padding: 0;
@@ -37,6 +38,11 @@
 
 .button[data-focus]>svg {
   box-shadow: var(--focus-ring);
+}
+
+.seek {
+  background-color: transparent;
+  margin-left: calc(-1 * var(--pad-x));
 }
 
 @media (max-width: 1024px) {

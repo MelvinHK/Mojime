@@ -18,6 +18,8 @@ export function VideoLayout() {
         <Controls.Group className={styles.controlsGroup}>
           <Buttons.Play />
           <TimeGroup />
+          <Buttons.Seek seconds={30}/>
+          <Buttons.Seek seconds={90}/>
           <div className={styles.spacer} />
           <Buttons.Fullscreen />
         </Controls.Group>
