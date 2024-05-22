@@ -7,8 +7,6 @@ import * as Sliders from './sliders'
 import { TimeGroup } from './time-group';
 
 export function VideoLayout() {
-
-
   return (
     <>
       <Gestures />
