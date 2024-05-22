@@ -2,6 +2,8 @@ import buttonStyles from '../../styles/player/button.module.css';
 
 import {
   FullscreenButton,
+  Menu,
+  RadioGroup,
   PlayButton,
   SeekButton,
   useMediaState,
@@ -45,4 +47,26 @@ export function Seek(props: SeekProps) {
       +{props.seconds}s
     </SeekButton>
   );
+}
+
+interface QualityProps {
+  quality?: string;
+  qualities?: (string | undefined)[];
+}
+
+export function Quality(props: QualityProps) {
+  return (
+    <Menu.Root>
+      <Menu.Button className={`${buttonStyles.button} ${buttonStyles.quality}`}>
+        {props.quality}
+      </Menu.Button>
+      <Menu.Items>
+        <RadioGroup.Root>
+          {props.qualities?.map(p => (
+            <RadioGroup.Item value={p}>{p}HW</RadioGroup.Item>
+          ))}
+        </RadioGroup.Root>
+      </Menu.Items>
+    </Menu.Root>
+  )
 }

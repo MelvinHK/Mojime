@@ -28,7 +28,7 @@ export default function Player(props: PlayerProps) {
       try {
         const data: ISource = await getEpisode(props.episodeId as string);
         setSources(data.sources);
-        setQualities(data.sources.map(src => src.quality));
+        setQualities(data.sources.map(src => src.quality).filter(src => /\d/.test(src ?? "")));
       } catch (error) {
         showBoundary(error);
       }
@@ -37,19 +37,31 @@ export default function Player(props: PlayerProps) {
     fetchEpisode();
   }, [props.episodeId])
 
+  const getQuality = () => {
+    if (!qualities) return;
+
+    // If localStorage quality exists, try find it.
+    // Return if found, else,
+    // check if qualities isn't empty, return qualties[last] if true,
+    // else, return "backup"
+  }
+
   return (
     <div id="player-container">
       <div id="player-ratio">
         <div id="player-wrapper">
-          {sources && (
+          {sources && qualities && (
             <MediaPlayer
               className={`${styles.player} player`}
-              src={sources?.find(src => src.quality === "720p")?.url}
+              src={sources?.find(src => src.quality === qualities[qualities.length - 1])?.url}
               playsInline
               autoPlay
             >
               <MediaProvider />
-              <VideoLayout />
+              <VideoLayout
+                quality={qualities[qualities.length - 1]}
+                qualities={qualities}
+              />
             </MediaPlayer>
           )}
         </div>

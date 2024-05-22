@@ -45,6 +45,10 @@
   align-items: center;
 }
 
+.m-0 {
+  margin: 0;
+}
+
 .m-auto {
   margin: auto;
 }
@@ -73,6 +77,10 @@
   margin-bottom: 1.5rem;
 }
 
+.pb-1p5r {
+  padding-bottom: 1.5rem;
+}
+
 .txt-center {
   text-align: center;
 }
@@ -83,4 +91,8 @@
 
 .bg-c-none {
   background-color: transparent;
+}
+
+.ul-hover:hover, .ul-hover:hover > form > input {
+  text-decoration: underline;
 }

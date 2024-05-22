@@ -72,39 +72,38 @@ export default function Watch() {
     <>
       <Player episodeId={animeInfo.episodes[episodeNumber - 1].id} />
       <p>{animeInfo.title as string}</p>
-      <div
-        className="flex fl-a-center"
-        onClick={() => episodeInputRef.current?.focus()}
-      >
-        <form onSubmit={(e) => (
-          e.preventDefault(),
-          handleEpisodeNavigate(episodeInput)
-        )}
-        >
-          <input
-            ref={episodeInputRef}
-            type="number"
-            value={episodeInput}
-            onKeyDown={(e) => [',', '.', '+', '-'].includes(e.key) && e.preventDefault()}
-            onChange={(e) => handleEpInputChange(e)}
-            onBlur={() => setEpisodeInput(episodeNo)}
-            style={episodeInputStyle}
-            min={1}
-            max={animeInfo.episodes.length}
-          />
-        </form>
-        <p>&nbsp;/ {animeInfo.episodes.length ?? "?"}</p>
-      </div>
-      <div className="flex gap fl-a-center">
+      <div className="flex gap fl-a-center pb-1p5r">
         <button
-          className="mb-1p5r"
           onClick={() => handleEpisodeNavigate(episodeNumber - 1)}
           disabled={episodeNumber === 1}
         >
           &lt; Prev.
         </button>
+        <div
+          className="flex fl-a-center ul-hover"
+          onClick={() => episodeInputRef.current?.focus()}
+        >
+          <form onSubmit={(e) => (
+            e.preventDefault(),
+            handleEpisodeNavigate(episodeInput)
+          )}
+          >
+            <input
+              className="ul-hover"
+              ref={episodeInputRef}
+              type="number"
+              value={episodeInput}
+              onKeyDown={(e) => [',', '.', '+', '-'].includes(e.key) && e.preventDefault()}
+              onChange={(e) => handleEpInputChange(e)}
+              onBlur={() => setEpisodeInput(episodeNo)}
+              style={episodeInputStyle}
+              min={1}
+              max={animeInfo.episodes.length}
+            />
+          </form>
+          <p className="m-0">&nbsp;/ {animeInfo.episodes.length ?? "?"}</p>
+        </div>
         <button
-          className="mb-1p5r"
           onClick={() => handleEpisodeNavigate(episodeNumber + 1)}
           disabled={episodeNumber >= (animeInfo.totalEpisodes ?? episodeNumber + 1)}
         >
