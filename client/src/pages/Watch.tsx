@@ -9,7 +9,7 @@ import Player from "../components/Player";
 
 export default function Watch() {
   const location = useLocation();
-  const { animeState } = location.state || {};
+  const { animeState, kaoIndexState } = location.state || {};
 
   const { animeId, episodeNo } = useParams();
   const episodeNumber = Number(episodeNo);
@@ -19,6 +19,8 @@ export default function Watch() {
 
   const episodeInputRef = useRef<HTMLInputElement>(null);
 
+  const kaomojiIndex = Math.floor(Math.random() * watchKaomojis.length);
+
   const navigate = useNavigate();
 
   const { showBoundary } = useErrorBoundary();
@@ -26,7 +28,12 @@ export default function Watch() {
   const handleEpisodeNavigate = (ep: number | string) => {
     if (!ep || !animeInfo.episodes?.hasOwnProperty(Number(ep) - 1))
       return;
-    navigate(`/${animeId}/${ep}`, { state: { animeState: animeInfo } });
+    navigate(`/${animeId}/${ep}`, {
+      state: {
+        animeState: animeInfo,
+        kaoIndexState: kaoIndexState || kaomojiIndex
+      }
+    });
   }
 
   const handleEpInputChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -110,7 +117,7 @@ export default function Watch() {
           Next &gt;
         </button>
       </div>
-      <Link to="/" className="mt-auto m-0 txt-dec-none">{watchKaomojis[Math.floor(Math.random() * watchKaomojis.length)]}</Link>
+      <Link to="/" className="mt-auto m-0 txt-dec-none">{watchKaomojis[kaoIndexState || kaomojiIndex]}</Link>
     </>
   ));
 }
@@ -119,7 +126,7 @@ const watchKaomojis = [
   "(* ^ ω ^)",
   "(´ ∀ ` *)",
   "٩(◕‿◕｡)۶",
-  "☆*:.｡.o(≧▽≦)o.｡.:*☆",
+  "o(≧▽≦)/",
   "(o^▽^o)",
   "(⌒▽⌒)☆",
   "ヽ(・∀・)ﾉ",
@@ -133,7 +140,7 @@ const watchKaomojis = [
   "(*´▽`*)",
   "｡ﾟ( ﾟ^∀^ﾟ)ﾟ｡",
   "( ´ ω ` )",
-  "(((o(*°▽°*)o)))",
+  "o(*°▽°*)b",
   "(≧◡≦)",
   "(o´∀`o)",
   "(´• ω •`)",
@@ -181,7 +188,6 @@ const watchKaomojis = [
   "(๑˃ᴗ˂)ﻭ",
   "(๑˘︶˘๑)",
   "( ˙꒳​˙ )",
-  "°˖✧◝(⁰▿⁰)◜✧˖°",
   "(´･ᴗ･ ` )",
   "(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧",
   "(„• ֊ •„)",

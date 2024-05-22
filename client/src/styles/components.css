@@ -69,6 +69,15 @@
   width: 1px;
 }
 
+.loading {
+  white-space: pre;
+  position: absolute;
+}
+
+form .loading {
+  right: var(--pad-x);
+}
+
 #search-results {
   position: relative;
   margin: 0;
@@ -116,7 +125,7 @@
 #player-container {
   width: 60rem;
   max-width: 100%;
-  background-color: var(--gray);
+  background-color: black;
 }
 
 @media (max-width: 480px) {

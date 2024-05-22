@@ -1,5 +1,3 @@
-import useIsMobile from "../utils/hooks/useIsMobile";
-
 export default function Home() {
 
   return (

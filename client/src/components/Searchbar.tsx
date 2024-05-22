@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { IAnimeResult, ISearch } from "@consumet/extensions";
 import useClickAway from "../utils/hooks/useClickAway";
 import { useNavigate } from "react-router-dom";
+import LoadingAnimation from "./LoadingAnimation";
 
 export default function Searchbar() {
   const [searchBarQuery, setSearchbarQuery] = useState<string>("");
@@ -10,6 +11,7 @@ export default function Searchbar() {
   const [resultsList, setResultsList] = useState<IAnimeResult[]>();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [hasNextPage, setHasNextPage] = useState<boolean | undefined>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // Up/Down key search result selection.
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
@@ -33,6 +35,8 @@ export default function Searchbar() {
 
   const handleSearch = async (query: string, page: number) => {
     if (!query.trim()) { return };
+
+    setIsLoading(true);
 
     const search = await getSearch(query, page);
     updateSearchResults(search);
@@ -60,6 +64,7 @@ export default function Searchbar() {
     setCurrentPage(search.currentPage as number);
     setHasNextPage(search.hasNextPage);
     setShowDropdown(true);
+    setIsLoading(false);
   }
 
   const resetSearchbar = () => {
@@ -139,6 +144,7 @@ export default function Searchbar() {
       id="searchbar"
       ref={searchContainer}
     >
+      {/******** INPUT ********/}
       <form
         className='flex fl-a-center'
         spellCheck='false'
@@ -161,9 +167,13 @@ export default function Searchbar() {
           onFocus={() => setShowDropdown(true)}
           onBlur={() => setSelectedIndex(-1)}
         />
+        {isLoading && <LoadingAnimation />}
       </form>
+
+      {/******** DROPDOWN ********/}
       {resultsList && showDropdown && (
         <div id="dropdown">
+          {/******** PAGE NAVIGATION ********/}
           <div id="page-nav">
             {currentPage > 1 && (
               <button
@@ -187,6 +197,7 @@ export default function Searchbar() {
               </button>
             )}
           </div>
+          {/******** RESULTS ********/}
           <ul
             id='search-results'
             ref={resultsRef}
@@ -206,6 +217,7 @@ export default function Searchbar() {
               </li>
             )}
           </ul>
+          {/******** CLOSE BUTTON ********/}
           <button
             id="close-results"
             onClick={() => setShowDropdown(false)}
@@ -213,8 +225,7 @@ export default function Searchbar() {
             Close
           </button>
         </div>
-      )
-      }
+      )}
     </div >
   );
 }
