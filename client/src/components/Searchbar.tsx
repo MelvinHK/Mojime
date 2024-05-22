@@ -48,7 +48,7 @@ export default function Searchbar() {
 
   const handlePageButton = (page: number) => {
     if (searchCache[page - 1]) {
-      // Funny hack; need to setTimeout possibly due to a race condition with useClickAway 
+      // Stupid hack; there's a race condition with useClickAway 
       // when the buttons become hidden upon reaching the first/last page.
       setTimeout(() => updateSearchResults(searchCache[page - 1]), 1);
     } else {
