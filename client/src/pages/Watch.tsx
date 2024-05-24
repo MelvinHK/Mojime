@@ -19,8 +19,6 @@ export default function Watch() {
 
   const episodeInputRef = useRef<HTMLInputElement>(null);
 
-  const kaomojiIndex = Math.floor(Math.random() * watchKaomojis.length);
-
   const navigate = useNavigate();
 
   const { showBoundary } = useErrorBoundary();
@@ -32,7 +30,7 @@ export default function Watch() {
     navigate(`/${animeId}/${ep}`, {
       state: {
         animeState: animeInfo,
-        kaoIndexState: kaoIndexState || kaomojiIndex
+        kaoIndexState: kaoIndexState || randomKaoIndex
       }
     });
   }
@@ -118,7 +116,7 @@ export default function Watch() {
           Next &gt;
         </button>
       </div>
-      <Link to="/" className="mt-auto m-0 txt-dec-none">{watchKaomojis[kaoIndexState || kaomojiIndex]}</Link>
+      <Link to="/" className="mt-auto m-0 txt-dec-none">{watchKaomojis[kaoIndexState || randomKaoIndex]}</Link>
     </>
   ));
 }
@@ -212,3 +210,5 @@ const watchKaomojis = [
   "⸜(*ˊᗜˋ*)⸝",
   "⸜( *ˊᵕˋ* )⸝"
 ];
+
+const randomKaoIndex = Math.floor(Math.random() * watchKaomojis.length);
