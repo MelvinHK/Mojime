@@ -37,7 +37,9 @@ export default function Watch() {
 
   const handleEpInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;
-
+    if (newValue.length > String(animeInfo.episodes?.length).length) {
+      return;
+    }
     if (newValue === '' || /^[0-9]*$/.test(newValue)) {
       setEpisodeInput(newValue);
     }
