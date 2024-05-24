@@ -46,7 +46,7 @@ export default function Player(props: PlayerProps) {
   const { showBoundary } = useErrorBoundary();
 
   useEffect(() => {
-    if (!props.episodeId) return;
+    if (!props.episodeId) { return; }
 
     const fetchEpisode = async () => {
       try {
