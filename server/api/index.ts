@@ -7,6 +7,8 @@ const port = process.env.PORT || 3001;
 
 const provider = new ANIME.Gogoanime();
 
+app.get("/api", (req, res) => res.send("Express on Vercel"));
+
 // SEARCH
 app.get('/api/search/:query/page/:pageNumber', async (req, res, next) => {
   try {
