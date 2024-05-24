@@ -17,7 +17,7 @@ interface PlayerProps {
 }
 
 type QualityContextType = {
-  qualities: (string | undefined)[],
+  qualities: (string | undefined)[] | undefined,
   selectedQuality: string | undefined,
   setSelectedQuality: Dispatch<SetStateAction<(string | undefined)>>,
   setCurrentTime: Dispatch<SetStateAction<number>>,
@@ -42,6 +42,14 @@ export default function Player(props: PlayerProps) {
   const [currentTime, setCurrentTime] = useState<number>(0);
 
   const playerRef = useRef<MediaPlayerInstance>(null);
+
+  const qualityContextValues: QualityContextType = {
+    qualities,
+    selectedQuality,
+    setSelectedQuality,
+    setCurrentTime,
+    playerRef
+  }
 
   const { showBoundary } = useErrorBoundary();
 
@@ -106,13 +114,13 @@ export default function Player(props: PlayerProps) {
           {sources && qualities && (
             <MediaPlayer
               className={`${styles.player} player`}
-              src={sources?.find(src => src.quality === selectedQuality)?.url}
+              src={sources.find(src => src.quality === selectedQuality)?.url}
               playsInline
               autoPlay
               ref={playerRef}
             >
               <MediaProvider />
-              <QualityContext.Provider value={{ qualities, selectedQuality, setSelectedQuality, setCurrentTime, playerRef }}>
+              <QualityContext.Provider value={qualityContextValues}>
                 <VideoLayout />
               </QualityContext.Provider>
             </MediaPlayer>
@@ -120,6 +128,5 @@ export default function Player(props: PlayerProps) {
         </div>
       </div>
     </div >
-
   );
 }
