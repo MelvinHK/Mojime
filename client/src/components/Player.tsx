@@ -46,7 +46,10 @@ export default function Player(props: PlayerProps) {
       try {
         const data: ISource = await getEpisode(props.episodeId as string);
         setSources(data.sources);
-        setQualities(data.sources.map(src => src.quality).filter(src => /\d/.test(src ?? "")));
+        setQualities(data.sources
+          .map(src => src.quality)
+          .filter(src => /\d/.test(src ?? ""))
+        );
       } catch (error) {
         showBoundary(error);
       }
@@ -56,25 +59,28 @@ export default function Player(props: PlayerProps) {
   }, [props.episodeId])
 
   useEffect(() => {
-    handleQuality();
-  }, [qualities])
-
-  useEffect(() => {
     if (playerRef.current) {
       setIsLoading(false);
     }
   }, [playerRef.current])
 
   const handleQuality = () => {
-    if (!qualities) return;
+    if (!qualities) { return };
 
-    setSelectedQuality(qualities[qualities.length - 1]);
+    const storedQuality = localStorage.getItem("preferredVideoQuality");
 
-    // If localStorage quality exists, try find it.
-    // Return if found, else,
-    // check if qualities isn't empty, return qualties[last] if true,
-    // else, return "backup"
+    if (storedQuality !== null && qualities.includes(storedQuality)) {
+      setSelectedQuality(storedQuality);
+    } else if (qualities.length > 0) {
+      setSelectedQuality(qualities[qualities.length - 1]);
+    } else {
+      setSelectedQuality("default");
+    }
   }
+
+  useEffect(() => {
+    handleQuality();
+  }, [qualities])
 
   return (
     <div id="player-container">

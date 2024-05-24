@@ -34,7 +34,7 @@ export default function Searchbar() {
   });
 
   const handleSearch = async (query: string, page: number) => {
-    if (!query.trim()) { return };
+    if (!query.trim()) { return; }
 
     setIsLoading(true);
 
@@ -43,7 +43,7 @@ export default function Searchbar() {
 
     // 2. Page === 1 implies a new search; remove existing cache.
     setSearchCache(page === 1 ? [search] : [...searchCache, search]);
-    if (page === 1) { setPageNavQuery(searchBarQuery) };
+    if (page === 1) { setPageNavQuery(searchBarQuery); }
   }
 
   const handlePageButton = (page: number) => {

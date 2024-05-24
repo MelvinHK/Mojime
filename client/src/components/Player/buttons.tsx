@@ -58,6 +58,13 @@ export function Quality() {
     setSelectedQuality
   } = useContext(QualityContext);
 
+  const handleSelect = (p: string | undefined) => {
+    if (!p) { return; }
+
+    setSelectedQuality(p);
+    localStorage.setItem("preferredVideoQuality", p);
+  }
+
   return (
     <Menu.Root>
       <Menu.Button className={`${buttonStyles.button} ${buttonStyles.quality}`}>
@@ -73,7 +80,7 @@ export function Quality() {
               key={p}
               value={p}
               className={`${buttonStyles.radioChild} ${p === selectedQuality ? buttonStyles.radioChildSelected : ""}`}
-              onSelect={() => setSelectedQuality(p)}
+              onSelect={() => handleSelect(p)}
             >
               {p}
             </RadioGroup.Item>

@@ -26,8 +26,9 @@ export default function Watch() {
   const { showBoundary } = useErrorBoundary();
 
   const handleEpisodeNavigate = (ep: number | string) => {
-    if (!ep || !animeInfo.episodes?.hasOwnProperty(Number(ep) - 1))
+    if (!ep || !animeInfo.episodes?.hasOwnProperty(Number(ep) - 1)) {
       return;
+    }
     navigate(`/${animeId}/${ep}`, {
       state: {
         animeState: animeInfo,
@@ -45,7 +46,7 @@ export default function Watch() {
   }
 
   useEffect(() => {
-    if (!animeId || animeInfo) return;
+    if (!animeId || animeInfo) { return };
 
     const fetchAnime = async () => {
       try {
