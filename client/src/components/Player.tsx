@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, createContext, Dispatch, SetStateAction } from "react";
+import { useEffect, useState, useRef, createContext, Dispatch, SetStateAction, RefObject } from "react";
 import { getEpisode } from "../utils/api";
 
 import { useErrorBoundary } from "react-error-boundary";
@@ -19,13 +19,17 @@ interface PlayerProps {
 type QualityContextType = {
   qualities: (string | undefined)[],
   selectedQuality: string | undefined,
-  setSelectedQuality: Dispatch<SetStateAction<(string | undefined)>>
+  setSelectedQuality: Dispatch<SetStateAction<(string | undefined)>>,
+  setCurrentTime: Dispatch<SetStateAction<number>>,
+  playerRef: RefObject<MediaPlayerInstance> | undefined
 }
 
 export const QualityContext = createContext<QualityContextType>({
   qualities: [],
   selectedQuality: undefined,
-  setSelectedQuality: () => { }
+  setSelectedQuality: () => { },
+  setCurrentTime: () => { },
+  playerRef: undefined
 });
 
 export default function Player(props: PlayerProps) {
@@ -34,6 +38,8 @@ export default function Player(props: PlayerProps) {
 
   const [qualities, setQualities] = useState<(string | undefined)[]>();
   const [selectedQuality, setSelectedQuality] = useState<(string | undefined)>();
+
+  const [currentTime, setCurrentTime] = useState<number>(0);
 
   const playerRef = useRef<MediaPlayerInstance>(null);
 
@@ -82,6 +88,12 @@ export default function Player(props: PlayerProps) {
     handleQuality();
   }, [qualities])
 
+  useEffect(() => {
+    if (!playerRef.current) { return; }
+
+    playerRef.current.currentTime = currentTime;
+  }, [currentTime])
+
   return (
     <div id="player-container">
       <div id="player-ratio">
@@ -100,7 +112,7 @@ export default function Player(props: PlayerProps) {
               ref={playerRef}
             >
               <MediaProvider />
-              <QualityContext.Provider value={{ qualities, selectedQuality, setSelectedQuality }}>
+              <QualityContext.Provider value={{ qualities, selectedQuality, setSelectedQuality, setCurrentTime, playerRef }}>
                 <VideoLayout />
               </QualityContext.Provider>
             </MediaPlayer>

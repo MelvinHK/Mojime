@@ -55,7 +55,9 @@ export function Quality() {
   const {
     qualities,
     selectedQuality,
-    setSelectedQuality
+    setSelectedQuality,
+    setCurrentTime,
+    playerRef
   } = useContext(QualityContext);
 
   const handleSelect = (p: string | undefined) => {
@@ -63,6 +65,10 @@ export function Quality() {
 
     setSelectedQuality(p);
     localStorage.setItem("preferredVideoQuality", p);
+
+    if (playerRef && playerRef.current) {
+      setCurrentTime(playerRef.current.currentTime);
+    }
   }
 
   return (
