@@ -1,3 +1,5 @@
+@import url('index.css');
+
 .content {
   display: flex;
   flex-direction: column;

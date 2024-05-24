@@ -76,6 +76,8 @@
 
 form .loading {
   right: var(--pad-x);
+  padding-left: var(--pad-x);
+  background-color: var(--gray);
 }
 
 #search-results {

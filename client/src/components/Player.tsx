@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, createContext, Dispatch, SetStateAction } from "react";
 import { getEpisode } from "../utils/api";
 
 import { useErrorBoundary } from "react-error-boundary";
@@ -16,10 +16,24 @@ interface PlayerProps {
   episodeId?: string;
 }
 
+type QualityContextType = {
+  qualities: (string | undefined)[],
+  selectedQuality: string | undefined,
+  setSelectedQuality: Dispatch<SetStateAction<(string | undefined)>>
+}
+
+export const QualityContext = createContext<QualityContextType>({
+  qualities: [],
+  selectedQuality: undefined,
+  setSelectedQuality: () => { }
+});
+
 export default function Player(props: PlayerProps) {
   const [sources, setSources] = useState<IVideo[]>();
-  const [qualities, setQualities] = useState<(string | undefined)[]>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const [qualities, setQualities] = useState<(string | undefined)[]>();
+  const [selectedQuality, setSelectedQuality] = useState<(string | undefined)>();
 
   const playerRef = useRef<MediaPlayerInstance>(null);
 
@@ -42,13 +56,19 @@ export default function Player(props: PlayerProps) {
   }, [props.episodeId])
 
   useEffect(() => {
+    handleQuality();
+  }, [qualities])
+
+  useEffect(() => {
     if (playerRef.current) {
       setIsLoading(false);
     }
   }, [playerRef.current])
 
-  const getQuality = () => {
+  const handleQuality = () => {
     if (!qualities) return;
+
+    setSelectedQuality(qualities[qualities.length - 1]);
 
     // If localStorage quality exists, try find it.
     // Return if found, else,
@@ -68,16 +88,15 @@ export default function Player(props: PlayerProps) {
           {sources && qualities && (
             <MediaPlayer
               className={`${styles.player} player`}
-              src={sources?.find(src => src.quality === qualities[qualities.length - 1])?.url}
+              src={sources?.find(src => src.quality === selectedQuality)?.url}
               playsInline
               autoPlay
               ref={playerRef}
             >
               <MediaProvider />
-              <VideoLayout
-                quality={qualities[qualities.length - 1]}
-                qualities={qualities}
-              />
+              <QualityContext.Provider value={{ qualities, selectedQuality, setSelectedQuality }}>
+                <VideoLayout />
+              </QualityContext.Provider>
             </MediaPlayer>
           )}
         </div>

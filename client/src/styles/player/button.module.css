@@ -48,6 +48,22 @@
 
 .quality {
   margin-right: var(--pad-x);
+  text-decoration: underline;
+}
+
+.radioWrapper {
+  padding: calc(var(--pad-y)/2) 0;
+  border-radius: var(--b-radius);
+  background-color: var(--gray);
+}
+
+.radioChild {
+  padding: calc(var(--pad-y)/2) var(--pad-x);
+  cursor: pointer;
+}
+
+.radioChildSelected{
+  text-decoration: underline;
 }
 
 @media (max-width: 1024px) {

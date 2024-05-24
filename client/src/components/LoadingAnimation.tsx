@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 
 export default function LoadingAnimation() {
   const frames = [
-    "∙∙∙",
-    "●∙∙",
-    "∙●∙",
-    "∙∙●",
-    "∙∙∙"
+    "ooo",
+    "Ooo",
+    "oOo",
+    "ooO",
+    "ooo"
   ]
 
   const [index, setIndex] = useState(0);

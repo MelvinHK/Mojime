@@ -6,12 +6,7 @@ import * as Buttons from './buttons';
 import * as Sliders from './sliders'
 import { TimeGroup } from './timeGroup';
 
-interface VideoProps {
-  quality?: string;
-  qualities?: (string | undefined)[];
-}
-
-export function VideoLayout(props: VideoProps) {
+export function VideoLayout() {
   return (
     <>
       <Gestures />
@@ -21,10 +16,10 @@ export function VideoLayout(props: VideoProps) {
         <Controls.Group className={styles.controlsGroup}>
           <Buttons.Play />
           <TimeGroup />
-          <Buttons.Seek seconds={25}/>
-          <Buttons.Seek seconds={85}/>
+          <Buttons.Seek seconds={25} />
+          <Buttons.Seek seconds={85} />
           <div className={styles.spacer} />
-          {/* <Buttons.Quality quality={props.quality}/> */}
+          <Buttons.Quality />
           <Buttons.Fullscreen />
         </Controls.Group>
       </Controls.Root>

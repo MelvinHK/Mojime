@@ -14,6 +14,8 @@ import {
   PauseIcon,
   PlayIcon,
 } from '@vidstack/react/icons';
+import { QualityContext } from '../Player';
+import { useContext } from 'react';
 
 export function Play() {
   const isPaused = useMediaState('paused');
@@ -49,21 +51,32 @@ export function Seek(props: SeekProps) {
   );
 }
 
-interface QualityProps {
-  quality?: string;
-  qualities?: (string | undefined)[];
-}
+export function Quality() {
+  const {
+    qualities,
+    selectedQuality,
+    setSelectedQuality
+  } = useContext(QualityContext);
 
-export function Quality(props: QualityProps) {
   return (
     <Menu.Root>
       <Menu.Button className={`${buttonStyles.button} ${buttonStyles.quality}`}>
-        {props.quality}
+        {selectedQuality}
       </Menu.Button>
-      <Menu.Items>
+      <Menu.Items
+        placement="top"
+        className={buttonStyles.radioWrapper}
+      >
         <RadioGroup.Root>
-          {props.qualities?.map(p => (
-            <RadioGroup.Item value={p}>{p}HW</RadioGroup.Item>
+          {qualities?.map(p => (
+            <RadioGroup.Item
+              key={p}
+              value={p}
+              className={`${buttonStyles.radioChild} ${p === selectedQuality ? buttonStyles.radioChildSelected : ""}`}
+              onSelect={() => setSelectedQuality(p)}
+            >
+              {p}
+            </RadioGroup.Item>
           ))}
         </RadioGroup.Root>
       </Menu.Items>
