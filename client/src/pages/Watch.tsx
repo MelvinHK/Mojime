@@ -6,6 +6,7 @@ import { IAnimeInfo } from "@consumet/extensions";
 import { getAnime } from "../utils/api";
 
 import Player from "../components/Player";
+import LoadingAnimation from "../components/LoadingAnimation";
 
 export default function Watch() {
   const location = useLocation();
@@ -76,7 +77,7 @@ export default function Watch() {
     width: episodeInput.length + 'ch', // Set width based on the length of the value
   };
 
-  return (animeInfo && animeInfo.episodes?.hasOwnProperty(episodeNumber - 1) && episodeNo && (
+  return (animeInfo && animeInfo.episodes?.hasOwnProperty(episodeNumber - 1) && episodeNo ? (
     <>
       <Player episodeId={animeInfo.episodes[episodeNumber - 1].id} />
       <p>{animeInfo.title as string}</p>
@@ -120,6 +121,10 @@ export default function Watch() {
       </div>
       <Link to="/" className="mt-auto m-0 txt-dec-none">{watchKaomojis[kaoIndexState || randomKaoIndex]}</Link>
     </>
+  ) : (
+    <div className="abs-center">
+      <LoadingAnimation />
+    </div>
   ));
 }
 

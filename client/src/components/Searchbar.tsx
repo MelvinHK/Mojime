@@ -105,24 +105,28 @@ export default function Searchbar() {
         return;
       }
 
-      if (!resultsList) {
+      if (!resultsList || !filteredResults) {
         return;
       }
 
-      const total = resultsList.length;
-      let index = selectedIndex;
+      const addIndex = (index: number, key: string, total = resultsList.length): number => {
+        index = key === 'ArrowUp' ? (index + total) % (total + 1) : (index + 1) % (total + 1);
+        if (filteredResults[index] !== null) {
+          return index;
+        }
+        return addIndex(index, key, total);
+      }
 
       if (['ArrowUp', 'ArrowDown'].includes(e.key) && showDropdown) {
         e.preventDefault();
         searchbarRef?.current?.focus();
-        index = e.key === 'ArrowUp' ? (index + total) % (total + 1) : (index + 1) % (total + 1);
-        setSelectedIndex(index);
+        setSelectedIndex(addIndex(selectedIndex, e.key));
         return;
       }
 
       if (e.key === 'Enter' && resultsList.hasOwnProperty(selectedIndex)) {
         e.preventDefault();
-        handleNavigate(index);
+        handleNavigate(selectedIndex);
         return;
       }
     }
@@ -130,13 +134,6 @@ export default function Searchbar() {
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [resultsList, selectedIndex, showDropdown]);
-
-  useEffect(() => {
-    if (resultsList?.hasOwnProperty(selectedIndex)) {
-      resultsRef.current?.children[selectedIndex]
-        .scrollIntoView(selectedIndex === resultsList.length - 1);
-    }
-  }, [selectedIndex]);
 
   useEffect(() => {
     if (searchBarQuery.length === 0) {
