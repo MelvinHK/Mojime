@@ -1,14 +1,22 @@
 import { getSearch } from "../utils/api";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Fragment } from "react";
 import { IAnimeResult, ISearch } from "@consumet/extensions";
 import useClickAway from "../utils/hooks/useClickAway";
 import { useNavigate } from "react-router-dom";
 import LoadingAnimation from "./LoadingAnimation";
 
+type subDub = "sub" | "dub";
+
 export default function Searchbar() {
   const [searchBarQuery, setSearchbarQuery] = useState<string>("");
+  const [subOrDubOption, setSubOrDubOption] = useState<subDub>("sub");
 
   const [resultsList, setResultsList] = useState<IAnimeResult[]>();
+  const filteredResults = resultsList?.map(result =>
+    result.subOrDub === subOrDubOption ? result : null
+  );
+  const hasResults = filteredResults?.some(result => result !== null);
+
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [hasNextPage, setHasNextPage] = useState<boolean | undefined>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -57,10 +65,7 @@ export default function Searchbar() {
   }
 
   const updateSearchResults = (search: ISearch<IAnimeResult>) => {
-    const list = search.results
-      .filter(result => result.subOrDub === "sub");
-
-    setResultsList(list);
+    setResultsList(search.results);
     setCurrentPage(search.currentPage as number);
     setHasNextPage(search.hasNextPage);
     setShowDropdown(true);
@@ -175,43 +180,57 @@ export default function Searchbar() {
         <div id="dropdown">
           {/******** PAGE NAVIGATION ********/}
           <div id="page-nav">
-            {currentPage > 1 && (
-              <button
-                className="mr-auto"
-                onClick={() => handlePageButton(currentPage - 1)}
-              >
-                &lt; Prev
-              </button>
-            )}
-            {(currentPage > 1 || hasNextPage) && (
-              <div className="abs-center">
-                {`\u{22B6}\u{22B0} ${currentPage} \u{22B1}\u{22B7}`}
-              </div>
-            )}
-            {hasNextPage && (
-              <button
-                className="ml-auto"
-                onClick={() => handlePageButton(currentPage + 1)}
-              >
-                Next &gt;
-              </button>
-            )}
+            {/* SUB OR DUB TOGGLE */}
+            <button
+              onClick={() => setSubOrDubOption(subOrDubOption === "sub" ? "dub" : "sub")}
+            >
+              <span className={subOrDubOption !== "sub" ? "o-disabled" : ""}>
+                Sub&nbsp;
+              </span>
+              /
+              <span className={subOrDubOption !== "dub" ? "o-disabled" : ""}>
+                &nbsp;Dub
+              </span>
+            </button>
+            {/* NEXT & PREV BUTTONS */}
+            <div className="ml-auto">
+              {currentPage > 1 && (
+                <button
+                  onClick={() => handlePageButton(currentPage - 1)}
+                >
+                  &lt; Prev
+                </button>
+              )}
+              {(hasNextPage || currentPage > 1) && (
+                <button
+                  onClick={() => handlePageButton(currentPage + 1)}
+                  disabled={!hasNextPage}
+                >
+                  Next &gt;
+                </button>
+              )}
+            </div>
           </div>
           {/******** RESULTS ********/}
           <ul
             id='search-results'
             ref={resultsRef}
           >
-            {resultsList.length !== 0 ? (
-              resultsList.map((result, index) =>
-                <li
-                  key={result.id}
-                  className={selectedIndex === index ? 'selected' : ''}
-                  onClick={() => handleNavigate(index)}
-                >
-                  {result.title as string}
-                </li>
-              )) : (
+            {hasResults ? (
+              filteredResults?.map((result, index) =>
+                result !== null ? (
+                  <li
+                    key={result.id}
+                    className={selectedIndex === index ? 'selected' : ''}
+                    onClick={() => handleNavigate(index)}
+                  >
+                    {result.title as string}
+                  </li>
+                ) : (
+                  <Fragment key={index} />
+                )
+              )
+            ) : (
               <li className="no-results">
                 No results
               </li>

@@ -27,6 +27,8 @@ body {
   --blue: #646cff;
 
   --b-radius: 8px;
+
+  --disabled-opacity: 0.25;
 }
 
 * {
@@ -68,7 +70,7 @@ button:active {
 }
 
 button:disabled {
-  opacity: .25;
+  opacity: var(--disabled-opacity);
   cursor: default;
 }
 

@@ -24,15 +24,17 @@ type QualityContextType = {
   playerRef: RefObject<MediaPlayerInstance> | undefined
 }
 
-export const QualityContext = createContext<QualityContextType>({
+const defaultQualityContext: QualityContextType = {
   qualities: [],
   selectedQuality: undefined,
   setSelectedQuality: () => { },
   setCurrentTime: () => { },
   playerRef: undefined
-});
+};
 
-export default function Player(props: PlayerProps) {
+export const QualityContext = createContext<QualityContextType>(defaultQualityContext);
+
+export default function Player({ episodeId }: PlayerProps) {
   const [sources, setSources] = useState<IVideo[]>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -54,11 +56,11 @@ export default function Player(props: PlayerProps) {
   const { showBoundary } = useErrorBoundary();
 
   useEffect(() => {
-    if (!props.episodeId) { return; }
+    if (!episodeId) { return; }
 
     const fetchEpisode = async () => {
       try {
-        const data: ISource = await getEpisode(props.episodeId as string);
+        const data: ISource = await getEpisode(episodeId as string);
         setSources(data.sources);
         setQualities(data.sources
           .map(src => src.quality)
@@ -66,41 +68,30 @@ export default function Player(props: PlayerProps) {
         );
       } catch (error) {
         showBoundary(error);
+      } finally {
+        setIsLoading(false);
       }
     }
 
     fetchEpisode();
-  }, [props.episodeId])
+  }, [episodeId])
+
+  useEffect(() => {
+    if (qualities) {
+      const storedQuality = localStorage.getItem("preferredVideoQuality");
+      if (storedQuality && qualities.includes(storedQuality)) {
+        setSelectedQuality(storedQuality);
+      } else {
+        setSelectedQuality(qualities[qualities.length - 1] || "default");
+      }
+    }
+  }, [qualities]);
 
   useEffect(() => {
     if (playerRef.current) {
-      setIsLoading(false);
+      playerRef.current.currentTime = currentTime;
     }
-  }, [playerRef.current])
-
-  const handleQuality = () => {
-    if (!qualities) { return };
-
-    const storedQuality = localStorage.getItem("preferredVideoQuality");
-
-    if (storedQuality !== null && qualities.includes(storedQuality)) {
-      setSelectedQuality(storedQuality);
-    } else if (qualities.length > 0) {
-      setSelectedQuality(qualities[qualities.length - 1]);
-    } else {
-      setSelectedQuality("default");
-    }
-  }
-
-  useEffect(() => {
-    handleQuality();
-  }, [qualities])
-
-  useEffect(() => {
-    if (!playerRef.current) { return; }
-
-    playerRef.current.currentTime = currentTime;
-  }, [currentTime])
+  }, [currentTime]);
 
   return (
     <div id="player-container">

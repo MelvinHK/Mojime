@@ -114,3 +114,14 @@
 .txt-dec-none:hover {
   text-decoration: none;
 }
+
+.no-select {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.o-disabled {
+  opacity: var(--disabled-opacity);
+}
