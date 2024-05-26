@@ -41,6 +41,8 @@ export default function Player({ episodeId }: PlayerProps) {
   const [qualities, setQualities] = useState<(string | undefined)[]>();
   const [selectedQuality, setSelectedQuality] = useState<(string | undefined)>();
 
+  const source = sources?.find(src => src.quality === selectedQuality)?.url;
+
   const [currentTime, setCurrentTime] = useState<number>(0);
 
   const playerRef = useRef<MediaPlayerInstance>(null);
@@ -105,7 +107,7 @@ export default function Player({ episodeId }: PlayerProps) {
           {sources && qualities && (
             <MediaPlayer
               className={`${styles.player} player`}
-              src={sources.find(src => src.quality === selectedQuality)?.url}
+              src={source}
               playsInline
               autoPlay
               ref={playerRef}

@@ -12,10 +12,9 @@ export default function Searchbar() {
   const [subOrDubOption, setSubOrDubOption] = useState<subDub>("sub");
 
   const [resultsList, setResultsList] = useState<IAnimeResult[]>();
-  const filteredResults = resultsList?.map(result =>
-    result.subOrDub === subOrDubOption ? result : null
+  const filteredResults = resultsList?.filter(result =>
+    result.subOrDub === subOrDubOption
   );
-  const hasResults = filteredResults?.some(result => result !== null);
 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [hasNextPage, setHasNextPage] = useState<boolean | undefined>(false);
@@ -83,10 +82,10 @@ export default function Searchbar() {
   }
 
   const handleNavigate = (index: number) => {
-    if (resultsList) {
-      setSearchbarQuery(resultsList[index].title as string);
+    if (filteredResults) {
+      setSearchbarQuery(filteredResults[index].title as string);
       setShowDropdown(false);
-      navigate(`/${resultsList[index].id}/1`);
+      navigate(`/${filteredResults[index].id}/1`);
       searchbarRef?.current?.blur();
     }
   }
@@ -105,26 +104,23 @@ export default function Searchbar() {
         return;
       }
 
-      if (!resultsList || !filteredResults) {
+      if (!filteredResults) {
         return;
-      }
-
-      const addIndex = (index: number, key: string, total = resultsList.length): number => {
-        index = key === 'ArrowUp' ? (index + total) % (total + 1) : (index + 1) % (total + 1);
-        if (filteredResults[index] !== null) {
-          return index;
-        }
-        return addIndex(index, key, total);
       }
 
       if (['ArrowUp', 'ArrowDown'].includes(e.key) && showDropdown) {
         e.preventDefault();
         searchbarRef?.current?.focus();
-        setSelectedIndex(addIndex(selectedIndex, e.key));
+        setSelectedIndex(
+          e.key === 'ArrowUp' ?
+            (selectedIndex + filteredResults.length) % (filteredResults.length + 1)
+            :
+            (selectedIndex + 1) % (filteredResults.length + 1)
+        );
         return;
       }
 
-      if (e.key === 'Enter' && resultsList.hasOwnProperty(selectedIndex)) {
+      if (e.key === 'Enter' && filteredResults.hasOwnProperty(selectedIndex)) {
         e.preventDefault();
         handleNavigate(selectedIndex);
         return;
@@ -133,7 +129,14 @@ export default function Searchbar() {
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [resultsList, selectedIndex, showDropdown]);
+  }, [filteredResults, selectedIndex, showDropdown]);
+
+  useEffect(() => {
+    if (filteredResults?.hasOwnProperty(selectedIndex)) {
+      resultsRef.current?.children[selectedIndex]
+        .scrollIntoView(selectedIndex === filteredResults.length - 1);
+    }
+  }, [selectedIndex]);
 
   useEffect(() => {
     if (searchBarQuery.length === 0) {
@@ -213,19 +216,15 @@ export default function Searchbar() {
             id='search-results'
             ref={resultsRef}
           >
-            {hasResults ? (
+            {filteredResults ? (
               filteredResults?.map((result, index) =>
-                result !== null ? (
-                  <li
-                    key={result.id}
-                    className={selectedIndex === index ? 'selected' : ''}
-                    onClick={() => handleNavigate(index)}
-                  >
-                    {result.title as string}
-                  </li>
-                ) : (
-                  <Fragment key={index} />
-                )
+                <li
+                  key={result.id}
+                  className={selectedIndex === index ? 'selected' : ''}
+                  onClick={() => handleNavigate(index)}
+                >
+                  {result.title as string}
+                </li>
               )
             ) : (
               <li className="no-results">
