@@ -122,7 +122,7 @@ export default function Watch() {
       <Link to="/" className="mt-auto m-0 txt-dec-none">{watchKaomojis[kaoIndexState || randomKaoIndex]}</Link>
     </>
   ) : (
-    <div className="abs-center">
+    <div className="abs-center flex fl-a-center fl-j-center">
       <LoadingAnimation />
     </div>
   ));
