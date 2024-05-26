@@ -176,7 +176,7 @@ export default function Searchbar() {
       </form>
 
       {/******** DROPDOWN ********/}
-      {resultsList && showDropdown && (
+      {filteredResults && showDropdown && (
         <div id="dropdown">
           {/******** PAGE NAVIGATION ********/}
           <div id="page-nav">
@@ -216,7 +216,7 @@ export default function Searchbar() {
             id='search-results'
             ref={resultsRef}
           >
-            {filteredResults ? (
+            {filteredResults.length > 0 ? (
               filteredResults?.map((result, index) =>
                 <li
                   key={result.id}
