@@ -24,15 +24,13 @@ type QualityContextType = {
   playerRef: RefObject<MediaPlayerInstance> | undefined
 }
 
-const defaultQualityContext: QualityContextType = {
+export const QualityContext = createContext<QualityContextType>({
   qualities: [],
   selectedQuality: undefined,
   setSelectedQuality: () => { },
   setCurrentTime: () => { },
   playerRef: undefined
-};
-
-export const QualityContext = createContext<QualityContextType>(defaultQualityContext);
+});
 
 export default function Player({ episodeId }: PlayerProps) {
   const [sources, setSources] = useState<IVideo[]>();

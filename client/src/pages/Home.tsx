@@ -3,13 +3,13 @@ export default function Home() {
   return (
     <>
       <p id="greeting">
-        {homeKaomojis[Math.floor(Math.random() * homeKaomojis.length)]}
+        {kaomojis[Math.floor(Math.random() * kaomojis.length)]}
       </p>
     </>
   )
 }
 
-const homeKaomojis: string[] = [
+export const kaomojis: string[] = [
   "(*・ω・)ﾉ",
   "(￣▽￣)ノ",
   "(°▽°)/",

@@ -1,21 +1,24 @@
-import { useParams, useNavigate, useLocation, Link } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { useErrorBoundary } from "react-error-boundary";
-import { useEffect, useRef, useState, ChangeEvent } from "react";
+import { useEffect, useRef, useState, ChangeEvent, useContext } from "react";
 
-import { IAnimeInfo } from "@consumet/extensions";
 import { getAnime } from "../utils/api";
 
 import Player from "../components/Player";
 import LoadingAnimation from "../components/LoadingAnimation";
+import { WatchContext } from "../Root";
+import { kaomojis } from "./Home";
 
-export default function Watch() {
-  const location = useLocation();
-  const { animeState, kaoIndexState } = location.state || {};
+interface WatchProps {
+  kaomojiIndex: number,
+}
+
+export default function Watch({ kaomojiIndex }: WatchProps) {
+  const { animeInfo, setAnimeInfo } = useContext(WatchContext);
 
   const { animeId, episodeNo } = useParams();
   const episodeNumber = Number(episodeNo);
 
-  const [animeInfo, setAnimeInfo] = useState<IAnimeInfo>(animeState);
   const [episodeInput, setEpisodeInput] = useState<string>(episodeNo ?? "");
 
   const episodeInputRef = useRef<HTMLInputElement>(null);
@@ -25,20 +28,15 @@ export default function Watch() {
   const { showBoundary } = useErrorBoundary();
 
   const handleEpisodeNavigate = (ep: number | string) => {
-    if (!ep || !animeInfo.episodes?.hasOwnProperty(Number(ep) - 1)) {
+    if (!ep || !animeInfo?.episodes?.hasOwnProperty(Number(ep) - 1)) {
       return;
     }
-    navigate(`/${animeId}/${ep}`, {
-      state: {
-        animeState: animeInfo,
-        kaoIndexState: kaoIndexState || randomKaoIndex
-      }
-    });
+    navigate(`/${animeId}/${ep}`);
   }
 
   const handleEpInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;
-    if (newValue.length > String(animeInfo.episodes?.length).length) {
+    if (newValue.length > String(animeInfo?.episodes?.length).length) {
       return;
     }
     if (newValue === '' || /^[0-9]*$/.test(newValue)) {
@@ -47,11 +45,20 @@ export default function Watch() {
   }
 
   useEffect(() => {
-    if (!animeId || animeInfo) { return };
+    if (!animeId) { return };
 
     const fetchAnime = async () => {
       try {
         const data = await getAnime(animeId);
+        if (!data.episodes?.hasOwnProperty(episodeNumber - 1)) {
+          throw new Response(
+            "Error: Not Found",
+            {
+              status: 404,
+              statusText: `Anime/Episode not found`
+            }
+          );
+        }
         setAnimeInfo(data);
       } catch (error) {
         showBoundary(error);
@@ -59,27 +66,15 @@ export default function Watch() {
     }
 
     fetchAnime();
-  }, [animeId, animeInfo])
-
-  useEffect(() => {
-    if (animeInfo && !animeInfo.episodes?.hasOwnProperty(episodeNumber - 1)) {
-      throw new Response(
-        "Error: Not Found",
-        {
-          status: 404,
-          statusText: `Anime/Episode not found`
-        }
-      );
-    }
-  }, [animeInfo])
+  }, [animeId])
 
   const episodeInputStyle = {
     width: episodeInput.length + 'ch', // Set width based on the length of the value
   };
 
-  return (animeInfo && animeInfo.episodes?.hasOwnProperty(episodeNumber - 1) && episodeNo ? (
+  return (animeInfo && episodeNo ? (
     <>
-      <Player episodeId={animeInfo.episodes[episodeNumber - 1].id} />
+      <Player episodeId={animeInfo.episodes?.[episodeNumber - 1].id} />
       <p>{animeInfo.title as string}</p>
       <div className="flex gap fl-a-center pb-1p5r">
         <button
@@ -107,10 +102,10 @@ export default function Watch() {
               onBlur={() => setEpisodeInput(episodeNo)}
               style={episodeInputStyle}
               min={1}
-              max={animeInfo.episodes.length}
+              max={animeInfo.episodes?.length}
             />
           </form>
-          <p className="m-0">&nbsp;/ {animeInfo.episodes.length ?? "?"}</p>
+          <p className="m-0">&nbsp;/ {animeInfo.episodes?.length ?? "?"}</p>
         </div>
         <button
           onClick={() => handleEpisodeNavigate(episodeNumber + 1)}
@@ -119,7 +114,7 @@ export default function Watch() {
           Next &gt;
         </button>
       </div>
-      <Link to="/" className="mt-auto m-0 txt-dec-none">{watchKaomojis[kaoIndexState || randomKaoIndex]}</Link>
+      <Link to="/" className="mt-auto m-0 txt-dec-none">{kaomojis[kaomojiIndex]}</Link>
     </>
   ) : (
     <div className="abs-center flex fl-a-center fl-j-center">
@@ -127,95 +122,3 @@ export default function Watch() {
     </div>
   ));
 }
-
-const watchKaomojis = [
-  "(* ^ ω ^)",
-  "(´ ∀ ` *)",
-  "٩(◕‿◕｡)۶",
-  "o(≧▽≦)/",
-  "(o^▽^o)",
-  "(⌒▽⌒)☆",
-  "ヽ(・∀・)ﾉ",
-  "(´｡• ω •｡`)",
-  "(￣ω￣)",
-  "(o･ω･o)",
-  "(＠＾◡＾)",
-  "ヽ(*・ω・)ﾉ",
-  "(o_ _)ﾉ彡☆",
-  "(o´▽`o)",
-  "(*´▽`*)",
-  "｡ﾟ( ﾟ^∀^ﾟ)ﾟ｡",
-  "( ´ ω ` )",
-  "o(*°▽°*)b",
-  "(≧◡≦)",
-  "(o´∀`o)",
-  "(´• ω •`)",
-  "(＾▽＾)",
-  "(⌒ω⌒)",
-  "∑d(°∀°d)",
-  "╰(▔∀▔)╯",
-  "(─‿‿─)",
-  "(*^‿^*)",
-  "ヽ(o^ ^o)ﾉ",
-  "(✯◡✯)",
-  "(◕‿◕)",
-  "(*≧ω≦*)",
-  "(☆▽☆)",
-  "(⌒‿⌒)",
-  "＼(≧▽≦)／",
-  "ヽ(o＾▽＾o)ノ",
-  "☆ ～('▽^人)",
-  "(*°▽°*)",
-  "٩(｡•́‿•̀｡)۶",
-  "(✧ω✧)",
-  "ヽ(*⌒▽⌒*)ﾉ",
-  "(´｡• ᵕ •｡`)",
-  "( ´ ▽ ` )",
-  "(￣▽￣)",
-  "╰(*´︶`*)╯",
-  "ヽ(>∀<☆)ノ",
-  "o(≧▽≦)o",
-  "(☆ω☆)",
-  "(っ˘ω˘ς )",
-  "＼(￣▽￣)／",
-  "(*¯︶¯*)",
-  "＼(＾▽＾)／",
-  "٩(◕‿◕)۶",
-  "(o˘◡˘o)",
-  "\\(★ω★)/",
-  "\\(^ヮ^)/",
-  "(〃＾▽＾〃)",
-  "(╯✧▽✧)╯",
-  "o(>ω<)o",
-  "o( ❛ᴗ❛ )o",
-  "( ‾́ ◡ ‾́ )",
-  "(ﾉ´ヮ`)ﾉ*: ･ﾟ",
-  "(b ᵔ▽ᵔ)b",
-  "(๑˃ᴗ˂)ﻭ",
-  "(๑˘︶˘๑)",
-  "( ˙꒳​˙ )",
-  "(´･ᴗ･ ` )",
-  "(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧",
-  "(„• ֊ •„)",
-  "(.❛ ᴗ ❛.)",
-  "(⁀ᗢ⁀)",
-  "(￢‿￢ )",
-  "(¬‿¬ )",
-  "(*￣▽￣)b",
-  "( ˙▿˙ )",
-  "(¯▿¯)",
-  "( ◕▿◕ )",
-  "＼(٥⁀▽⁀ )／",
-  "(„• ᴗ •„)",
-  "(ᵔ◡ᵔ)",
-  "( ´ ▿ ` )",
-  "(๑>◡<๑)",
-  "( = ⩊ = )",
-  "( ´ ꒳ ` )",
-  "⸜( ´ ꒳ ` )⸝",
-  "⸜(⸝⸝⸝´꒳`⸝⸝⸝)⸝",
-  "⸜(*ˊᗜˋ*)⸝",
-  "⸜( *ˊᵕˋ* )⸝"
-];
-
-const randomKaoIndex = Math.floor(Math.random() * watchKaomojis.length);

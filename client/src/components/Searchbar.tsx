@@ -54,10 +54,10 @@ export default function Searchbar() {
   }
 
   const handlePageButton = (page: number) => {
+    if (isLoading) { return; }
+    
     if (searchCache[page - 1]) {
-      // Stupid hack; there's a race condition with useClickAway 
-      // when the buttons become hidden upon reaching the first/last page.
-      setTimeout(() => updateSearchResults(searchCache[page - 1]), 1);
+      updateSearchResults(searchCache[page - 1]);
     } else {
       handleSearch(pageNavQuery, page);
     }
@@ -193,23 +193,23 @@ export default function Searchbar() {
               </span>
             </button>
             {/* NEXT & PREV BUTTONS */}
-            <div className="ml-auto">
-              {currentPage > 1 && (
+            {(hasNextPage || currentPage > 1) && (
+              <div className="ml-auto">
                 <button
                   onClick={() => handlePageButton(currentPage - 1)}
+                  disabled={currentPage === 1}
                 >
                   &lt; Prev
                 </button>
-              )}
-              {(hasNextPage || currentPage > 1) && (
                 <button
                   onClick={() => handlePageButton(currentPage + 1)}
                   disabled={!hasNextPage}
                 >
                   Next &gt;
                 </button>
-              )}
-            </div>
+
+              </div>
+            )}
           </div>
           {/******** RESULTS ********/}
           <ul

@@ -1,10 +1,11 @@
+import { isAxiosError } from "axios";
 import { useRouteError, isRouteErrorResponse, Link } from "react-router-dom"
 
 interface ErrorProps {
   error?: any;
 }
 
-const Error: React.FC<ErrorProps> = ({ error }) => {
+function Error({ error }: ErrorProps) {
   const routeError = useRouteError();
 
   const errorMessage = () => {
@@ -18,9 +19,13 @@ const Error: React.FC<ErrorProps> = ({ error }) => {
       return (
         <p>{error.status} Error: {error.statusText}</p>
       );
+    } else if (isAxiosError(error)) {
+      if (error.code === 'ECONNABORTED') {
+        return <p>Connection Error: Request timed out... It took too long!</p>
+      }
     } else {
       return (
-        <p>Unknown Error: I'm not sure what went wrong!!!</p>
+        <p>Unknown Error: I'm not sure what went wrong!</p>
       )
     }
   }
