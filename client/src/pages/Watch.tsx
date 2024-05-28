@@ -65,6 +65,7 @@ export default function Watch({ kaomojiIndex }: WatchProps) {
       }
     }
 
+    setAnimeInfo(undefined);
     fetchAnime();
   }, [animeId])
 
