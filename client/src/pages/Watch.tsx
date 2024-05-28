@@ -45,7 +45,9 @@ export default function Watch({ kaomojiIndex }: WatchProps) {
   }
 
   useEffect(() => {
-    if (!animeId) { return };
+    if (!animeId || animeId === animeInfo?.id) {
+      return;
+    }
 
     const fetchAnime = async () => {
       try {
@@ -67,7 +69,7 @@ export default function Watch({ kaomojiIndex }: WatchProps) {
 
     setAnimeInfo(undefined);
     fetchAnime();
-  }, [animeId])
+  }, [animeInfo, animeId])
 
   const episodeInputStyle = {
     width: episodeInput.length + 'ch', // Set width based on the length of the value
