@@ -11,12 +11,12 @@ interface RootProps {
 
 type WatchContextType = {
   animeInfo: IAnimeInfo | undefined,
-  setAnimeInfo: Dispatch<SetStateAction<IAnimeInfo | undefined>>,
+  setAnimeInfo: Dispatch<SetStateAction<IAnimeInfo | undefined>>
 }
 
 export const WatchContext = createContext<WatchContextType>({
   animeInfo: undefined,
-  setAnimeInfo: () => { },
+  setAnimeInfo: () => { }
 });
 
 function Root(props: RootProps) {

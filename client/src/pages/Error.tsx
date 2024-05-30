@@ -21,7 +21,7 @@ function Error({ error }: ErrorProps) {
       );
     } else if (isAxiosError(error)) {
       if (error.code === 'ECONNABORTED') {
-        return <p>Connection Error: Request timed out... It took too long!</p>
+        return <p>Connection Error: Request timed out; it took too long!</p>
       }
     } else {
       return (

@@ -117,11 +117,13 @@ export default function Watch({ kaomojiIndex }: WatchProps) {
           Next &gt;
         </button>
       </div>
-      <Link to="/" className="mt-auto m-0 txt-dec-none">{kaomojis[kaomojiIndex]}</Link>
+      <Link to="/" className="mt-auto m-0 txt-dec-none">
+        {kaomojis[kaomojiIndex]}
+      </Link>
     </>
   ) : (
-    <div className="abs-center flex fl-a-center fl-j-center">
+    <span className="abs-center flex fl-a-center fl-j-center">
       <LoadingAnimation />
-    </div>
+    </span>
   ));
 }

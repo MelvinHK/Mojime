@@ -37,6 +37,10 @@
   max-width: 100%;
 }
 
+.fl-col {
+  flex-direction: column;
+}
+
 .gap {
   gap: 1.5rem;
 }

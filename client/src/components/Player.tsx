@@ -97,9 +97,9 @@ export default function Player({ episodeId }: PlayerProps) {
     <div id="player-container">
       <div id="player-ratio">
         {isLoading && (
-          <div className="abs-center w-100 h-100 flex fl-a-center fl-j-center">
+          <span className="abs-center w-100 h-100 flex fl-a-center fl-j-center">
             <LoadingAnimation />
-          </div>
+          </span>
         )}
         <div id="player-wrapper">
           {sources && qualities && (
