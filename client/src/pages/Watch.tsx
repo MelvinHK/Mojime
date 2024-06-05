@@ -112,7 +112,7 @@ export default function Watch({ kaomojiIndex }: WatchProps) {
         </div>
         <button
           onClick={() => handleEpisodeNavigate(episodeNumber + 1)}
-          disabled={episodeNumber >= (animeInfo.totalEpisodes ?? episodeNumber + 1)}
+          disabled={episodeNumber >= (animeInfo.episodes?.length ?? episodeNumber + 1)}
         >
           Next &gt;
         </button>
