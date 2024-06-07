@@ -59,12 +59,20 @@
   background-color: var(--gray);
 }
 
+#home {
+  position: relative;
+  margin-top: auto;
+  text-decoration: none;
+  color: inherit;
+}
+
 /* Psuedo bottom margin */
-#dropdown::after {
+#dropdown::after,
+#home::after {
   position: absolute;
   content: "";
   bottom: 0;
-  margin-bottom: calc(-1.5rem - 1px);
+  margin-bottom: calc(-1.5rem + 1px);
   height: 1px;
   width: 1px;
 }

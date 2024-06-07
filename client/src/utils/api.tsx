@@ -1,8 +1,10 @@
 import axios from "axios";
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 export const getSearch = async (query: string, page: number) => {
   try {
-    const results = await axios.get(`https://shanime-api.vercel.app/api/search/${query}/page/${page}`, {
+    const results = await axios.get(`${apiUrl}/api/search/${query}/page/${page}`, {
       timeout: 10000
     });
     return results.data;
@@ -31,7 +33,7 @@ const handlePageContentError = (error: any) => {
 
 export const getAnime = async (id: string) => {
   try {
-    const results = await axios.get(`https://shanime-api.vercel.app/api/anime/${id}`, {
+    const results = await axios.get(`${apiUrl}/api/anime/${id}`, {
       timeout: 10000
     });
     return results.data;
@@ -42,7 +44,7 @@ export const getAnime = async (id: string) => {
 
 export const getEpisode = async (id: string) => {
   try {
-    const results = await axios.get(`https://shanime-api.vercel.app/api/episode/${id}`, {
+    const results = await axios.get(`${apiUrl}/api/episode/${id}`, {
       timeout: 10000
     });
     return results.data;
