@@ -15,6 +15,7 @@ export function VideoLayout() {
         <Sliders.Time />
         <Controls.Group className={styles.controlsGroup}>
           <Buttons.Play />
+          <Buttons.Next />
           <TimeGroup />
           <Buttons.Seek seconds={25} />
           <Buttons.Seek seconds={85} />

@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, createContext, Dispatch, SetStateAction, RefObject } from "react";
+import { useEffect, useState, useRef, createContext, Dispatch, SetStateAction, RefObject, useContext } from "react";
 import { getEpisode } from "../utils/api";
 
 import { useErrorBoundary } from "react-error-boundary";
@@ -11,6 +11,10 @@ import { MediaPlayer, MediaProvider, MediaPlayerInstance } from '@vidstack/react
 import { VideoLayout } from './Player/videoLayout';
 import '@vidstack/react/player/styles/base.css';
 import LoadingAnimation from "./LoadingAnimation";
+
+import { throttle } from "lodash-es";
+import { WatchContext } from "../Root";
+import { useParams } from "react-router-dom";
 
 interface PlayerProps {
   episodeId?: string;
@@ -32,7 +36,16 @@ export const QualityContext = createContext<QualityContextType>({
   playerRef: undefined
 });
 
+type PreloadedEpisode = {
+  episodeId: string,
+  sources: IVideo[],
+  qualities: (string | undefined)[]
+}
+
 export default function Player({ episodeId }: PlayerProps) {
+  const { animeInfo } = useContext(WatchContext);
+  const { episodeNo } = useParams()
+
   const [sources, setSources] = useState<IVideo[]>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -44,6 +57,7 @@ export default function Player({ episodeId }: PlayerProps) {
   const [currentTime, setCurrentTime] = useState<number>(0);
 
   const playerRef = useRef<MediaPlayerInstance>(null);
+  const isPreloadThreshold = useRef(false);
 
   const qualityContextValues: QualityContextType = {
     qualities,
@@ -58,11 +72,21 @@ export default function Player({ episodeId }: PlayerProps) {
   useEffect(() => {
     if (!episodeId) { return; }
 
-    const fetchEpisode = async () => {
+    const setEpisode = async (id: string) => {
+      const preloaded = localStorage.getItem("preloadedNextEpisode");
+      if (preloaded) {
+        const parsed: PreloadedEpisode = JSON.parse(preloaded);
+        if (episodeId === parsed.episodeId) {
+          setSources(parsed.sources);
+          setQualities(parsed.qualities);
+          return;
+        }
+      }
+
       try {
-        const data: ISource = await getEpisode(episodeId as string);
-        setSources(data.sources);
-        setQualities(data.sources
+        const episode: ISource = await getEpisode(id);
+        setSources(episode.sources);
+        setQualities(episode.sources
           .map(src => src.quality)
           .filter(src => /\d/.test(src ?? ""))
         );
@@ -73,8 +97,8 @@ export default function Player({ episodeId }: PlayerProps) {
       }
     }
 
-    fetchEpisode();
-  }, [episodeId])
+    setEpisode(episodeId as string);
+  }, [episodeId]);
 
   useEffect(() => {
     if (qualities) {
@@ -93,6 +117,42 @@ export default function Player({ episodeId }: PlayerProps) {
     }
   }, [currentTime]);
 
+  const handlePreload = async () => {
+    if (
+      !playerRef?.current ||
+      isPreloadThreshold.current ||
+      !animeInfo?.episodes?.hasOwnProperty(Number(episodeNo))
+    ) {
+      return;
+    }
+
+    const duration = playerRef.current.duration;
+    const currentTime = playerRef.current.currentTime;
+    const progressPercent = currentTime / duration;
+
+    if (progressPercent >= 0.75) {
+      const episodeId = animeInfo.episodes?.[Number(episodeNo)].id
+
+      try {
+        const episode: ISource = await getEpisode(episodeId);
+
+        const data: PreloadedEpisode = {
+          episodeId: episodeId,
+          sources: episode.sources,
+          qualities: episode.sources
+            .map(src => src.quality)
+            .filter(src => /\d/.test(src ?? ""))
+        }
+
+        localStorage.setItem("preloadedNextEpisode", JSON.stringify(data));
+      } catch (error) {
+        console.log("Unable to preload next episode.");
+      } finally {
+        isPreloadThreshold.current = true;
+      }
+    }
+  }
+
   return (
     <div id="player-container">
       <div id="player-ratio">
@@ -109,6 +169,7 @@ export default function Player({ episodeId }: PlayerProps) {
               playsInline
               autoPlay
               ref={playerRef}
+              onTimeUpdate={throttle(() => handlePreload(), 1000)}
             >
               <MediaProvider />
               <QualityContext.Provider value={qualityContextValues}>

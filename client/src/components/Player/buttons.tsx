@@ -13,9 +13,12 @@ import {
   FullscreenIcon,
   PauseIcon,
   PlayIcon,
+  NextIcon
 } from '@vidstack/react/icons';
 import { QualityContext } from '../Player';
 import { useContext } from 'react';
+import { WatchContext } from '../../Root';
+import { useParams, useNavigate } from 'react-router-dom';
 
 export function Play() {
   const isPaused = useMediaState('paused');
@@ -95,4 +98,19 @@ export function Quality() {
       </Menu.Items>
     </Menu.Root>
   )
+}
+
+export function Next() {
+  const { animeInfo } = useContext(WatchContext);
+  const { episodeNo } = useParams();
+  const navigate = useNavigate();
+
+  return (animeInfo?.episodes?.hasOwnProperty(Number(episodeNo)) && (
+    <button
+      onClick={() => navigate(`/${animeInfo?.id}/${Number(episodeNo) + 1}`)}
+      className={`${buttonStyles.button}`}
+    >
+      <NextIcon />
+    </button>
+  ));
 }
