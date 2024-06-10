@@ -14,7 +14,7 @@ interface WatchProps {
 }
 
 export default function Watch({ kaomojiIndex }: WatchProps) {
-  const { animeInfo, setAnimeInfo } = useContext(WatchContext);
+  const { animeInfo, setAnimeInfo, isFullscreen, isAutoFullscreen } = useContext(WatchContext);
 
   const { animeId, episodeNo } = useParams();
   const episodeNumber = Number(episodeNo);
@@ -31,6 +31,7 @@ export default function Watch({ kaomojiIndex }: WatchProps) {
     if (!ep || !animeInfo?.episodes?.hasOwnProperty(Number(ep) - 1)) {
       return;
     }
+    isAutoFullscreen.current = isFullscreen.current === true;
     navigate(`/${animeId}/${ep}`);
   }
 

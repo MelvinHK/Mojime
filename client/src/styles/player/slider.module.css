@@ -59,7 +59,7 @@
   left: var(--slider-fill);
   opacity: 0;
   contain: layout size style;
-  width: 15px;
+  width: 30px;
   height: 15px;
   border-radius: 9999px;
   background-color: #fff;
@@ -67,7 +67,15 @@
   pointer-events: none;
   will-change: left;
   z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   /** above track fill. */
+}
+
+.thumb::after {
+  color: gray;
+  content: ">∀<";
 }
 
 [data-active]>.thumb {

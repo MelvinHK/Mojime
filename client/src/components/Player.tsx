@@ -43,7 +43,7 @@ type PreloadedEpisode = {
 }
 
 export default function Player({ episodeId }: PlayerProps) {
-  const { animeInfo } = useContext(WatchContext);
+  const { animeInfo, isFullscreen, isAutoFullscreen } = useContext(WatchContext);
   const { episodeNo } = useParams()
 
   const [sources, setSources] = useState<IVideo[]>();
@@ -169,7 +169,9 @@ export default function Player({ episodeId }: PlayerProps) {
               playsInline
               autoPlay
               ref={playerRef}
+              onStarted={() => isAutoFullscreen.current === true && playerRef.current?.enterFullscreen()}
               onTimeUpdate={throttle(() => handlePreload(), 1000)}
+              onFullscreenChange={(detail) => isFullscreen.current = detail}
             >
               <MediaProvider />
               <QualityContext.Provider value={qualityContextValues}>

@@ -101,13 +101,18 @@ export function Quality() {
 }
 
 export function Next() {
-  const { animeInfo } = useContext(WatchContext);
+  const { animeInfo, isFullscreen, isAutoFullscreen } = useContext(WatchContext);
   const { episodeNo } = useParams();
   const navigate = useNavigate();
 
+  const handleNavigate = () => {
+    isAutoFullscreen.current = isFullscreen.current === true;
+    navigate(`/${animeInfo?.id}/${Number(episodeNo) + 1}`);
+  }
+
   return (animeInfo?.episodes?.hasOwnProperty(Number(episodeNo)) && (
     <button
-      onClick={() => navigate(`/${animeInfo?.id}/${Number(episodeNo) + 1}`)}
+      onClick={() => handleNavigate()}
       className={`${buttonStyles.button}`}
     >
       <NextIcon />

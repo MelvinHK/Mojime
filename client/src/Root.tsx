@@ -2,7 +2,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import Header from "./components/Header";
 import { ErrorBoundary } from "react-error-boundary";
 import Error from "./pages/Error";
-import { Dispatch, SetStateAction, createContext, useState } from "react";
+import { Dispatch, SetStateAction, createContext, useState, useRef, MutableRefObject, useEffect } from "react";
 import { IAnimeInfo } from "@consumet/extensions";
 
 interface RootProps {
@@ -11,20 +11,28 @@ interface RootProps {
 
 type WatchContextType = {
   animeInfo: IAnimeInfo | undefined,
-  setAnimeInfo: Dispatch<SetStateAction<IAnimeInfo | undefined>>
+  setAnimeInfo: Dispatch<SetStateAction<IAnimeInfo | undefined>>,
+  isFullscreen: MutableRefObject<boolean>,
+  isAutoFullscreen: MutableRefObject<boolean>,
 }
 
 export const WatchContext = createContext<WatchContextType>({
   animeInfo: undefined,
-  setAnimeInfo: () => { }
+  setAnimeInfo: () => { },
+  isFullscreen: { current: false },
+  isAutoFullscreen: { current: false }
 });
 
 function Root(props: RootProps) {
   const [animeInfo, setAnimeInfo] = useState<IAnimeInfo>();
+  const isFullscreen = useRef(false);
+  const isAutoFullscreen = useRef(false);
 
   const WatchContextValues: WatchContextType = {
     animeInfo,
-    setAnimeInfo
+    setAnimeInfo,
+    isFullscreen,
+    isAutoFullscreen
   }
 
   const location = useLocation();

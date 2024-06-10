@@ -10,7 +10,7 @@ export const getSearch = async (query: string, page: number) => {
     return results.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.code === 'ECONNABORTED') {
-      alert('Error: Request timed out; the search took too long.');
+      alert('Error: Request timed out; the search took too long. Maybe try again.');
     } else {
       alert(`Error: Unable to fetch search results... Try again later.`);
     }
@@ -34,7 +34,7 @@ const handlePageContentError = (error: any) => {
 export const getAnime = async (id: string) => {
   try {
     const results = await axios.get(`${apiUrl}/api/anime/${id}`, {
-      timeout: 10000
+      timeout: 15000
     });
     return results.data;
   } catch (error) {
@@ -45,7 +45,7 @@ export const getAnime = async (id: string) => {
 export const getEpisode = async (id: string) => {
   try {
     const results = await axios.get(`${apiUrl}/api/episode/${id}`, {
-      timeout: 10000
+      timeout: 15000
     });
     return results.data;
   } catch (error) {
