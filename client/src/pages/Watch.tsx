@@ -72,6 +72,11 @@ export default function Watch({ kaomojiIndex }: WatchProps) {
     fetchAnime();
   }, [animeInfo, animeId])
 
+  useEffect(() => {
+    if (episodeNo && animeInfo)
+      document.title = `${animeInfo?.title} Ep.${episodeNo} - MojiKan`
+  }, [episodeNo, animeInfo])
+
   const episodeInputStyle = {
     width: episodeInput.length + 'ch', // Set width based on the length of the value
   };
