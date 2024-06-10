@@ -2,7 +2,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import Header from "./components/Header";
 import { ErrorBoundary } from "react-error-boundary";
 import Error from "./pages/Error";
-import { Dispatch, SetStateAction, createContext, useState, useRef, MutableRefObject, useEffect } from "react";
+import { Dispatch, SetStateAction, createContext, useState, useRef, MutableRefObject } from "react";
 import { IAnimeInfo } from "@consumet/extensions";
 
 interface RootProps {
