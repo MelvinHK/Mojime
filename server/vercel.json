@@ -18,7 +18,7 @@
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://shanime.vercel.app"
+          "value": "https://mojikan.vercel.app"
         }
       ]
     }
