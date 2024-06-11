@@ -1,4 +1,3 @@
-import { isAxiosError } from "axios";
 import { useRouteError, isRouteErrorResponse, Link } from "react-router-dom"
 
 interface ErrorProps {
