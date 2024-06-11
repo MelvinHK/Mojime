@@ -7,15 +7,31 @@ import * as Buttons from './buttons';
 import * as Sliders from './sliders'
 import { TimeGroup } from './timeGroup';
 import { useParams } from 'react-router-dom';
-import { useContext } from 'react';
+import { Dispatch, SetStateAction, createContext, useContext, useState } from 'react';
 import { WatchContext } from '../../Root';
+
+type VidLayoutContextType = {
+  draggedTime: string,
+  setDraggedTime: Dispatch<SetStateAction<string>>
+}
+
+export const VidLayoutContext = createContext<VidLayoutContextType>({
+  draggedTime: "",
+  setDraggedTime: () => { }
+});
 
 export function VideoLayout() {
   const { animeInfo } = useContext(WatchContext);
   const { episodeNo } = useParams();
 
+  const [draggedTime, setDraggedTime] = useState("");
+
+  const VidLayoutContextValues = {
+    draggedTime, setDraggedTime
+  }
+
   return (
-    <>
+    <VidLayoutContext.Provider value={VidLayoutContextValues}>
       <Gestures />
       <Controls.Root className={styles.controls} hideOnMouseLeave={true}>
         <p className={styles.playerTitle}>
@@ -37,7 +53,7 @@ export function VideoLayout() {
           <Buttons.Fullscreen />
         </Controls.Group>
       </Controls.Root>
-    </>
+    </VidLayoutContext.Provider>
   );
 }
 

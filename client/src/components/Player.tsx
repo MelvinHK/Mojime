@@ -20,7 +20,7 @@ interface PlayerProps {
   episodeId?: string;
 }
 
-type QualityContextType = {
+type PlayerContextType = {
   qualities: (string | undefined)[] | undefined,
   selectedQuality: string | undefined,
   setSelectedQuality: Dispatch<SetStateAction<(string | undefined)>>,
@@ -28,12 +28,12 @@ type QualityContextType = {
   playerRef: RefObject<MediaPlayerInstance> | undefined
 }
 
-export const QualityContext = createContext<QualityContextType>({
+export const PlayerContext = createContext<PlayerContextType>({
   qualities: [],
   selectedQuality: undefined,
   setSelectedQuality: () => { },
   setCurrentTime: () => { },
-  playerRef: undefined
+  playerRef: { current: null }
 });
 
 type PreloadedEpisode = {
@@ -59,7 +59,7 @@ export default function Player({ episodeId }: PlayerProps) {
   const playerRef = useRef<MediaPlayerInstance>(null);
   const isPreloadThreshold = useRef(false);
 
-  const qualityContextValues: QualityContextType = {
+  const qualityContextValues: PlayerContextType = {
     qualities,
     selectedQuality,
     setSelectedQuality,
@@ -174,9 +174,9 @@ export default function Player({ episodeId }: PlayerProps) {
               onFullscreenChange={(detail) => isFullscreen.current = detail}
             >
               <MediaProvider />
-              <QualityContext.Provider value={qualityContextValues}>
+              <PlayerContext.Provider value={qualityContextValues}>
                 <VideoLayout />
-              </QualityContext.Provider>
+              </PlayerContext.Provider>
             </MediaPlayer>
           )}
         </div>

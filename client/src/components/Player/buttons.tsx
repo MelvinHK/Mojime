@@ -15,7 +15,7 @@ import {
   PlayIcon,
   NextIcon
 } from '@vidstack/react/icons';
-import { QualityContext } from '../Player';
+import { PlayerContext } from '../Player';
 import { useContext } from 'react';
 import { WatchContext } from '../../Root';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -61,7 +61,7 @@ export function Quality() {
     setSelectedQuality,
     setCurrentTime,
     playerRef
-  } = useContext(QualityContext);
+  } = useContext(PlayerContext);
 
   const handleSelect = (p: string | undefined) => {
     if (!p) { return; }
