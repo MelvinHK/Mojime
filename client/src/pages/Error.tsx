@@ -19,10 +19,8 @@ function Error({ error }: ErrorProps) {
       return (
         <p>{error.status} Error: {error.statusText}</p>
       );
-    } else if (isAxiosError(error)) {
-      if (error.code === 'ECONNABORTED') {
-        return <p>Connection Error: Request timed out; it took too long! Reload to try again.</p>
-      }
+    } else if (error.code === 'ECONNABORTED') {
+      return <p>Connection Error: Request timed out; it took too long! Reload to try again.</p>
     } else {
       return (
         <p>Unknown Error: I'm not sure what went wrong!</p>

@@ -18,7 +18,7 @@ export const getSearch = async (query: string, page: number) => {
 }
 
 const handlePageContentError = (error: any) => {
-  if (axios.isAxiosError(error)) {
+  if (error.code === 'ECONNABORTED') {
     throw error;
   } else {
     throw new Response(
