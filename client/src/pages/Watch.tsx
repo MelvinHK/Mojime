@@ -74,7 +74,7 @@ export default function Watch({ kaomojiIndex }: WatchProps) {
 
   useEffect(() => {
     if (episodeNo && animeInfo)
-      document.title = `${animeInfo?.title} Ep.${episodeNo} - MojiKan`
+      document.title = `${animeInfo?.title} Ep.${episodeNo} - Mojime`
   }, [episodeNo, animeInfo])
 
   const episodeInputStyle = {

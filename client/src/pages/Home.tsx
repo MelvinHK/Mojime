@@ -3,7 +3,7 @@ import { useEffect } from "react";
 export default function Home() {
 
   useEffect(() => {
-    document.title = `MojiKan`
+    document.title = `Mojime`
   }, [])
 
   return (
