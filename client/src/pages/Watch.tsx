@@ -14,7 +14,7 @@ interface WatchProps {
 }
 
 export default function Watch({ kaomojiIndex }: WatchProps) {
-  const { animeInfo, setAnimeInfo, isFullscreen, isAutoFullscreen } = useContext(WatchContext);
+  const { animeInfo, setAnimeInfo } = useContext(WatchContext);
 
   const { animeId, episodeNo } = useParams();
   const episodeNumber = Number(episodeNo);
