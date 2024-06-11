@@ -41,7 +41,8 @@ export function VideoLayout() {
         <Sliders.Time />
         <Controls.Group className={styles.controlsGroup}>
           <div className={styles.playbackControls}>
-            <div className={`${buttonStyles.playbackSpacer} ${buttonStyles.button}`}></div>
+            {animeInfo?.episodes?.hasOwnProperty(Number(episodeNo)) &&
+              <div className={`${buttonStyles.playbackSpacer} ${buttonStyles.button}`}></div>}
             <Buttons.Play />
             <Buttons.Next />
           </div>
