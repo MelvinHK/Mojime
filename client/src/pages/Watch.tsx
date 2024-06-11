@@ -31,7 +31,6 @@ export default function Watch({ kaomojiIndex }: WatchProps) {
     if (!ep || !animeInfo?.episodes?.hasOwnProperty(Number(ep) - 1)) {
       return;
     }
-    isAutoFullscreen.current = isFullscreen.current === true;
     navigate(`/${animeId}/${ep}`);
   }
 

@@ -1,3 +1,5 @@
+@import url('@vidstack/react/player/styles/base.css');
+
 /*************************************************************************************************
  * Controls
  *************************************************************************************************/
@@ -8,15 +10,12 @@
   position: absolute;
   inset: 0;
   width: 100%;
-  display: none;
+  visibility: hidden;
 }
 
 .controls[data-visible] {
-  display: flex;
-  background-image: linear-gradient(to bottom,
-      transparent,
-      80%,
-      rgb(0 0 0 / 0.8));
+  visibility: visible;
+  background-color: rgba(0, 0, 0, 0.464);
 }
 
 .controlsGroup {
@@ -40,6 +39,25 @@
 
 .controls :global(.fullscreen-button) {
   margin-right: 0 !important;
+}
+
+.playbackControls {
+  display: flex;
+  align-items: center;
+}
+
+.playerTitle {
+  margin-left: 1rem;
+}
+
+@media (max-width: 1024px) {
+  .playbackControls {
+    position: absolute;
+    gap: 2rem;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
 }
 
 /*************************************************************************************************

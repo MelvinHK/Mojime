@@ -23,7 +23,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 export function Play() {
   const isPaused = useMediaState('paused');
   return (
-    <PlayButton className={`play-button ${buttonStyles.button} ${buttonStyles.mobile}`}>
+    <PlayButton className={`play-button ${buttonStyles.button} ${buttonStyles.playButtonMobile}`}>
       {isPaused ? <PlayIcon /> : <PauseIcon />}
     </PlayButton>
   );
@@ -81,6 +81,7 @@ export function Quality() {
       </Menu.Button>
       <Menu.Items
         placement="top"
+        offset={20}
         className={buttonStyles.radioWrapper}
       >
         <RadioGroup.Root>
@@ -101,12 +102,11 @@ export function Quality() {
 }
 
 export function Next() {
-  const { animeInfo, isFullscreen, isAutoFullscreen } = useContext(WatchContext);
+  const { animeInfo } = useContext(WatchContext);
   const { episodeNo } = useParams();
   const navigate = useNavigate();
 
   const handleNavigate = () => {
-    isAutoFullscreen.current = isFullscreen.current === true;
     navigate(`/${animeInfo?.id}/${Number(episodeNo) + 1}`);
   }
 
