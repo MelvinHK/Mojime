@@ -72,7 +72,7 @@ export default function Player({ episodeId }: PlayerProps) {
   useEffect(() => {
     if (!episodeId) { return; }
 
-    const setEpisode = async (id: string) => {
+    const setEpisode = async () => {
       const preloaded = localStorage.getItem("preloadedNextEpisode");
       if (preloaded) {
         const parsed: PreloadedEpisode = JSON.parse(preloaded);
@@ -84,7 +84,7 @@ export default function Player({ episodeId }: PlayerProps) {
       }
 
       try {
-        const episode: ISource = await getEpisode(id);
+        const episode: ISource = await getEpisode(episodeId);
         setSources(episode.sources);
         setQualities(episode.sources
           .map(src => src.quality)
@@ -97,7 +97,7 @@ export default function Player({ episodeId }: PlayerProps) {
       }
     }
 
-    setEpisode(episodeId as string);
+    setEpisode();
   }, [episodeId]);
 
   useEffect(() => {
