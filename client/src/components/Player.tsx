@@ -37,7 +37,6 @@ export const PlayerContext = createContext<PlayerContextType>({
 });
 
 type PreloadedEpisode = {
-  episodeId: string,
   sources: IVideo[],
   qualities: (string | undefined)[]
 }
@@ -73,23 +72,30 @@ export default function Player({ episodeId }: PlayerProps) {
     if (!episodeId) { return; }
 
     const setEpisode = async () => {
-      const preloaded = localStorage.getItem("preloadedNextEpisode");
+      const preloaded = sessionStorage.getItem(episodeId);
       if (preloaded) {
         const parsed: PreloadedEpisode = JSON.parse(preloaded);
-        if (episodeId === parsed.episodeId) {
-          setSources(parsed.sources);
-          setQualities(parsed.qualities);
-          return;
-        }
+        setSources(parsed.sources);
+        setQualities(parsed.qualities);
+        return;
       }
 
       try {
         const episode: ISource = await getEpisode(episodeId);
-        setSources(episode.sources);
-        setQualities(episode.sources
+        const sources = episode.sources;
+        const qualities = episode.sources
           .map(src => src.quality)
           .filter(src => /\d/.test(src ?? ""))
-        );
+
+        setSources(sources);
+        setQualities(qualities);
+
+        const episodeCache: PreloadedEpisode = {
+          sources: sources,
+          qualities: qualities
+        }
+
+        sessionStorage.setItem(episodeId, JSON.stringify(episodeCache));
       } catch (error) {
         showBoundary(error);
       } finally {
@@ -136,15 +142,14 @@ export default function Player({ episodeId }: PlayerProps) {
       try {
         const episode: ISource = await getEpisode(episodeId);
 
-        const data: PreloadedEpisode = {
-          episodeId: episodeId,
+        const episodeCache: PreloadedEpisode = {
           sources: episode.sources,
           qualities: episode.sources
             .map(src => src.quality)
             .filter(src => /\d/.test(src ?? ""))
         }
 
-        localStorage.setItem("preloadedNextEpisode", JSON.stringify(data));
+        sessionStorage.setItem(episodeId, JSON.stringify(episodeCache));
       } catch (error) {
         console.log("Unable to preload next episode.");
       } finally {
