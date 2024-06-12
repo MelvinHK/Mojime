@@ -8,7 +8,6 @@ import * as Sliders from './sliders'
 import { TimeGroup } from './timeGroup';
 import { Dispatch, SetStateAction, createContext, useContext, useState } from 'react';
 import { WatchContext } from '../../contexts/WatchProvider';
-import LoadingAnimation from '../LoadingAnimation';
 
 type VidLayoutContextType = {
   draggedTime: string,
@@ -21,7 +20,7 @@ export const VidLayoutContext = createContext<VidLayoutContextType>({
 });
 
 export function VideoLayout() {
-  const { animeInfo, episodeNoState, isLoadingEpisode } = useContext(WatchContext);
+  const { animeInfo, episodeNoState } = useContext(WatchContext);
 
   const [draggedTime, setDraggedTime] = useState("");
 
@@ -54,11 +53,6 @@ export function VideoLayout() {
           <Buttons.Fullscreen />
         </Controls.Group>
       </Controls.Root>
-      {isLoadingEpisode && (
-        <span className="abs-center w-100 h-100 flex fl-a-center fl-j-center pointer-none">
-          <LoadingAnimation />
-        </span>
-      )}
     </VidLayoutContext.Provider>
   );
 }

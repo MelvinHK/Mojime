@@ -13,12 +13,12 @@ import '@vidstack/react/player/styles/base.css';
 import { throttle } from "lodash-es";
 import { WatchContext, PreloadedEpisode } from "../contexts/WatchProvider";
 import { useErrorBoundary } from "react-error-boundary";
-import LoadingAnimation from "./LoadingAnimation";
-import { useParams } from "react-router-dom";
 import { isAxiosError } from "axios";
+import { useParams } from "react-router-dom";
+import LoadingAnimation from "./LoadingAnimation";
 
 type PlayerContextType = {
-  playerRef: RefObject<MediaPlayerInstance> | undefined
+  playerRef: RefObject<MediaPlayerInstance> | undefined,
 }
 
 export const PlayerContext = createContext<PlayerContextType>({
@@ -38,7 +38,8 @@ export default function Player() {
     episodeNoState,
     setIsLoadingEpisode
   } = useContext(WatchContext);
-  const { animeId } = useParams();
+
+  const { animeId } = useParams()
 
   const source = sources?.find(src => src.quality === selectedQuality)?.url;
   const playerRef = useRef<MediaPlayerInstance>(null);
@@ -101,14 +102,11 @@ export default function Player() {
         }
       }
 
+      setSources([]);
+      setQualities([undefined]);
       setEpisode();
     }
-  }, [episodeNoState, animeInfo]);
-
-  useEffect(() => {
-    setSources([]);
-    setQualities([]);
-  }, [animeId])
+  }, [episodeNoState, animeInfo, animeId]);
 
   useEffect(() => {
     if (qualities) {

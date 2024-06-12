@@ -51,7 +51,7 @@ export const WatchProvider = (props: GPProps) => {
   const { episodeNoParam } = useParams();
 
   // Pseudo episode number url parameter (see '../utils/navigateToEpisode.tsx').
-  const [episodeNoState, setEpisodeNoState] = useState(episodeNoParam); 
+  const [episodeNoState, setEpisodeNoState] = useState(episodeNoParam);
 
   useEffect(() => {
     const handleEpisodeParam = () => {

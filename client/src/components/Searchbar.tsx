@@ -1,13 +1,16 @@
 import { getSearch } from "../utils/api";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { IAnimeResult, ISearch } from "@consumet/extensions";
 import useClickAway from "../utils/hooks/useClickAway";
 import { useNavigate } from "react-router-dom";
 import LoadingAnimation from "./LoadingAnimation";
+import { WatchContext } from "../contexts/WatchProvider";
 
 type subDub = "sub" | "dub";
 
 export default function Searchbar() {
+  const { setEpisodeNoState } = useContext(WatchContext);
+
   const [searchBarQuery, setSearchbarQuery] = useState<string>("");
   const [subOrDubOption, setSubOrDubOption] = useState<subDub>("sub");
 
@@ -55,7 +58,7 @@ export default function Searchbar() {
 
   const handlePageButton = (page: number) => {
     if (isLoading) { return; }
-    
+
     if (searchCache[page - 1]) {
       updateSearchResults(searchCache[page - 1]);
     } else {
@@ -86,6 +89,7 @@ export default function Searchbar() {
       setSearchbarQuery(filteredResults[index].title as string);
       setShowDropdown(false);
       navigate(`/${filteredResults[index].id}/1`);
+      setEpisodeNoState("1");
       searchbarRef?.current?.blur();
     }
   }
