@@ -32,6 +32,7 @@ export default function Player() {
     setSources,
     setQualities,
     selectedQuality,
+    isLoadingEpisode,
     setSelectedQuality,
     currentTime,
     sources,
@@ -103,11 +104,17 @@ export default function Player() {
         }
       }
 
-      setSources([]);
-      setQualities([undefined]);
       setEpisode();
     }
-  }, [episodeNoState, animeInfo, animeId]);
+  }, [episodeNoState, animeInfo]);
+
+  useEffect(() => {
+    if (animeId !== animeInfo?.id) {
+      setSources([]);
+      setQualities([undefined]);
+      setIsLoadingEpisode(true);
+    }
+  }, [animeId, animeInfo])
 
   useEffect(() => {
     if (qualities) {
@@ -174,11 +181,10 @@ export default function Player() {
             onTimeUpdate={throttle(() => handlePreload(), 1000)}
           >
             <MediaProvider />
-            {source ? (
-              <PlayerContext.Provider value={qualityContextValues}>
-                <VideoLayout />
-              </PlayerContext.Provider>
-            ) : (
+            <PlayerContext.Provider value={qualityContextValues}>
+              <VideoLayout />
+            </PlayerContext.Provider>
+            {isLoadingEpisode && (
               <span className="abs-center w-100 h-100 flex fl-a-center fl-j-center pointer-none">
                 <LoadingAnimation />
               </span>
