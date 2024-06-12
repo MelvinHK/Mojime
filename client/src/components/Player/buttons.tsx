@@ -17,13 +17,20 @@ import {
 } from '@vidstack/react/icons';
 import { PlayerContext } from '../Player';
 import { useContext } from 'react';
-import { WatchContext } from '../../Root';
-import { useParams, useNavigate } from 'react-router-dom';
+import { WatchContext } from '../../contexts/WatchProvider';
+import { navigateToEpisode } from '../../utils/navigateToEpisode';
+import useIsMobile from '../../utils/hooks/useIsMobile';
 
 export function Play() {
+  const { isLoadingEpisode } = useContext(WatchContext);
   const isPaused = useMediaState('paused');
+  const isMobile = useIsMobile();
+
   return (
-    <PlayButton className={`play-button ${buttonStyles.button} ${buttonStyles.playButtonMobile}`}>
+    <PlayButton
+      data-mobile-ep-loading={isLoadingEpisode && isMobile ? "true" : "false"}
+      className={`play-button ${buttonStyles.button} ${buttonStyles.playButtonMobile}`}
+    >
       {isPaused ? <PlayIcon /> : <PauseIcon />}
     </PlayButton>
   );
@@ -56,12 +63,15 @@ export function Seek(props: SeekProps) {
 
 export function Quality() {
   const {
+    playerRef
+  } = useContext(PlayerContext);
+
+  const {
     qualities,
     selectedQuality,
     setSelectedQuality,
-    setCurrentTime,
-    playerRef
-  } = useContext(PlayerContext);
+    setCurrentTime
+  } = useContext(WatchContext);
 
   const handleSelect = (p: string | undefined) => {
     if (!p) { return; }
@@ -85,9 +95,9 @@ export function Quality() {
         className={buttonStyles.radioWrapper}
       >
         <RadioGroup.Root>
-          {qualities?.map(p => (
+          {qualities?.map((p, index) => (
             <RadioGroup.Item
-              key={p}
+              key={index}
               value={p}
               className={`${buttonStyles.radioChild} ${p === selectedQuality ? buttonStyles.radioChildSelected : ""}`}
               onSelect={() => handleSelect(p)}
@@ -102,15 +112,14 @@ export function Quality() {
 }
 
 export function Next() {
-  const { animeInfo } = useContext(WatchContext);
-  const { episodeNo } = useParams();
-  const navigate = useNavigate();
+  const { animeInfo, episodeNoState, setEpisodeNoState, setIsLoadingEpisode } = useContext(WatchContext);
 
   const handleNavigate = () => {
-    navigate(`/${animeInfo?.id}/${Number(episodeNo) + 1}`);
+    navigateToEpisode(Number(episodeNoState) + 1, setEpisodeNoState);
+    setIsLoadingEpisode(true);
   }
 
-  return (animeInfo?.episodes?.hasOwnProperty(Number(episodeNo)) && (
+  return (animeInfo?.episodes?.hasOwnProperty(Number(episodeNoState)) && (
     <button
       onClick={() => handleNavigate()}
       className={`${buttonStyles.button}`}

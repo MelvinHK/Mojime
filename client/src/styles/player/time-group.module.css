@@ -17,5 +17,5 @@
 
 .divider {
   margin: 0 2.5px;
-  color: #e0e0e0;
+  color: var(--white);
 }

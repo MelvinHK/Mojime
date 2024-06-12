@@ -1,29 +1,23 @@
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useErrorBoundary } from "react-error-boundary";
 import { useEffect, useRef, useState, ChangeEvent, useContext } from "react";
 
 import { getAnime } from "../utils/api";
 
-import Player from "../components/Player";
-import LoadingAnimation from "../components/LoadingAnimation";
-import { WatchContext } from "../Root";
-import { kaomojis } from "./Home";
+import LoadingAnimation from "./LoadingAnimation";
+import { WatchContext } from "../contexts/WatchProvider";
+import { navigateToEpisode } from "../utils/navigateToEpisode";
 
-interface WatchProps {
-  kaomojiIndex: number,
-}
+import Player from "./Player";
 
-export default function Watch({ kaomojiIndex }: WatchProps) {
-  const { animeInfo, setAnimeInfo } = useContext(WatchContext);
+export default function Watch() {
+  const { animeInfo, setAnimeInfo, episodeNoState, setEpisodeNoState, setIsLoadingEpisode } = useContext(WatchContext);
 
-  const { animeId, episodeNo } = useParams();
-  const episodeNumber = Number(episodeNo);
+  const { animeId } = useParams();
 
-  const [episodeInput, setEpisodeInput] = useState<string>(episodeNo ?? "");
+  const [episodeInput, setEpisodeInput] = useState<string>(episodeNoState ?? "");
 
   const episodeInputRef = useRef<HTMLInputElement>(null);
-
-  const navigate = useNavigate();
 
   const { showBoundary } = useErrorBoundary();
 
@@ -31,7 +25,8 @@ export default function Watch({ kaomojiIndex }: WatchProps) {
     if (!ep || !animeInfo?.episodes?.hasOwnProperty(Number(ep) - 1)) {
       return;
     }
-    navigate(`/${animeId}/${ep}`);
+    navigateToEpisode(ep, setEpisodeNoState);
+    setIsLoadingEpisode(true);
   }
 
   const handleEpInputChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -45,14 +40,14 @@ export default function Watch({ kaomojiIndex }: WatchProps) {
   }
 
   useEffect(() => {
-    if (!animeId || animeId === animeInfo?.id) {
+    if (!animeId || animeId === animeInfo?.id || !episodeNoState) {
       return;
     }
 
     const fetchAnime = async () => {
       try {
         const data = await getAnime(animeId);
-        if (!data.episodes?.hasOwnProperty(episodeNumber - 1)) {
+        if (!data.episodes?.hasOwnProperty(Number(episodeNoState) - 1)) {
           throw new Response(
             "Error: Not Found",
             {
@@ -69,25 +64,30 @@ export default function Watch({ kaomojiIndex }: WatchProps) {
 
     setAnimeInfo(undefined);
     fetchAnime();
-  }, [animeInfo, animeId])
+  }, [animeInfo, animeId, episodeNoState])
 
   useEffect(() => {
-    if (episodeNo && animeInfo)
-      document.title = `${animeInfo?.title} Ep.${episodeNo} - Mojime`
-  }, [episodeNo, animeInfo])
+    if (episodeNoState && animeInfo)
+      document.title = `${animeInfo?.title} Ep.${episodeNoState} - Mojime`
+  }, [episodeNoState, animeInfo])
+
+  useEffect(() => {
+    if (episodeNoState)
+      setEpisodeInput(episodeNoState);
+  }, [episodeNoState])
 
   const episodeInputStyle = {
     width: episodeInput.length + 'ch', // Set width based on the length of the value
   };
 
-  return (animeInfo && episodeNo ? (
+  return (animeInfo && episodeNoState ? (
     <>
-      <Player episodeId={animeInfo.episodes?.[episodeNumber - 1].id} />
+      <Player />
       <p>{animeInfo.title as string}</p>
       <div className="flex gap fl-a-center pb-1p5r">
         <button
-          onClick={() => handleEpisodeNavigate(episodeNumber - 1)}
-          disabled={episodeNumber === 1}
+          onClick={() => handleEpisodeNavigate(Number(episodeNoState) - 1)}
+          disabled={Number(episodeNoState) === 1}
         >
           &lt; Prev
         </button>
@@ -107,7 +107,7 @@ export default function Watch({ kaomojiIndex }: WatchProps) {
               value={episodeInput}
               onKeyDown={(e) => [',', '.', '+', '-'].includes(e.key) && e.preventDefault()}
               onChange={(e) => handleEpInputChange(e)}
-              onBlur={() => setEpisodeInput(episodeNo)}
+              onBlur={() => setEpisodeInput(episodeNoState)}
               style={episodeInputStyle}
               min={1}
               max={animeInfo.episodes?.length}
@@ -116,15 +116,12 @@ export default function Watch({ kaomojiIndex }: WatchProps) {
           <p className="m-0">&nbsp;/ {animeInfo.episodes?.length ?? "?"}</p>
         </div>
         <button
-          onClick={() => handleEpisodeNavigate(episodeNumber + 1)}
-          disabled={episodeNumber >= (animeInfo.episodes?.length ?? episodeNumber + 1)}
+          onClick={() => handleEpisodeNavigate(Number(episodeNoState) + 1)}
+          disabled={Number(episodeNoState) >= (animeInfo.episodes?.length ?? Number(episodeNoState) + 1)}
         >
           Next &gt;
         </button>
       </div>
-      <Link to="/" id="home">
-        {kaomojis[kaomojiIndex]}
-      </Link>
     </>
   ) : (
     <span className="abs-center flex fl-a-center fl-j-center">

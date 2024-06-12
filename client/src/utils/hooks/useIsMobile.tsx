@@ -4,7 +4,7 @@ const useIsMobile = (): boolean => {
   const [isMobile, setIsMobile] = useState<boolean>(false);
 
   useEffect(() => {
-    const checkDeviceType = () => setIsMobile(window.matchMedia('(max-width: 768px)').matches);
+    const checkDeviceType = () => setIsMobile(window.matchMedia('(max-width: 1024px)').matches);
 
     checkDeviceType();
     window.addEventListener('resize', checkDeviceType);

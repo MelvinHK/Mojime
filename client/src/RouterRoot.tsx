@@ -7,12 +7,12 @@ import {
 
 import Error from './pages/Error.tsx';
 import Root from './Root.tsx';
-import Home, { kaomojis } from './pages/Home.tsx';
-import Watch from './pages/Watch.tsx';
+import Home from './pages/Home.tsx';
 
 import './styles/index.css'
 import './styles/components.css'
 import './styles/attributes.css'
+import WatchLayout from './pages/WatchLayout.tsx';
 
 const router = createBrowserRouter([
   {
@@ -25,8 +25,8 @@ const router = createBrowserRouter([
         element: <Home />
       },
       {
-        path: ":animeId/:episodeNo",
-        element: <Watch kaomojiIndex={Math.floor(Math.random() * kaomojis.length)} />
+        path: ":animeId/:episodeNoParam",
+        element: <WatchLayout />
       }
     ]
   }

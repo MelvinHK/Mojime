@@ -11,7 +11,7 @@
   align-items: center;
   width: 40px;
   height: 40px;
-  color: white;
+  color: var(--white);
   cursor: pointer;
   /* Resets. */
   padding: 0;
@@ -27,7 +27,11 @@
 
 /* Easy way to hide all buttons that are not supported in current env (e.g. fullscreen/pip). */
 .button[aria-hidden='true'] {
-  display: none;
+  display: none !important;
+}
+
+.button[data-mobile-ep-loading='true'] {
+  visibility: hidden !important;
 }
 
 .button>svg {

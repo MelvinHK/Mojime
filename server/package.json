@@ -14,7 +14,8 @@
   "dependencies": {
     "@consumet/extensions": "^1.6.0",
     "axios": "^1.7.0",
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.3.1"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",

@@ -60,7 +60,7 @@
   width: 30px;
   height: 15px;
   border-radius: 9999px;
-  background-color: #fff;
+  background-color: var(--white);
   transform: translate(-50%, -50%) translateZ(0) scale(0, 0);
   transition: transform 0.05s;
   pointer-events: none;
