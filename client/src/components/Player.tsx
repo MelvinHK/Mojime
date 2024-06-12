@@ -66,6 +66,7 @@ export default function Player() {
   }
 
   useEffect(() => {
+    isPreloadThreshold.current = false;
     const episodeId = animeInfo?.episodes?.[Number(episodeNoState) - 1].id as string;
 
     if (episodeId) {
