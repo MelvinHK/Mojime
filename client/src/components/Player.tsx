@@ -154,6 +154,10 @@ export default function Player() {
       const episodeId = animeInfo.episodes?.[Number(episodeNoState)].id
 
       try {
+        if (abortControllerRef.current) {
+          abortControllerRef.current.abort();
+        }
+
         const episode: ISource = await getEpisodeWithAbort(episodeId);
 
         const episodeCache: PreloadedEpisode = {
