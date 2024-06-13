@@ -99,7 +99,7 @@ export function Quality() {
             <RadioGroup.Item
               key={index}
               value={p}
-              className={`${buttonStyles.radioChild} ${p === selectedQuality ? buttonStyles.radioChildSelected : ""}`}
+              className={`${buttonStyles.radioChild} ${p === selectedQuality ? "o-disabled pointer-none" : ""}`}
               onSelect={() => handleSelect(p)}
             >
               {p}

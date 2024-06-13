@@ -67,10 +67,6 @@
   cursor: pointer;
 }
 
-.radioChildSelected {
-  text-decoration: underline;
-}
-
 .playbackSpacer {
   display: none;
 }
