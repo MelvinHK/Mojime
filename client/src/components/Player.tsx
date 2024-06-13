@@ -137,7 +137,7 @@ export default function Player() {
     }
   }, [currentTime]);
 
-  const handlePreload = async () => {
+  const handlePreloadNextEpisode = async () => {
     if (
       !playerRef.current ||
       isPreloadThreshold.current ||
@@ -146,19 +146,19 @@ export default function Player() {
       return;
     }
 
-    const duration = playerRef.current.duration;
-    const currentTime = playerRef.current.currentTime;
-    const progressPercent = currentTime / duration;
+    const progressPercent = playerRef.current.currentTime / playerRef.current.duration;
 
     if (progressPercent >= 0.75) {
-      const episodeId = animeInfo.episodes?.[Number(episodeNoState)].id
+      const nextEpisodeId = animeInfo.episodes?.[Number(episodeNoState)].id;
 
       try {
         if (abortControllerRef.current) {
           abortControllerRef.current.abort();
         }
 
-        const episode: ISource = await getEpisodeWithAbort(episodeId);
+        if (sessionStorage.getItem(nextEpisodeId)) { return; }
+
+        const episode: ISource = await getEpisodeWithAbort(nextEpisodeId);
 
         const episodeCache: PreloadedEpisode = {
           sources: episode.sources,
@@ -167,7 +167,7 @@ export default function Player() {
             .filter(src => /\d/.test(src ?? ""))
         }
 
-        sessionStorage.setItem(episodeId, JSON.stringify(episodeCache));
+        sessionStorage.setItem(nextEpisodeId, JSON.stringify(episodeCache));
       } catch (error) {
         return;
       } finally {
@@ -186,7 +186,9 @@ export default function Player() {
             playsInline
             autoPlay
             ref={playerRef}
-            onTimeUpdate={throttle(() => handlePreload(), 1000)}
+            onTimeUpdate={throttle(() =>
+              handlePreloadNextEpisode(), 1000
+            )}
           >
             <MediaProvider />
             <PlayerContext.Provider value={qualityContextValues}>
