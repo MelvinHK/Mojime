@@ -89,7 +89,7 @@
 
 .gesture[action='seek:-10'],
 .gesture[action='seek:10'] {
-  width: 20%;
+  width: 25%;
   z-index: 1;
   background: transparent;
 }
