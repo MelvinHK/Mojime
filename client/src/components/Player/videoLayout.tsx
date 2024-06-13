@@ -1,6 +1,4 @@
 import styles from '../../styles/player/video-layout.module.css'
-import buttonStyles from '../../styles/player/button.module.css';
-
 import { Controls, Gesture } from '@vidstack/react';
 
 import * as Buttons from './buttons';
@@ -38,9 +36,7 @@ export function VideoLayout() {
         <Sliders.Time />
         <Controls.Group className={styles.controlsGroup}>
           <div className={styles.playbackControls}>
-            {animeInfo?.episodes?.hasOwnProperty(Number(episodeNoState)) && (
-              <div className={`${buttonStyles.playbackSpacer} ${buttonStyles.button} pointer-none`}></div>
-            )}
+            <Buttons.Previous />
             <Buttons.Play />
             <Buttons.Next />
           </div>

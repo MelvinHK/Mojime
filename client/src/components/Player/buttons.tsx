@@ -13,7 +13,8 @@ import {
   FullscreenIcon,
   PauseIcon,
   PlayIcon,
-  NextIcon
+  NextIcon,
+  PreviousIcon
 } from '@vidstack/react/icons';
 import { PlayerContext } from '../Player';
 import { useContext } from 'react';
@@ -119,12 +120,36 @@ export function Next() {
     setIsLoadingEpisode(true);
   }
 
-  return (animeInfo?.episodes?.hasOwnProperty(Number(episodeNoState)) && (
+  return (animeInfo?.episodes?.hasOwnProperty(Number(episodeNoState)) ? (
     <button
       onClick={() => handleNavigate()}
       className={`${buttonStyles.button}`}
     >
       <NextIcon />
     </button>
+  ) : (
+    <div className={`${buttonStyles.playbackSpacer} ${buttonStyles.button} pointer-none`}></div>
   ));
 }
+
+
+export function Previous() {
+  const { animeInfo, episodeNoState, setEpisodeNoState, setIsLoadingEpisode } = useContext(WatchContext);
+
+  const handleNavigate = () => {
+    navigateToEpisode(Number(episodeNoState) - 1, setEpisodeNoState);
+    setIsLoadingEpisode(true);
+  }
+
+  return (animeInfo?.episodes?.hasOwnProperty(Number(episodeNoState) - 2) ? (
+    <button
+      onClick={() => handleNavigate()}
+      className={`${buttonStyles.button}`}
+    >
+      <PreviousIcon />
+    </button>
+  ) : (
+    <div className={`${buttonStyles.playbackSpacer} ${buttonStyles.button} pointer-none`}></div>
+  ));
+}
+
