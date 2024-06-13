@@ -18,10 +18,7 @@
   margin: 0 var(--pad-x);
   -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
-}
-
-.sliderSmall {
-  max-width: 72px;
+  z-index: 2;
 }
 
 .slider[data-focus] .track {
@@ -38,10 +35,11 @@
   transform: translateY(-60%) translateZ(0);
   background-color: rgb(255 255 255 / 0.3);
   contain: layout style;
+  z-index: 2;
 }
 
 .trackFill {
-  z-index: 2;
+  z-index: 3;
   /** above track and track progress. */
   background-color: var(--media-brand);
   width: var(--slider-fill, 0%);
@@ -65,7 +63,7 @@
   transition: transform 0.05s;
   pointer-events: none;
   will-change: left;
-  z-index: 2;
+  z-index: 3;
   display: flex;
   align-items: center;
   justify-content: center;

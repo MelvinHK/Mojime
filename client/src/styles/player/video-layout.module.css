@@ -82,12 +82,6 @@
   z-index: 0;
 }
 
-.gesture[action='seek:-10'],
-.gesture[action='seek:10'] {
-  width: 20%;
-  z-index: 1;
-}
-
 .gesture[action='seek:10'] {
   left: unset;
   right: 0;
@@ -95,8 +89,36 @@
 
 .gesture[action='seek:-10'],
 .gesture[action='seek:10'] {
-  width: 20%;
+  width: 30%;
   z-index: 1;
+  background: transparent;
+}
+
+.seekTenFeedback {
+  width: 100%;
+  height: 100%;
+  transition: 0.25s ease-out;
+  pointer-events: none;
+  opacity: 0;
+  color: transparent;
+}
+
+.seekTenFeedback[data-triggered="true"] {
+  opacity: 1;
+  color: var(--white);
+}
+
+.seekTenFeedback[data-triggered="false"] {
+  opacity: 0;
+  color: transparent
+}
+
+.seekTenFeedback[data-seek-type="true"] {
+  background-image: linear-gradient(to left, rgba(0, 0, 0, 0.314) 70%, rgba(0, 0, 0, 0));
+}
+
+.seekTenFeedback[data-seek-type="false"] {
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.314) 70%, rgba(0, 0, 0, 0));
 }
 
 /* Remove toggle to pause on touch. */

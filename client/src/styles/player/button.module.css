@@ -24,6 +24,7 @@
   -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
   pointer-events: auto;
+  z-index: 2;
 }
 
 /* Easy way to hide all buttons that are not supported in current env (e.g. fullscreen/pip). */
