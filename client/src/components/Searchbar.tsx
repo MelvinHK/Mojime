@@ -45,15 +45,19 @@ export default function Searchbar() {
 
   const handleSearch = async (query: string, page: number) => {
     if (!query.trim()) { return; }
-
+    
     setIsLoading(true);
-
-    const search = await getSearch(query, page);
-    updateSearchResults(search);
-
-    // 2. Page === 1 implies a new search; remove existing cache.
-    setSearchCache(page === 1 ? [search] : [...searchCache, search]);
-    if (page === 1) { setPageNavQuery(searchBarQuery); }
+    try {
+      const search = await getSearch(query, page);
+      updateSearchResults(search);
+      // 2. Page === 1 implies a new search; remove existing cache.
+      setSearchCache(page === 1 ? [search] : [...searchCache, search]);
+      if (page === 1) { setPageNavQuery(searchBarQuery); }
+    } catch (error) {
+      return;
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   const handlePageButton = (page: number) => {
@@ -71,7 +75,6 @@ export default function Searchbar() {
     setCurrentPage(search.currentPage as number);
     setHasNextPage(search.hasNextPage);
     setShowDropdown(true);
-    setIsLoading(false);
   }
 
   const resetSearchbar = () => {

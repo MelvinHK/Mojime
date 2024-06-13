@@ -23,6 +23,7 @@
   touch-action: manipulation;
   -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
+  pointer-events: auto;
 }
 
 /* Easy way to hide all buttons that are not supported in current env (e.g. fullscreen/pip). */
@@ -58,7 +59,7 @@
 .radioWrapper {
   padding: calc(var(--pad-y)/2) 0;
   border-radius: var(--b-radius);
-  background-color: var(--gray);
+  background-color: rgba(0, 0, 0, 0.464);
 }
 
 .radioChild {

@@ -30,7 +30,6 @@ export function VideoLayout() {
 
   return (
     <VidLayoutContext.Provider value={VidLayoutContextValues}>
-      <Gestures />
       <Controls.Root className={styles.controls} hideOnMouseLeave={true}>
         <p className={styles.playerTitle}>
           {animeInfo?.title as string} - Episode {episodeNoState}
@@ -40,7 +39,7 @@ export function VideoLayout() {
         <Controls.Group className={styles.controlsGroup}>
           <div className={styles.playbackControls}>
             {animeInfo?.episodes?.hasOwnProperty(Number(episodeNoState)) && (
-              <div className={`${buttonStyles.playbackSpacer} ${buttonStyles.button}`}></div>
+              <div className={`${buttonStyles.playbackSpacer} ${buttonStyles.button} pointer-none`}></div>
             )}
             <Buttons.Play />
             <Buttons.Next />
@@ -53,6 +52,7 @@ export function VideoLayout() {
           <Buttons.Fullscreen />
         </Controls.Group>
       </Controls.Root>
+      <Gestures />
     </VidLayoutContext.Provider>
   );
 }

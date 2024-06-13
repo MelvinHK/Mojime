@@ -3,7 +3,9 @@ import { getEpisode } from "../utils/api";
 
 import { ISource } from "@consumet/extensions";
 
-import styles from '../styles/player/player.module.css';
+import plStyles from '../styles/player/player.module.css';
+import vlStyles from '../styles/player/video-layout.module.css'
+
 
 import { MediaPlayer, MediaProvider, MediaPlayerInstance } from '@vidstack/react';
 
@@ -51,10 +53,8 @@ export default function Player() {
   const { showBoundary } = useErrorBoundary();
 
   const abortControllerRef = useRef<AbortController | null>(null);
-  const getEpisodeWithAbortSignal = async (episodeId: string) => {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
+
+  const getEpisodeWithAbort = async (episodeId: string) => {
     const newAbortController = new AbortController();
     abortControllerRef.current = newAbortController;
     try {
@@ -71,6 +71,10 @@ export default function Player() {
     const episodeId = animeInfo?.episodes?.[Number(episodeNoState) - 1].id as string;
 
     if (episodeId) {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+
       const setEpisode = async () => {
         const preloaded = sessionStorage.getItem(episodeId);
         if (preloaded) {
@@ -82,7 +86,7 @@ export default function Player() {
         }
 
         try {
-          const episode: ISource = await getEpisodeWithAbortSignal(episodeId);
+          const episode: ISource = await getEpisodeWithAbort(episodeId);
           const sources = episode.sources;
           const qualities = episode.sources
             .map(src => src.quality)
@@ -150,7 +154,7 @@ export default function Player() {
       const episodeId = animeInfo.episodes?.[Number(episodeNoState)].id
 
       try {
-        const episode: ISource = await getEpisodeWithAbortSignal(episodeId);
+        const episode: ISource = await getEpisodeWithAbort(episodeId);
 
         const episodeCache: PreloadedEpisode = {
           sources: episode.sources,
@@ -173,7 +177,7 @@ export default function Player() {
       <div id="player-ratio">
         <div id="player-wrapper">
           <MediaPlayer
-            className={`${styles.player} player`}
+            className={`${plStyles.player} player`}
             src={source}
             playsInline
             autoPlay
@@ -186,6 +190,7 @@ export default function Player() {
             </PlayerContext.Provider>
             {isLoadingEpisode && (
               <span className="abs-center w-100 h-100 flex fl-a-center fl-j-center pointer-none">
+                <div className={vlStyles.loadingBackground}></div>
                 <LoadingAnimation />
               </span>
             )}
