@@ -11,7 +11,7 @@ import { navigateToEpisode } from "../utils/navigateToEpisode";
 import Player from "./Player";
 
 export default function Watch() {
-  const { animeInfo, setAnimeInfo, episodeNoState, setEpisodeNoState, setIsLoadingEpisode } = useContext(WatchContext);
+  const { animeInfo, setAnimeInfo, episodeNoState, setEpisodeNoState } = useContext(WatchContext);
 
   const { animeId } = useParams();
 
@@ -26,7 +26,6 @@ export default function Watch() {
       return;
     }
     navigateToEpisode(ep, setEpisodeNoState);
-    setIsLoadingEpisode(true);
   }
 
   const handleEpInputChange = (event: ChangeEvent<HTMLInputElement>) => {

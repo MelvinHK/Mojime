@@ -141,10 +141,9 @@ export function Quality() {
 }
 
 export function Next() {
-  const { animeInfo, episodeNoState, setEpisodeNoState, setIsLoadingEpisode } = useContext(WatchContext);
+  const { animeInfo, episodeNoState, setEpisodeNoState } = useContext(WatchContext);
 
   const handleNavigate = () => {
-    setIsLoadingEpisode(true);
     navigateToEpisode(Number(episodeNoState) + 1, setEpisodeNoState);
   }
 
@@ -163,10 +162,9 @@ export function Next() {
 
 
 export function Previous() {
-  const { animeInfo, episodeNoState, setEpisodeNoState, setIsLoadingEpisode } = useContext(WatchContext);
+  const { animeInfo, episodeNoState, setEpisodeNoState } = useContext(WatchContext);
 
   const handleNavigate = () => {
-    setIsLoadingEpisode(true);
     navigateToEpisode(Number(episodeNoState) - 1, setEpisodeNoState);
   }
 

@@ -47,7 +47,7 @@ export default function Player() {
 
   const source = sources?.find(src => src.quality === selectedQuality)?.url;
   const playerRef = useRef<MediaPlayerInstance>(null);
-  const isPreloadThreshold = useRef(false);
+  const isPreloadingAllowed = useRef(true);
 
   const qualityContextValues: PlayerContextType = { playerRef }
 
@@ -60,7 +60,6 @@ export default function Player() {
     abortControllerRef.current = newAbortController;
     try {
       const episode: ISource = await getEpisode(episodeId, newAbortController.signal);
-      setIsLoadingEpisode(false);
       return episode;
     } catch (error) {
       throw error;
@@ -68,25 +67,19 @@ export default function Player() {
   }
 
   useEffect(() => {
-    isPreloadThreshold.current = false;
-    const episodeId = animeInfo?.episodes?.[Number(episodeNoState) - 1].id as string;
+    const episodeId = animeInfo?.episodes?.[Number(episodeNoState) - 1].id;
 
-    if (episodeId) {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
+    const setEpisode = async () => {
+      if (!episodeId || !playerRef.current) { return; }
 
-      const setEpisode = async () => {
-        const preloaded = sessionStorage.getItem(episodeId);
-        if (preloaded) {
-          const parsed: PreloadedEpisode = JSON.parse(preloaded);
-          setSources(parsed.sources);
-          setQualities(parsed.qualities);
-          setIsLoadingEpisode(false);
-          return;
-        }
-
+      const preloaded = sessionStorage.getItem(episodeId);
+      if (preloaded) {
+        const parsed: PreloadedEpisode = JSON.parse(preloaded);
+        setSources(parsed.sources);
+        setQualities(parsed.qualities);
+      } else {
         try {
+          isPreloadingAllowed.current = false;
           const episode: ISource = await getEpisodeWithAbort(episodeId);
           const sources = episode.sources;
           const qualities = episode.sources
@@ -108,16 +101,22 @@ export default function Player() {
           showBoundary(error);
         }
       }
-
-      setEpisode();
+      setIsLoadingEpisode(false);
+      isPreloadingAllowed.current = true;
+      playerRef.current.currentTime = 0;
     }
+
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    setIsLoadingEpisode(true);
+    setEpisode();
   }, [episodeNoState, animeInfo]);
 
   useEffect(() => {
     if (animeId !== animeInfo?.id) {
       setSources([]);
       setQualities([undefined]);
-      setIsLoadingEpisode(true);
     }
   }, [animeId, animeInfo])
 
@@ -141,7 +140,7 @@ export default function Player() {
   const handlePreloadNextEpisode = async () => {
     if (
       !playerRef.current ||
-      isPreloadThreshold.current ||
+      !isPreloadingAllowed.current ||
       !animeInfo?.episodes?.hasOwnProperty(Number(episodeNoState))
     ) {
       return;
@@ -150,29 +149,26 @@ export default function Player() {
     const progressPercent = playerRef.current.currentTime / playerRef.current.duration;
 
     if (progressPercent >= 0.75) {
+      isPreloadingAllowed.current = false;
       const nextEpisodeId = animeInfo.episodes?.[Number(episodeNoState)].id;
 
+      if (sessionStorage.getItem(nextEpisodeId)) { return; }
+
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+
       try {
-        if (abortControllerRef.current) {
-          abortControllerRef.current.abort();
-        }
-
-        if (sessionStorage.getItem(nextEpisodeId)) { return; }
-
         const episode: ISource = await getEpisodeWithAbort(nextEpisodeId);
-
         const episodeCache: PreloadedEpisode = {
           sources: episode.sources,
           qualities: episode.sources
             .map(src => src.quality)
             .filter(src => /\d/.test(src ?? ""))
         }
-
         sessionStorage.setItem(nextEpisodeId, JSON.stringify(episodeCache));
       } catch (error) {
         return;
-      } finally {
-        isPreloadThreshold.current = true;
       }
     }
   }
