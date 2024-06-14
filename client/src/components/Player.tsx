@@ -6,7 +6,6 @@ import { ISource } from "@consumet/extensions";
 import plStyles from '../styles/player/player.module.css';
 import vlStyles from '../styles/player/video-layout.module.css'
 
-
 import { MediaPlayer, MediaProvider, MediaPlayerInstance } from '@vidstack/react';
 
 import { VideoLayout } from './Player/videoLayout';
@@ -18,6 +17,7 @@ import { useErrorBoundary } from "react-error-boundary";
 import { isAxiosError } from "axios";
 import { useParams } from "react-router-dom";
 import LoadingAnimation from "./LoadingAnimation";
+import { navigateToEpisode } from "../utils/navigateToEpisode";
 
 type PlayerContextType = {
   playerRef: RefObject<MediaPlayerInstance> | undefined,
@@ -39,7 +39,8 @@ export default function Player() {
     currentTime,
     sources,
     episodeNoState,
-    setIsLoadingEpisode
+    setIsLoadingEpisode,
+    setEpisodeNoState
   } = useContext(WatchContext);
 
   const { animeId } = useParams()
@@ -176,8 +177,8 @@ export default function Player() {
     }
   }
 
-  // const hasNext = animeInfo?.episodes?.hasOwnProperty(Number(episodeNoState));
-  // const hasPrevious = animeInfo?.episodes?.hasOwnProperty(Number(episodeNoState) - 2);
+  const hasNext = animeInfo?.episodes?.hasOwnProperty(Number(episodeNoState));
+  const hasPrevious = animeInfo?.episodes?.hasOwnProperty(Number(episodeNoState) - 2);
 
   const keyShortcuts = {
     togglePaused: 'k Space',
@@ -187,12 +188,24 @@ export default function Player() {
     seekForward: 'l L ArrowRight',
     volumeUp: 'ArrowUp',
     volumeDown: 'ArrowDown',
-    // nextEp: {
-    //   keys: '.',
-    //   onKeyUp() {
-    //     console.log("yo")
-    //   }
-    // }
+    nextEp: {
+      keys: '.',
+      onKeyUp() {
+        if (hasNext) {
+          setIsLoadingEpisode(true);
+          navigateToEpisode(Number(episodeNoState) + 1, setEpisodeNoState);
+        }
+      }
+    },
+    prevEp: {
+      keys: ',',
+      onKeyUp() {
+        if (hasPrevious) {
+          setIsLoadingEpisode(true);
+          navigateToEpisode(Number(episodeNoState) - 1, setEpisodeNoState);
+        }
+      }
+    }
   }
 
   return (

@@ -144,8 +144,8 @@ export function Next() {
   const { animeInfo, episodeNoState, setEpisodeNoState, setIsLoadingEpisode } = useContext(WatchContext);
 
   const handleNavigate = () => {
-    navigateToEpisode(Number(episodeNoState) + 1, setEpisodeNoState);
     setIsLoadingEpisode(true);
+    navigateToEpisode(Number(episodeNoState) + 1, setEpisodeNoState);
   }
 
   const hasNext = animeInfo?.episodes?.hasOwnProperty(Number(episodeNoState));
@@ -166,8 +166,8 @@ export function Previous() {
   const { animeInfo, episodeNoState, setEpisodeNoState, setIsLoadingEpisode } = useContext(WatchContext);
 
   const handleNavigate = () => {
-    navigateToEpisode(Number(episodeNoState) - 1, setEpisodeNoState);
     setIsLoadingEpisode(true);
+    navigateToEpisode(Number(episodeNoState) - 1, setEpisodeNoState);
   }
 
   const hasPrevious = animeInfo?.episodes?.hasOwnProperty(Number(episodeNoState) - 2);
