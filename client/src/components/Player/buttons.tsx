@@ -14,27 +14,55 @@ import {
   PauseIcon,
   PlayIcon,
   NextIcon,
-  PreviousIcon
+  PreviousIcon,
+  MuteIcon,
+  VolumeHighIcon,
+  VolumeLowIcon
 } from '@vidstack/react/icons';
 import { PlayerContext } from '../Player';
 import { useContext } from 'react';
 import { WatchContext } from '../../contexts/WatchProvider';
 import { navigateToEpisode } from '../../utils/navigateToEpisode';
-import useIsMobile from '../../utils/hooks/useIsMobile';
+import useIsMobileMatchMedia from '../../utils/hooks/useIsMobile';
+import { Volume } from './sliders';
 
 export function Play() {
   const { isLoadingEpisode } = useContext(WatchContext);
   const isPaused = useMediaState('paused');
-  const isMobile = useIsMobile();
+  const isMobileMatchMedia = useIsMobileMatchMedia();
 
   return (
     <PlayButton
-      data-mobile-ep-loading={isLoadingEpisode && isMobile ? "true" : "false"}
+      data-mobile-ep-loading={isLoadingEpisode && isMobileMatchMedia ? "true" : "false"}
       className={`play-button ${buttonStyles.button} ${buttonStyles.playButtonMobile}`}
     >
       {isPaused ? <PlayIcon /> : <PauseIcon />}
     </PlayButton>
   );
+}
+
+export function Mute() {
+  const volume = useMediaState('volume');
+
+  return (<Menu.Root>
+    <Menu.Button className={`${buttonStyles.button} ${buttonStyles.volume}`}>
+      {volume == 0 ? (
+        <MuteIcon />
+      ) : volume < 0.5 ? (
+        <VolumeLowIcon />
+      ) : (
+        <VolumeHighIcon />
+      )}
+    </Menu.Button>
+    <Menu.Items
+      placement="top"
+      offset={20}
+      className={`flex fl-col fl-a-center ${buttonStyles.radioWrapper}`}
+    >
+      <Volume />
+      {Math.floor(volume * 10)}
+    </Menu.Items>
+  </Menu.Root>);
 }
 
 export function Fullscreen() {
@@ -120,16 +148,17 @@ export function Next() {
     setIsLoadingEpisode(true);
   }
 
-  return (animeInfo?.episodes?.hasOwnProperty(Number(episodeNoState)) ? (
+  const hasNext = animeInfo?.episodes?.hasOwnProperty(Number(episodeNoState));
+
+  return (
     <button
       onClick={() => handleNavigate()}
       className={`${buttonStyles.button}`}
+      disabled={!hasNext}
     >
       <NextIcon />
     </button>
-  ) : (
-    <div className={`${buttonStyles.playbackSpacer} ${buttonStyles.button} pointer-none`}></div>
-  ));
+  );
 }
 
 
@@ -141,15 +170,16 @@ export function Previous() {
     setIsLoadingEpisode(true);
   }
 
-  return (animeInfo?.episodes?.hasOwnProperty(Number(episodeNoState) - 2) ? (
+  const hasPrevious = animeInfo?.episodes?.hasOwnProperty(Number(episodeNoState) - 2);
+
+  return (
     <button
       onClick={() => handleNavigate()}
       className={`${buttonStyles.button}`}
+      disabled={!hasPrevious}
     >
       <PreviousIcon />
     </button>
-  ) : (
-    <div className={`${buttonStyles.playbackSpacer} ${buttonStyles.button} pointer-none`}></div>
-  ));
+  );
 }
 

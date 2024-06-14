@@ -57,6 +57,10 @@
   text-decoration: underline;
 }
 
+.volume {
+  margin-right: var(--pad-x);
+}
+
 .radioWrapper {
   padding: calc(var(--pad-y)/2) 0;
   border-radius: var(--b-radius);
@@ -68,17 +72,9 @@
   cursor: pointer;
 }
 
-.playbackSpacer {
-  display: none;
-}
-
-@media (max-width: 1024px) {
+@media (max-width: 1368px) {
   .playButtonMobile {
     width: 80px;
     height: 80px;
-  }
-
-  .playbackSpacer {
-    display: initial;
   }
 }

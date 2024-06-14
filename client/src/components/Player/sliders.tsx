@@ -1,7 +1,7 @@
 import { useContext, useRef } from 'react';
 import styles from '../../styles/player/slider.module.css';
 
-import { TimeSlider, TimeSliderInstance } from '@vidstack/react';
+import { TimeSlider, TimeSliderInstance, VolumeSlider } from '@vidstack/react';
 import { PlayerContext } from '../Player';
 import { VidLayoutContext } from './videoLayout';
 
@@ -41,5 +41,23 @@ export function Time() {
 
       <TimeSlider.Thumb className={styles.thumb} />
     </TimeSlider.Root>
+  );
+}
+
+export function Volume() {
+  const handleSaveVolume = (value: number) => {
+    localStorage.setItem("preferredVolume", String(value));
+  }
+
+  return (
+    <VolumeSlider.Root
+      className={`volume-slider ${styles.slider} ${styles.sliderSmall}`}
+      orientation='vertical'
+      onDragEnd={(detail) => handleSaveVolume(detail)}
+    >
+      <VolumeSlider.Track className={styles.track} />
+      <VolumeSlider.TrackFill className={`${styles.trackFill} ${styles.track}`} />
+      <VolumeSlider.Thumb className={styles.thumb} />
+    </VolumeSlider.Root>
   );
 }

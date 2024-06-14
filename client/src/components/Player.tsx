@@ -176,6 +176,25 @@ export default function Player() {
     }
   }
 
+  // const hasNext = animeInfo?.episodes?.hasOwnProperty(Number(episodeNoState));
+  // const hasPrevious = animeInfo?.episodes?.hasOwnProperty(Number(episodeNoState) - 2);
+
+  const keyShortcuts = {
+    togglePaused: 'k Space',
+    toggleFullscreen: 'f',
+    togglePictureInPicture: 'i',
+    seekBackward: 'j J ArrowLeft',
+    seekForward: 'l L ArrowRight',
+    volumeUp: 'ArrowUp',
+    volumeDown: 'ArrowDown',
+    // nextEp: {
+    //   keys: '.',
+    //   onKeyUp() {
+    //     console.log("yo")
+    //   }
+    // }
+  }
+
   return (
     <div id="player-container">
       <div id="player-ratio">
@@ -189,6 +208,8 @@ export default function Player() {
             onTimeUpdate={throttle(() =>
               handlePreloadNextEpisode(), 1000
             )}
+            volume={Number(localStorage.getItem("preferredVolume")) * 0.01 || 1}
+            keyShortcuts={keyShortcuts}
           >
             <MediaProvider />
             <PlayerContext.Provider value={qualityContextValues}>

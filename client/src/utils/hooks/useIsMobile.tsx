@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 
-const useIsMobile = (): boolean => {
+const useIsMobileMatchMedia = (): boolean => {
   const [isMobile, setIsMobile] = useState<boolean>(false);
 
   useEffect(() => {
-    const checkDeviceType = () => setIsMobile(window.matchMedia('(max-width: 1024px)').matches);
+    const checkDeviceType = () => setIsMobile(window.matchMedia('(max-width: 1368px)').matches);
 
     checkDeviceType();
     window.addEventListener('resize', checkDeviceType);
@@ -15,4 +15,4 @@ const useIsMobile = (): boolean => {
   return isMobile;
 };
 
-export default useIsMobile;
+export default useIsMobileMatchMedia;

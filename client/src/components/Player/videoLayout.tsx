@@ -6,6 +6,7 @@ import * as Sliders from './sliders'
 import { TimeGroup } from './timeGroup';
 import { Dispatch, SetStateAction, createContext, useContext, useState } from 'react';
 import { WatchContext } from '../../contexts/WatchProvider';
+import { isDesktop } from 'react-device-detect';
 
 type VidLayoutContextType = {
   draggedTime: string,
@@ -44,6 +45,9 @@ export function VideoLayout() {
           <Buttons.Seek seconds={25} />
           <Buttons.Seek seconds={85} />
           <div className={styles.spacer} />
+          {isDesktop && (
+            <Buttons.Mute />
+          )}
           <Buttons.Quality />
           <Buttons.Fullscreen />
         </Controls.Group>
