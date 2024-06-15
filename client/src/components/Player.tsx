@@ -188,7 +188,6 @@ export default function Player() {
       keys: '.',
       onKeyUp() {
         if (hasNext) {
-          setIsLoadingEpisode(true);
           navigateToEpisode(Number(episodeNoState) + 1, setEpisodeNoState);
         }
       }
@@ -197,7 +196,6 @@ export default function Player() {
       keys: ',',
       onKeyUp() {
         if (hasPrevious) {
-          setIsLoadingEpisode(true);
           navigateToEpisode(Number(episodeNoState) - 1, setEpisodeNoState);
         }
       }

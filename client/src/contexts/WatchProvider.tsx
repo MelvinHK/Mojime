@@ -1,4 +1,4 @@
-import { createContext, Dispatch, SetStateAction, useEffect, useState } from "react"
+import { createContext, Dispatch, SetStateAction, useState } from "react"
 import { IAnimeInfo, IVideo } from "@consumet/extensions";
 import { useParams } from "react-router-dom";
 
@@ -52,19 +52,6 @@ export const WatchProvider = (props: GPProps) => {
 
   // Pseudo episode number url parameter (see '../utils/navigateToEpisode.tsx').
   const [episodeNoState, setEpisodeNoState] = useState(episodeNoParam);
-
-  useEffect(() => {
-    const handleEpisodeParam = () => {
-      setEpisodeNoState(location.href.substring(location.href.lastIndexOf('/') + 1));
-    }
-
-    window.addEventListener('popstate', handleEpisodeParam);
-    return () => window.removeEventListener('popstate', handleEpisodeParam);
-  }, [])
-
-  useEffect(() => {
-    setEpisodeNoState(episodeNoParam);
-  }, [episodeNoParam])
 
   const [sources, setSources] = useState<IVideo[]>([]);
   const [qualities, setQualities] = useState<(string | undefined)[]>([undefined]);
