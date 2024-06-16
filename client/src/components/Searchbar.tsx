@@ -1,5 +1,5 @@
 import { getSearch } from "../utils/api";
-import { useState, useEffect, useRef, useContext } from "react";
+import { useState, useEffect, useRef, useContext, useMemo } from "react";
 import { IAnimeResult, ISearch } from "@consumet/extensions";
 import useClickAway from "../utils/hooks/useClickAway";
 import { useNavigate } from "react-router-dom";
@@ -15,8 +15,9 @@ export default function Searchbar() {
   const [subOrDubOption, setSubOrDubOption] = useState<subDub>("sub");
 
   const [resultsList, setResultsList] = useState<IAnimeResult[]>();
-  const filteredResults = resultsList?.filter(result =>
-    result.subOrDub === subOrDubOption
+  const filteredResults = useMemo(() =>
+    resultsList?.filter(result => result.subOrDub === subOrDubOption),
+    [resultsList, subOrDubOption]
   );
 
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -45,7 +46,7 @@ export default function Searchbar() {
 
   const handleSearch = async (query: string, page: number) => {
     if (!query.trim()) { return; }
-    
+
     setIsLoading(true);
     try {
       const search = await getSearch(query, page);
