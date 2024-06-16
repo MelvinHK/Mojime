@@ -3,6 +3,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import Header from "./components/Header";
 import Error from "./pages/Error";
 import { WatchProvider } from "./contexts/WatchProvider";
+import { Analytics } from "@vercel/analytics/react";
 
 interface RootProps {
   routeError?: JSX.Element;
@@ -25,6 +26,7 @@ function Root(props: RootProps) {
           </ErrorBoundary>
         }
       </div>
+      <Analytics />
     </WatchProvider>
   );
 }
