@@ -1,7 +1,7 @@
 import { useEffect, useRef, createContext, RefObject, useContext, useMemo } from "react";
 import { getEpisode } from "../utils/api";
 
-import { ISource } from "@consumet/extensions";
+import { ISource, IVideo } from "@consumet/extensions";
 
 import plStyles from '../styles/player/player.module.css';
 import vlStyles from '../styles/player/video-layout.module.css'
@@ -83,11 +83,15 @@ export default function Player() {
   const setEpisode = async (id: string | undefined) => {
     if (!id || !playerRef.current) { return; }
 
+    const setStates = (sources: IVideo[], qualities: (string | undefined)[]) => {
+      setSources(sources);
+      setQualities(qualities);
+    }
+
     const preloaded = sessionStorage.getItem(id);
     if (preloaded) {
       const parsed: PreloadedEpisode = JSON.parse(preloaded);
-      setSources(parsed.sources);
-      setQualities(parsed.qualities);
+      setStates(parsed.sources, parsed.qualities);
     } else {
       try {
         isPreloadingAllowed.current = false;
@@ -97,9 +101,7 @@ export default function Player() {
           .map(src => src.quality)
           .filter(src => /\d/.test(src ?? ""))
 
-        setSources(sources);
-        setQualities(qualities);
-
+        setStates(sources, qualities);
         const episodeCache: PreloadedEpisode = {
           sources: sources,
           qualities: qualities
@@ -162,7 +164,7 @@ export default function Player() {
 
     const progressPercent = playerRef.current.currentTime / playerRef.current.duration;
     if (progressPercent >= 0.75) {
-      
+
       abortPreviousRequest();
       isPreloadingAllowed.current = false;
 
