@@ -141,13 +141,11 @@ export function Quality() {
 }
 
 export function Next() {
-  const { animeInfo, episodeNoState, setEpisodeNoState } = useContext(WatchContext);
+  const { episodeNoState, setEpisodeNoState, hasNext } = useContext(WatchContext);
 
   const handleNavigate = () => {
     navigateToEpisode(Number(episodeNoState) + 1, setEpisodeNoState);
   }
-
-  const hasNext = animeInfo?.episodes?.hasOwnProperty(Number(episodeNoState));
 
   return (
     <button
@@ -162,13 +160,11 @@ export function Next() {
 
 
 export function Previous() {
-  const { animeInfo, episodeNoState, setEpisodeNoState } = useContext(WatchContext);
+  const { episodeNoState, setEpisodeNoState, hasPrevious } = useContext(WatchContext);
 
   const handleNavigate = () => {
     navigateToEpisode(Number(episodeNoState) - 1, setEpisodeNoState);
   }
-
-  const hasPrevious = animeInfo?.episodes?.hasOwnProperty(Number(episodeNoState) - 2);
 
   return (
     <button

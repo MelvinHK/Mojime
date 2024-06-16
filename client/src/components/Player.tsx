@@ -1,4 +1,4 @@
-import { useEffect, useRef, createContext, RefObject, useContext } from "react";
+import { useEffect, useRef, createContext, RefObject, useContext, useMemo } from "react";
 import { getEpisode } from "../utils/api";
 
 import { ISource } from "@consumet/extensions";
@@ -31,27 +31,35 @@ export default function Player() {
   const {
     animeInfo,
     qualities,
-    setSources,
     setQualities,
+    sources,
+    setSources,
     selectedQuality,
-    isLoadingEpisode,
     setSelectedQuality,
     currentTime,
-    sources,
-    episodeNoState,
+    isLoadingEpisode,
     setIsLoadingEpisode,
-    setEpisodeNoState
+    episodeNoState,
+    setEpisodeNoState,
+    episodeId,
+    nextEpisodeId,
+    hasNext,
+    hasPrevious
   } = useContext(WatchContext);
 
   const { animeId } = useParams()
 
-  const source = sources?.find(src => src.quality === selectedQuality)?.url;
-  const playerRef = useRef<MediaPlayerInstance>(null);
-  const isPreloadingAllowed = useRef(true);
+  const { showBoundary } = useErrorBoundary();
 
+  const source = useMemo(() =>
+    sources?.find(src => src.quality === selectedQuality)?.url,
+    [sources, selectedQuality]
+  );
+
+  const playerRef = useRef<MediaPlayerInstance>(null);
   const qualityContextValues: PlayerContextType = { playerRef }
 
-  const { showBoundary } = useErrorBoundary();
+  const isPreloadingAllowed = useRef(true);
 
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -66,51 +74,58 @@ export default function Player() {
     }
   }
 
-  useEffect(() => {
-    const episodeId = animeInfo?.episodes?.[Number(episodeNoState) - 1].id;
-
-    const setEpisode = async () => {
-      if (!episodeId || !playerRef.current) { return; }
-
-      const preloaded = sessionStorage.getItem(episodeId);
-      if (preloaded) {
-        const parsed: PreloadedEpisode = JSON.parse(preloaded);
-        setSources(parsed.sources);
-        setQualities(parsed.qualities);
-      } else {
-        try {
-          isPreloadingAllowed.current = false;
-          const episode: ISource = await getEpisodeWithAbort(episodeId);
-          const sources = episode.sources;
-          const qualities = episode.sources
-            .map(src => src.quality)
-            .filter(src => /\d/.test(src ?? ""))
-
-          setSources(sources);
-          setQualities(qualities);
-
-          const episodeCache: PreloadedEpisode = {
-            sources: sources,
-            qualities: qualities
-          }
-          sessionStorage.setItem(episodeId, JSON.stringify(episodeCache));
-        } catch (error) {
-          if (isAxiosError(error) && error.code === "ERR_CANCELED") {
-            return;
-          }
-          showBoundary(error);
-        }
-      }
-      setIsLoadingEpisode(false);
-      isPreloadingAllowed.current = true;
-      playerRef.current.currentTime = 0;
-    }
-
+  const abortPreviousRequest = () => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
+  };
+
+  const setEpisode = async (id: string | undefined) => {
+    if (!id || !playerRef.current) { return; }
+
+    const preloaded = sessionStorage.getItem(id);
+    if (preloaded) {
+      const parsed: PreloadedEpisode = JSON.parse(preloaded);
+      setSources(parsed.sources);
+      setQualities(parsed.qualities);
+    } else {
+      try {
+        isPreloadingAllowed.current = false;
+        const episode: ISource = await getEpisodeWithAbort(id);
+        const sources = episode.sources;
+        const qualities = episode.sources
+          .map(src => src.quality)
+          .filter(src => /\d/.test(src ?? ""))
+
+        setSources(sources);
+        setQualities(qualities);
+
+        const episodeCache: PreloadedEpisode = {
+          sources: sources,
+          qualities: qualities
+        }
+        sessionStorage.setItem(id, JSON.stringify(episodeCache));
+      } catch (error) {
+        if (isAxiosError(error) && error.code === "ERR_CANCELED") {
+          return;
+        }
+        showBoundary(error);
+      }
+    }
+    setIsLoadingEpisode(false);
+    playerRef.current.currentTime = 0;
+    isPreloadingAllowed.current = true;
+  }
+
+  useEffect(() => {
+    abortPreviousRequest();
+
     setIsLoadingEpisode(true);
-    setEpisode();
+    setEpisode(episodeId);
+
+    return () => {
+      abortPreviousRequest();
+    };
   }, [episodeNoState, animeInfo]);
 
   useEffect(() => {
@@ -138,25 +153,18 @@ export default function Player() {
   }, [currentTime]);
 
   const handlePreloadNextEpisode = async () => {
-    if (
-      !playerRef.current ||
+    if (!playerRef.current ||
       !isPreloadingAllowed.current ||
-      !animeInfo?.episodes?.hasOwnProperty(Number(episodeNoState))
-    ) {
+      !nextEpisodeId ||
+      sessionStorage.getItem(nextEpisodeId)) {
       return;
     }
 
     const progressPercent = playerRef.current.currentTime / playerRef.current.duration;
-
     if (progressPercent >= 0.75) {
+      
+      abortPreviousRequest();
       isPreloadingAllowed.current = false;
-      const nextEpisodeId = animeInfo.episodes?.[Number(episodeNoState)].id;
-
-      if (sessionStorage.getItem(nextEpisodeId)) { return; }
-
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
 
       try {
         const episode: ISource = await getEpisodeWithAbort(nextEpisodeId);
@@ -171,10 +179,7 @@ export default function Player() {
         return;
       }
     }
-  }
-
-  const hasNext = animeInfo?.episodes?.hasOwnProperty(Number(episodeNoState));
-  const hasPrevious = animeInfo?.episodes?.hasOwnProperty(Number(episodeNoState) - 2);
+  };
 
   const keyShortcuts = {
     togglePaused: 'k Space',
