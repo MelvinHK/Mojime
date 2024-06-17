@@ -108,11 +108,12 @@
   color: transparent
 }
 
-/* Seeking type: true = forward, false = backwards */
+/* Seeking forwards */
 .seekTenFeedback[data-seek-type="true"] {
   background-image: linear-gradient(to left, rgba(0, 0, 0, 0.314) 70%, rgba(0, 0, 0, 0));
 }
 
+/* Seeking backwards */
 .seekTenFeedback[data-seek-type="false"] {
   background-image: linear-gradient(to right, rgba(0, 0, 0, 0.314) 70%, rgba(0, 0, 0, 0));
 }
@@ -124,9 +125,24 @@
   }
 }
 
+/* Remove double tap to fullscreen on touch */
+@media (pointer: coarse) {
+  .gesture[action='toggle:fullscreen'] {
+    display: none;
+  }
+}
+
 /* Remove toggle controls on mouse. */
 @media not (pointer: coarse) {
   .gesture[action='toggle:controls'] {
+    display: none;
+  }
+}
+
+/* Remove double tap seek on mouse */
+@media not (pointer: coarse) {
+  .gesture[action='seek:10'],
+  .gesture[action='seek:-10'] {
     display: none;
   }
 }

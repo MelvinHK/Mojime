@@ -82,36 +82,30 @@ function Gestures() {
         event="pointerup"
         action="toggle:paused"
       />
-      {isDesktop && (
-        <Gesture
-          className={styles.gesture}
-          event="dblpointerup"
-          action="toggle:fullscreen"
-        />)
-      }
+      <Gesture
+        className={styles.gesture}
+        event="dblpointerup"
+        action="toggle:fullscreen"
+      />
       <Gesture
         className={styles.gesture}
         event="pointerup"
         action="toggle:controls"
       />
-      {isMobile && (
-        <>
-          <Gesture
-            className={styles.gesture}
-            event="dblpointerup"
-            action="seek:-10"
-            onTrigger={() => setIsBackward(true)}
-            children={<SeekTenFeedback active={isBackward} seekType={false} />}
-          />
-          <Gesture
-            className={styles.gesture}
-            event="dblpointerup"
-            action="seek:10"
-            onTrigger={() => setIsForward(true)}
-            children={<SeekTenFeedback active={isForward} seekType={true} />}
-          />
-        </>
-      )}
+      <Gesture
+        className={styles.gesture}
+        event="dblpointerup"
+        action="seek:-10"
+        onTrigger={() => setIsBackward(true)}
+        children={<SeekTenFeedback active={isBackward} seekType={false} />}
+      />
+      <Gesture
+        className={styles.gesture}
+        event="dblpointerup"
+        action="seek:10"
+        onTrigger={() => setIsForward(true)}
+        children={<SeekTenFeedback active={isForward} seekType={true} />}
+      />
     </>
   );
 }
