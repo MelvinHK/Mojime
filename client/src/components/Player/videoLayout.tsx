@@ -4,9 +4,10 @@ import { Controls, Gesture, useMediaRemote } from '@vidstack/react';
 import * as Buttons from './buttons';
 import * as Sliders from './sliders'
 import { TimeGroup } from './timeGroup';
-import { Dispatch, SetStateAction, createContext, useContext, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { WatchContext } from '../../contexts/WatchProvider';
 import { isDesktop, isMobile } from 'react-device-detect';
+import { debounce } from 'lodash-es';
 
 type VidLayoutContextType = {
   draggedTime: string,
@@ -58,8 +59,8 @@ export function VideoLayout() {
 }
 
 function Gestures() {
-  const [isForward, setIsForward] = useState(false);
-  const [isBackward, setIsBackward] = useState(false);
+  const [isForward, setIsForward] = useDebouncedState(false, 500);
+  const [isBackward, setIsBackward] = useDebouncedState(false, 500);
 
   const remote = useMediaRemote();
 
@@ -100,14 +101,14 @@ function Gestures() {
             event="dblpointerup"
             action="seek:-10"
             onTrigger={() => setIsBackward(true)}
-            children={<SeekTenFeedback active={isBackward} setActive={setIsBackward} seekType={false} />}
+            children={<SeekTenFeedback active={isBackward} seekType={false} />}
           />
           <Gesture
             className={styles.gesture}
             event="dblpointerup"
             action="seek:10"
             onTrigger={() => setIsForward(true)}
-            children={<SeekTenFeedback active={isForward} setActive={setIsForward} seekType={true} />}
+            children={<SeekTenFeedback active={isForward} seekType={true} />}
           />
         </>
       )}
@@ -115,23 +116,29 @@ function Gestures() {
   );
 }
 
+const useDebouncedState = (initialValue: boolean, delay: number) => {
+  const [state, setState] = useState(initialValue);
+
+  const debouncedSetState = useCallback(
+    debounce(() => setState(false), delay),
+    [delay]
+  );
+
+  useEffect(() => {
+    if (state) {
+      debouncedSetState();
+    }
+  }, [state, debouncedSetState]);
+
+  return [state, setState] as const;
+};
+
 interface seekFeedbackProps {
   active: boolean;
-  setActive: Dispatch<SetStateAction<boolean>>;
   seekType: boolean; // false = -10s, true = +10s.
 }
 
-function SeekTenFeedback({ active, setActive, seekType }: seekFeedbackProps) {
-  useEffect(() => {
-    var timeout: NodeJS.Timeout;
-
-    if (active) {
-      timeout = setTimeout(() => setActive(false), 500);
-    }
-
-    return () => clearTimeout(timeout);
-  }, [active, setActive])
-
+function SeekTenFeedback({ active, seekType }: seekFeedbackProps) {
   return (
     <div
       className={`flex fl-a-center fl-j-center ${styles.seekTenFeedback}`}
