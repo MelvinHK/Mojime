@@ -20,7 +20,7 @@ type GlobalContextType = {
 
   episodeNoState: string | undefined,
   setEpisodeNoState: Dispatch<SetStateAction<string | undefined>>,
-  
+
   isLoadingEpisode: boolean,
   setIsLoadingEpisode: Dispatch<SetStateAction<boolean>>,
 
@@ -71,8 +71,8 @@ export const WatchProvider = (props: GPProps) => {
   const [animeInfo, setAnimeInfo] = useState<IAnimeInfo>();
 
   const { episodeNoParam } = useParams();
-  const [episodeNoState, setEpisodeNoState] = useState(episodeNoParam); 
-   // Pseudo episode number url parameter (see '../utils/navigateToEpisode.tsx')
+  const [episodeNoState, setEpisodeNoState] = useState(episodeNoParam);
+  // Pseudo episode number url parameter (see '../utils/navigateToEpisode.tsx')
 
   const [sources, setSources] = useState<IVideo[]>([]);
   const [qualities, setQualities] = useState<(string | undefined)[]>([undefined]);

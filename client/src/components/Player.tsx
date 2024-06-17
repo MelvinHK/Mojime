@@ -19,6 +19,10 @@ import { useParams } from "react-router-dom";
 import LoadingAnimation from "./LoadingAnimation";
 import { navigateToEpisode } from "../utils/navigateToEpisode";
 
+import { useDrag } from '@use-gesture/react';
+import { useSpring, animated } from "@react-spring/web";
+import { isMobile } from "react-device-detect";
+
 type PlayerContextType = {
   playerRef: RefObject<MediaPlayerInstance> | undefined,
 }
@@ -209,6 +213,22 @@ export default function Player() {
     }
   }
 
+  const [{ y }, api] = useSpring(() => ({ y: 0 }))
+  const threshold = 25;
+
+  const bind = useDrag(({ down, movement: [_, my], dragging }) => {
+    if (!dragging) {
+      if (my > threshold * 4 || my < -1 * threshold * 4) {
+        window.dispatchEvent(new CustomEvent('playerdrag'));
+      }
+      my = 0;
+    }
+    api.start({ y: down ? my : 0 });
+  }, {
+    axis: 'y',
+    threshold: threshold
+  })
+
   return (
     <div id="player-container">
       <div id="player-ratio">
@@ -225,7 +245,13 @@ export default function Player() {
             volume={Number(localStorage.getItem("preferredVolume")) * 0.01 || 1}
             keyShortcuts={keyShortcuts}
           >
-            <MediaProvider />
+            {isMobile ? (
+              <animated.div {...bind()} style={{ y, touchAction: "none" }} id="animated-player">
+                <MediaProvider />
+              </animated.div>
+            ) : (
+              <MediaProvider />
+            )}
             <PlayerContext.Provider value={qualityContextValues}>
               <VideoLayout />
             </PlayerContext.Provider>

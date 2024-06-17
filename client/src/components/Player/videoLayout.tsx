@@ -1,12 +1,12 @@
 import styles from '../../styles/player/video-layout.module.css'
-import { Controls, Gesture } from '@vidstack/react';
+import { Controls, Gesture, useMediaRemote } from '@vidstack/react';
 
 import * as Buttons from './buttons';
 import * as Sliders from './sliders'
 import { TimeGroup } from './timeGroup';
-import { Dispatch, SetStateAction, createContext, useContext, useState } from 'react';
+import { Dispatch, SetStateAction, createContext, useContext, useEffect, useState } from 'react';
 import { WatchContext } from '../../contexts/WatchProvider';
-import { isDesktop } from 'react-device-detect';
+import { isDesktop, isMobile } from 'react-device-detect';
 
 type VidLayoutContextType = {
   draggedTime: string,
@@ -58,8 +58,21 @@ export function VideoLayout() {
 }
 
 function Gestures() {
-  // const [isForward, setIsForward] = useState(false);
-  // const [isBackward, setIsBackward] = useState(false);
+  const [isForward, setIsForward] = useState(false);
+  const [isBackward, setIsBackward] = useState(false);
+
+  const remote = useMediaRemote();
+
+  useEffect(() => {
+    if (isMobile) {
+      const toggleFullscreen = () => {
+        remote.toggleFullscreen();
+      }
+
+      window.addEventListener('playerdrag', toggleFullscreen);
+      return () => window.removeEventListener('playerdrag', toggleFullscreen);
+    }
+  }, [])
 
   return (
     <>
@@ -68,52 +81,64 @@ function Gestures() {
         event="pointerup"
         action="toggle:paused"
       />
-      <Gesture
-        className={styles.gesture}
-        event="dblpointerup"
-        action="toggle:fullscreen"
-      />
+      {isDesktop && (
+        <Gesture
+          className={styles.gesture}
+          event="dblpointerup"
+          action="toggle:fullscreen"
+        />)
+      }
       <Gesture
         className={styles.gesture}
         event="pointerup"
         action="toggle:controls"
       />
-      {/* <Gesture
-        className={styles.gesture}
-        event="dblpointerup"
-        action="seek:-10"
-        onTrigger={() => setIsBackward(true)}
-        children={<SeekTenFeedback active={isBackward} setActive={setIsBackward} seekType={false} />}
-      />
-      <Gesture
-        className={styles.gesture}
-        event="dblpointerup"
-        action="seek:10"
-        onTrigger={() => setIsForward(true)}
-        children={<SeekTenFeedback active={isForward} setActive={setIsForward} seekType={true} />}
-      /> */}
+      {isMobile && (
+        <>
+          <Gesture
+            className={styles.gesture}
+            event="dblpointerup"
+            action="seek:-10"
+            onTrigger={() => setIsBackward(true)}
+            children={<SeekTenFeedback active={isBackward} setActive={setIsBackward} seekType={false} />}
+          />
+          <Gesture
+            className={styles.gesture}
+            event="dblpointerup"
+            action="seek:10"
+            onTrigger={() => setIsForward(true)}
+            children={<SeekTenFeedback active={isForward} setActive={setIsForward} seekType={true} />}
+          />
+        </>
+      )}
     </>
   );
 }
 
-// interface seekFeedbackProps {
-//   active: boolean;
-//   setActive: Dispatch<SetStateAction<boolean>>;
-//   seekType: boolean; // false = -10s, true = +10s.
-// }
+interface seekFeedbackProps {
+  active: boolean;
+  setActive: Dispatch<SetStateAction<boolean>>;
+  seekType: boolean; // false = -10s, true = +10s.
+}
 
-// function SeekTenFeedback({ active, setActive, seekType }: seekFeedbackProps) {
-//   useEffect(() => {
-//     setTimeout(() => setActive(false), 500);
-//   }, [active, setActive])
+function SeekTenFeedback({ active, setActive, seekType }: seekFeedbackProps) {
+  useEffect(() => {
+    var timeout: NodeJS.Timeout;
 
-//   return (
-//     <div
-//       className={`flex fl-a-center fl-j-center ${styles.seekTenFeedback}`}
-//       data-triggered={active.toString()}
-//       data-seek-type={seekType.toString()}
-//     >
-//       {seekType ? "+" : "-"}10s
-//     </div>
-//   )
-// }
+    if (active) {
+      timeout = setTimeout(() => setActive(false), 500);
+    }
+
+    return () => clearTimeout(timeout);
+  }, [active, setActive])
+
+  return (
+    <div
+      className={`flex fl-a-center fl-j-center ${styles.seekTenFeedback}`}
+      data-triggered={active.toString()}
+      data-seek-type={seekType.toString()}
+    >
+      {seekType ? "+" : "-"}10s
+    </div>
+  )
+}
