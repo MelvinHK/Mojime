@@ -123,7 +123,7 @@ export function Quality() {
         offset={20}
         className={buttonStyles.radioWrapper}
       >
-        <RadioGroup.Root>
+        <RadioGroup.Root value={selectedQuality}>
           {qualities?.map((p, index) => (
             <RadioGroup.Item
               key={index}
