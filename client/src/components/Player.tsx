@@ -8,7 +8,7 @@ import vlStyles from '../styles/player/video-layout.module.css'
 
 import { MediaPlayer, MediaProvider, MediaPlayerInstance } from '@vidstack/react';
 
-import { VideoLayout } from './Player/videoLayout';
+import { VideoLayout } from "./Player/VideoLayout";
 import '@vidstack/react/player/styles/base.css';
 
 import { throttle } from "lodash-es";
@@ -19,7 +19,7 @@ import { useParams } from "react-router-dom";
 import LoadingAnimation from "./LoadingAnimation";
 import { navigateToEpisode } from "../utils/navigateToEpisode";
 
-import { useDrag } from '@use-gesture/react';
+import { useGesture } from '@use-gesture/react';
 import { useSpring, animated } from "@react-spring/web";
 import { isMobile } from "react-device-detect";
 
@@ -61,7 +61,7 @@ export default function Player() {
   );
 
   const playerRef = useRef<MediaPlayerInstance>(null);
-  const qualityContextValues: PlayerContextType = { playerRef }
+  const qualityContextValues: PlayerContextType = { playerRef };
 
   const isPreloadingAllowed = useRef(true);
 
@@ -215,18 +215,26 @@ export default function Player() {
 
   const [{ y }, api] = useSpring(() => ({ y: 0 }))
   const threshold = 25;
+  const bound = threshold * 3;
 
-  const bind = useDrag(({ down, movement: [_, my], dragging }) => {
-    if (!dragging) {
-      if (my > threshold * 4 || my < -1 * threshold * 4) {
-        window.dispatchEvent(new CustomEvent('playerdrag'));
+  const bind = useGesture({
+    onDrag: ({ down, movement: [_mX, mY], dragging }) => {
+      if (Math.abs(mY) >= bound) {
+        mY = bound * Math.sign(mY);
       }
-      my = 0;
-    }
-    api.start({ y: down ? my : 0 });
+      if (!dragging) {
+        if (Math.abs(mY) >= bound) {
+          dispatchEvent(new CustomEvent('playerdrag'));
+        }
+        mY = 0;
+      }
+      api.start({ y: mY, immediate: down });
+    },
   }, {
-    axis: 'y',
-    threshold: threshold
+    drag: {
+      axis: 'y',
+      threshold: threshold
+    }
   })
 
   return (
