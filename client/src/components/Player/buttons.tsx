@@ -24,7 +24,7 @@ import { useContext } from 'react';
 import { WatchContext } from '../../contexts/WatchProvider';
 import { navigateToEpisode } from '../../utils/navigateToEpisode';
 import useIsMobileMatchMedia from '../../utils/hooks/useIsMobile';
-import { Volume } from './Sliders';
+import { Volume } from './sliders';
 
 export function Play() {
   const { isLoadingEpisode } = useContext(WatchContext);

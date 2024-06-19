@@ -1,10 +1,10 @@
 import styles from '../../styles/player/video-layout.module.css'
 import { Controls, useMediaState } from '@vidstack/react';
 
-import * as Buttons from './Buttons';
-import * as Sliders from './Sliders'
-import { TimeGroup } from './TimeGroup';
-import Gestures from './Gestures';
+import * as Buttons from './buttons';
+import * as Sliders from './sliders'
+import { TimeGroup } from './timeGroup';
+import Gestures from './gestures';
 import { Dispatch, SetStateAction, createContext, useContext, useState } from 'react';
 import { WatchContext } from '../../contexts/WatchProvider';
 import { isDesktop } from 'react-device-detect';

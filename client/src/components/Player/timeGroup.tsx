@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import styles from '../../styles/player/time-group.module.css';
 
 import { Time } from '@vidstack/react';
-import { VidLayoutContext } from './VideoLayout';
+import { VidLayoutContext } from './videoLayout';
 
 export function TimeGroup() {
   const { draggedTime } = useContext(VidLayoutContext)

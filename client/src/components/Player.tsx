@@ -8,7 +8,7 @@ import vlStyles from '../styles/player/video-layout.module.css'
 
 import { MediaPlayer, MediaProvider, MediaPlayerInstance } from '@vidstack/react';
 
-import { VideoLayout } from "./Player/VideoLayout";
+import { VideoLayout } from "./Player/videoLayout";
 import '@vidstack/react/player/styles/base.css';
 
 import { throttle } from "lodash-es";

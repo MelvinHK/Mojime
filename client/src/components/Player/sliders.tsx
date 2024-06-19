@@ -3,7 +3,7 @@ import styles from '../../styles/player/slider.module.css';
 
 import { TimeSlider, TimeSliderInstance, VolumeSlider } from '@vidstack/react';
 import { PlayerContext } from '../Player';
-import { VidLayoutContext } from './VideoLayout';
+import { VidLayoutContext } from './videoLayout';
 
 export function Time() {
   const { playerRef } = useContext(PlayerContext);
