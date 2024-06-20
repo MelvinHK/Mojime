@@ -15,7 +15,6 @@ import { throttle } from "lodash-es";
 import { WatchContext, PreloadedEpisode } from "../contexts/WatchProvider";
 import { useErrorBoundary } from "react-error-boundary";
 import { isAxiosError } from "axios";
-import { useParams } from "react-router-dom";
 import LoadingAnimation from "./LoadingAnimation";
 import { navigateToEpisode } from "../utils/navigateToEpisode";
 
@@ -50,8 +49,6 @@ export default function Player() {
     hasNext,
     hasPrevious
   } = useContext(WatchContext);
-
-  const { animeId } = useParams()
 
   const { showBoundary } = useErrorBoundary();
 
@@ -133,13 +130,6 @@ export default function Player() {
       abortPreviousRequest();
     };
   }, [episodeNoState, animeInfo]);
-
-  useEffect(() => {
-    if (animeId !== animeInfo?.id) {
-      setSources([]);
-      setQualities([undefined]);
-    }
-  }, [animeId, animeInfo])
 
   useEffect(() => {
     if (qualities) {

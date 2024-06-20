@@ -1,4 +1,4 @@
-import { createContext, Dispatch, SetStateAction, useState, useMemo } from "react"
+import { createContext, Dispatch, SetStateAction, useState, useMemo, useEffect } from "react"
 import { IAnimeInfo, IVideo } from "@consumet/extensions";
 import { useParams } from "react-router-dom";
 
@@ -70,7 +70,7 @@ export type PreloadedEpisode = {
 export const WatchProvider = (props: GPProps) => {
   const [animeInfo, setAnimeInfo] = useState<IAnimeInfo>();
 
-  const { episodeNoParam } = useParams();
+  const { episodeNoParam, animeId } = useParams();
   const [episodeNoState, setEpisodeNoState] = useState(episodeNoParam);
   // Pseudo episode number url parameter (see '../utils/navigateToEpisode.tsx')
 
@@ -79,6 +79,10 @@ export const WatchProvider = (props: GPProps) => {
   const [selectedQuality, setSelectedQuality] = useState<(string | undefined)>();
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [isLoadingEpisode, setIsLoadingEpisode] = useState(true);
+
+  useEffect(() => {
+    setEpisodeNoState(episodeNoParam);
+  }, [episodeNoParam]);
 
   const episodeId = useMemo(() =>
     animeInfo?.episodes?.[Number(episodeNoState) - 1]?.id,
@@ -96,6 +100,13 @@ export const WatchProvider = (props: GPProps) => {
     animeInfo?.episodes?.hasOwnProperty(Number(episodeNoState) - 2),
     [animeInfo, episodeNoState]
   );
+
+  useEffect(() => {
+    if (animeId !== animeInfo?.id) {
+      setSources([]);
+      setQualities([undefined]);
+    }
+  }, [animeId, animeInfo])
 
   const GlobalContextValues = {
     animeInfo,
