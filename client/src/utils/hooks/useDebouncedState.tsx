@@ -1,19 +1,26 @@
 import { useState, useEffect, useCallback } from "react";
 import { debounce } from "lodash-es";
 
-export const useDebouncedState = (initialValue: boolean, delay: number) => {
+export const useDebouncedState = <T,>(initialValue: T, delay: number) => {
   const [state, setState] = useState(initialValue);
 
-  const debouncedSetState = useCallback(
-    debounce(() => setState(false), delay),
-    [delay]
+  const resetToInitalValue = useCallback(
+    debounce(() => {
+      setState(initialValue);
+    }, delay),
+    [initialValue, delay]
   );
 
-  useEffect(() => {
-    if (state) {
-      debouncedSetState();
-    }
-  }, [state, debouncedSetState]);
+  const setDebouncedState = (value: T) => {
+    setState(value);
+    resetToInitalValue();
+  };
 
-  return [state, setState] as const;
+  useEffect(() => {
+    return () => {
+      resetToInitalValue.cancel();
+    };
+  }, [resetToInitalValue]);
+
+  return [state, setDebouncedState] as const;
 };

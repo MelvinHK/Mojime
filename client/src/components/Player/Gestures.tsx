@@ -5,8 +5,11 @@ import { useMediaRemote, Gesture } from "@vidstack/react";
 import styles from '../../styles/player/video-layout.module.css'
 
 export default function Gestures() {
-  const [isForward, setIsForward] = useDebouncedState(false, 500);
-  const [isBackward, setIsBackward] = useDebouncedState(false, 500);
+  const [isForwardSeeking, setIsForwardSeeking] = useDebouncedState(false, 500);
+  const [forwardedTime, setForwardedTime] = useDebouncedState(0, 750);
+
+  const [isBackSeeking, setIsBackSeeking] = useDebouncedState(false, 500);
+  const [backedTime, setBackedTime] = useDebouncedState(0, 750);
 
   const remote = useMediaRemote();
 
@@ -42,15 +45,15 @@ export default function Gestures() {
         className={styles.gesture}
         event="dblpointerup"
         action="seek:-10"
-        onTrigger={() => setIsBackward(true)}
-        children={<SeekTenFeedback active={isBackward} seekType={false} />}
+        onTrigger={() => (setIsBackSeeking(true), setBackedTime(backedTime + 10))}
+        children={<SeekTenFeedback active={isBackSeeking} seekType={false} seekedTime={backedTime} />}
       />
       <Gesture
         className={styles.gesture}
         event="dblpointerup"
         action="seek:10"
-        onTrigger={() => setIsForward(true)}
-        children={<SeekTenFeedback active={isForward} seekType={true} />}
+        onTrigger={() => (setIsForwardSeeking(true), setForwardedTime(forwardedTime + 10))}
+        children={<SeekTenFeedback active={isForwardSeeking} seekType={true} seekedTime={forwardedTime} />}
       />
     </>
   );
@@ -59,16 +62,17 @@ export default function Gestures() {
 interface seekFeedbackProps {
   active: boolean;
   seekType: boolean; // false = -10s, true = +10s.
+  seekedTime: number;
 }
 
-function SeekTenFeedback({ active, seekType }: seekFeedbackProps) {
+function SeekTenFeedback({ active, seekType, seekedTime }: seekFeedbackProps) {
   return (
     <div
       className={`flex fl-a-center fl-j-center ${styles.seekTenFeedback}`}
       data-triggered={active.toString()}
       data-seek-type={seekType.toString()}
     >
-      {seekType ? "+" : "-"}10s
+      {seekType ? "+" : "-"}{seekedTime}s
     </div>
   )
 }

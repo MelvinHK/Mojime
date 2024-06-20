@@ -93,7 +93,6 @@
   width: 100%;
   height: 100%;
   transition: 0.25s ease-out;
-  pointer-events: none;
   opacity: 0;
   color: transparent;
 }
@@ -141,6 +140,7 @@
 
 /* Remove double tap seek on mouse */
 @media not (pointer: coarse) {
+
   .gesture[action='seek:10'],
   .gesture[action='seek:-10'] {
     display: none;
