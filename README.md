@@ -5,6 +5,8 @@ Minimalist anime streaming website. Does not host any content; scrapes off of a 
 ## Keyboard Shortcuts
 1. Search bar  
 `/` - Focus search bar  
+`ArrowUp/ArrowDown` - Select result  
+`Enter` - Navigate to selected result  
 
 2. Video player (while in focus)  
 `,` - Previous episode  
