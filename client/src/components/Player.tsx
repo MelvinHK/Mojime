@@ -200,6 +200,20 @@ export default function Player() {
           navigateToEpisode(Number(episodeNoState) - 1, setEpisodeNoState);
         }
       }
+    },
+    seek85: {
+      keys: "'",
+      onKeyUp() {
+        if (playerRef.current)
+          playerRef.current.currentTime += 85;
+      }
+    },
+    seek30: {
+      keys: ";",
+      onKeyUp() {
+        if (playerRef.current)
+          playerRef.current.currentTime += 25;
+      }
     }
   }
 
