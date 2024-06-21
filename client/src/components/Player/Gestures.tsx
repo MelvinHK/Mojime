@@ -14,7 +14,7 @@ export default function Gestures() {
   const remote = useMediaRemote();
 
   useEffect(() => {
-    if (isMobile) {
+    if (isMobile || window.matchMedia("(pointer: coarse)").matches) {
       const toggleFullscreen = () => {
         remote.toggleFullscreen();
       }

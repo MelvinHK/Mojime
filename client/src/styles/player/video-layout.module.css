@@ -52,7 +52,7 @@
 }
 
 .playerTitle {
-  margin-left: 1rem;
+  margin-left: var(--pad-x);
 }
 
 @media (max-width: 1368px) {

@@ -257,7 +257,7 @@ export default function Player() {
             volume={Number(localStorage.getItem("preferredVolume")) * 0.01 || 1}
             keyShortcuts={keyShortcuts}
           >
-            {isMobile ? (
+            {isMobile || window.matchMedia("(pointer: coarse)").matches ? (
               <animated.div {...bind()} style={{ y, touchAction: "none" }} id="animated-player">
                 <MediaProvider />
               </animated.div>
