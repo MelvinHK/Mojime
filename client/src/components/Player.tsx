@@ -16,11 +16,11 @@ import { WatchContext, PreloadedEpisode } from "../contexts/WatchProvider";
 import { useErrorBoundary } from "react-error-boundary";
 import { isAxiosError } from "axios";
 import LoadingAnimation from "./LoadingAnimation";
-import { navigateToEpisode } from "../utils/navigateToEpisode";
 
-import { useGesture } from '@use-gesture/react';
-import { useSpring, animated } from "@react-spring/web";
+import { animated } from "@react-spring/web";
 import { isMobile } from "react-device-detect";
+import { usePlayerGesture } from "../utils/player/usePlayerGesture";
+import { playerKeyShortcuts } from "../utils/player/playerKeyShortcuts";
 
 type PlayerContextType = {
   playerRef: RefObject<MediaPlayerInstance> | undefined,
@@ -43,11 +43,8 @@ export default function Player() {
     isLoadingEpisode,
     setIsLoadingEpisode,
     episodeNoState,
-    setEpisodeNoState,
     episodeId,
     nextEpisodeId,
-    hasNext,
-    hasPrevious
   } = useContext(WatchContext);
 
   const { showBoundary } = useErrorBoundary();
@@ -59,6 +56,8 @@ export default function Player() {
 
   const playerRef = useRef<MediaPlayerInstance>(null);
   const qualityContextValues: PlayerContextType = { playerRef };
+  const keyShortcuts = playerKeyShortcuts(playerRef);
+  const { bind, y } = usePlayerGesture();
 
   const isPreloadingAllowed = useRef(true);
 
@@ -176,70 +175,6 @@ export default function Player() {
       }
     }
   };
-
-  const keyShortcuts = {
-    togglePaused: 'k Space',
-    toggleFullscreen: 'f',
-    togglePictureInPicture: 'i',
-    seekBackward: 'j J ArrowLeft',
-    seekForward: 'l L ArrowRight',
-    volumeUp: 'ArrowUp',
-    volumeDown: 'ArrowDown',
-    nextEp: {
-      keys: '.',
-      onKeyUp() {
-        if (hasNext) {
-          navigateToEpisode(Number(episodeNoState) + 1, setEpisodeNoState);
-        }
-      }
-    },
-    prevEp: {
-      keys: ',',
-      onKeyUp() {
-        if (hasPrevious) {
-          navigateToEpisode(Number(episodeNoState) - 1, setEpisodeNoState);
-        }
-      }
-    },
-    seek85: {
-      keys: "'",
-      onKeyUp() {
-        if (playerRef.current)
-          playerRef.current.currentTime += 85;
-      }
-    },
-    seek30: {
-      keys: ";",
-      onKeyUp() {
-        if (playerRef.current)
-          playerRef.current.currentTime += 25;
-      }
-    }
-  }
-
-  const [{ y }, api] = useSpring(() => ({ y: 0 }))
-  const threshold = 25;
-  const bound = threshold * 3;
-
-  const bind = useGesture({
-    onDrag: ({ down, movement: [_mX, mY], dragging }) => {
-      if (Math.abs(mY) >= bound) {
-        mY = bound * Math.sign(mY);
-      }
-      if (!dragging) {
-        if (Math.abs(mY) >= bound) {
-          dispatchEvent(new CustomEvent('playerdrag'));
-        }
-        mY = 0;
-      }
-      api.start({ y: mY, immediate: down });
-    },
-  }, {
-    drag: {
-      axis: 'y',
-      threshold: threshold
-    }
-  })
 
   return (
     <div id="player-container">
