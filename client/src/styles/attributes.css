@@ -45,6 +45,10 @@
   gap: 1.5rem;
 }
 
+.gap-small {
+  gap: 1rem;
+}
+
 .fl-end {
   justify-content: flex-end;
 }
@@ -136,4 +140,8 @@
 
 .pointer-none {
   pointer-events: none !important;
+}
+
+.pointer-auto {
+  pointer-events: auto;
 }

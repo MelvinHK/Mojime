@@ -1,4 +1,4 @@
-import { useEffect, useRef, createContext, RefObject, useContext, useMemo } from "react";
+import { useEffect, useRef, createContext, RefObject, useContext, useMemo, Dispatch, SetStateAction } from "react";
 import { getEpisode } from "../utils/api";
 
 import { ISource, IVideo } from "@consumet/extensions";
@@ -16,18 +16,22 @@ import { WatchContext, PreloadedEpisode } from "../contexts/WatchProvider";
 import { useErrorBoundary } from "react-error-boundary";
 import { isAxiosError } from "axios";
 import LoadingAnimation from "./LoadingAnimation";
-import { navigateToEpisode } from "../utils/navigateToEpisode";
+import { playerKeyShortcuts } from "../utils/player/playerKeyShortcuts";
 
-import { useGesture } from '@use-gesture/react';
-import { useSpring, animated } from "@react-spring/web";
+import { animated } from "@react-spring/web";
 import { isMobile } from "react-device-detect";
+import { usePlayerGesture } from "../utils/player/usePlayerGesture";
 
 type PlayerContextType = {
   playerRef: RefObject<MediaPlayerInstance> | undefined,
+  tapHoldXY: number[],
+  setTapHoldXY: Dispatch<SetStateAction<number[]>>
 }
 
 export const PlayerContext = createContext<PlayerContextType>({
-  playerRef: { current: null }
+  playerRef: { current: null },
+  tapHoldXY: [],
+  setTapHoldXY: () => { }
 });
 
 export default function Player() {
@@ -43,11 +47,8 @@ export default function Player() {
     isLoadingEpisode,
     setIsLoadingEpisode,
     episodeNoState,
-    setEpisodeNoState,
     episodeId,
     nextEpisodeId,
-    hasNext,
-    hasPrevious
   } = useContext(WatchContext);
 
   const { showBoundary } = useErrorBoundary();
@@ -58,7 +59,10 @@ export default function Player() {
   );
 
   const playerRef = useRef<MediaPlayerInstance>(null);
-  const qualityContextValues: PlayerContextType = { playerRef };
+  const keyShortcuts = playerKeyShortcuts(playerRef);
+  const { bind, y: playerY, tapHoldXY, setTapHoldXY } = usePlayerGesture();
+
+  const playerContextValues: PlayerContextType = { playerRef, tapHoldXY, setTapHoldXY };
 
   const isPreloadingAllowed = useRef(true);
 
@@ -177,70 +181,6 @@ export default function Player() {
     }
   };
 
-  const keyShortcuts = {
-    togglePaused: 'k Space',
-    toggleFullscreen: 'f',
-    togglePictureInPicture: 'i',
-    seekBackward: 'j J ArrowLeft',
-    seekForward: 'l L ArrowRight',
-    volumeUp: 'ArrowUp',
-    volumeDown: 'ArrowDown',
-    nextEp: {
-      keys: '.',
-      onKeyUp() {
-        if (hasNext) {
-          navigateToEpisode(Number(episodeNoState) + 1, setEpisodeNoState);
-        }
-      }
-    },
-    prevEp: {
-      keys: ',',
-      onKeyUp() {
-        if (hasPrevious) {
-          navigateToEpisode(Number(episodeNoState) - 1, setEpisodeNoState);
-        }
-      }
-    },
-    seek85: {
-      keys: "'",
-      onKeyUp() {
-        if (playerRef.current)
-          playerRef.current.currentTime += 85;
-      }
-    },
-    seek30: {
-      keys: ";",
-      onKeyUp() {
-        if (playerRef.current)
-          playerRef.current.currentTime += 25;
-      }
-    }
-  }
-
-  const [{ y }, api] = useSpring(() => ({ y: 0 }))
-  const threshold = 25;
-  const bound = threshold * 3;
-
-  const bind = useGesture({
-    onDrag: ({ down, movement: [_mX, mY], dragging }) => {
-      if (Math.abs(mY) >= bound) {
-        mY = bound * Math.sign(mY);
-      }
-      if (!dragging) {
-        if (Math.abs(mY) >= bound) {
-          dispatchEvent(new CustomEvent('playerdrag'));
-        }
-        mY = 0;
-      }
-      api.start({ y: mY, immediate: down });
-    },
-  }, {
-    drag: {
-      axis: 'y',
-      threshold: threshold
-    }
-  })
-
   return (
     <div id="player-container">
       <div id="player-ratio">
@@ -258,13 +198,13 @@ export default function Player() {
             keyShortcuts={keyShortcuts}
           >
             {isMobile || window.matchMedia("(pointer: coarse)").matches ? (
-              <animated.div {...bind()} style={{ y, touchAction: "none" }} id="animated-player">
+              <animated.div {...bind()} style={{ y: playerY, touchAction: "none" }} id="animated-player">
                 <MediaProvider />
               </animated.div>
             ) : (
               <MediaProvider />
             )}
-            <PlayerContext.Provider value={qualityContextValues}>
+            <PlayerContext.Provider value={playerContextValues}>
               <VideoLayout />
             </PlayerContext.Provider>
             {isLoadingEpisode && (

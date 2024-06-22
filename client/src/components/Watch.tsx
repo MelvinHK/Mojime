@@ -75,7 +75,7 @@ export default function Watch() {
       setEpisodeInput(episodeNoState);
   }, [episodeNoState])
 
-  const episodeInputStyle = {
+  const episodeInputStyle: React.CSSProperties = {
     width: episodeInput.length + 'ch', // Set width based on the length of the value
   };
 

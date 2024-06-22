@@ -4,7 +4,7 @@ import { Controls, useMediaState } from '@vidstack/react';
 import * as Buttons from './Buttons';
 import * as Sliders from './Sliders'
 import { TimeGroup } from './TimeGroup';
-import Gestures from './Gestures';
+import { Gestures, TapHoldQuickControls } from './Gestures';
 import { Dispatch, SetStateAction, createContext, useContext, useState } from 'react';
 import { WatchContext } from '../../contexts/WatchProvider';
 import { isDesktop } from 'react-device-detect';
@@ -57,6 +57,7 @@ export function VideoLayout() {
         </Controls.Group>
       </Controls.Root>
       <Gestures />
+      <TapHoldQuickControls />
     </VidLayoutContext.Provider>
   );
 }

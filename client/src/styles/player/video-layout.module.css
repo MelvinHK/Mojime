@@ -51,6 +51,20 @@
   pointer-events: none;
 }
 
+.quickControls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-radius: var(--b-radius);
+  background-color: rgba(0, 0, 0, 0.464);
+  padding: 0.5rem 1rem;
+}
+
+.quickControls .seek {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
 .playerTitle {
   margin-left: var(--pad-x);
 }
