@@ -52,6 +52,8 @@ export default function Gestures() {
             active={isBackSeeking}
             seekType={false}
             seekedTime={backedTime}
+            setIsSeeking={setIsBackSeeking}
+            setSeekedTime={setBackedTime}
           />
         }
       />
@@ -68,6 +70,8 @@ export default function Gestures() {
             active={isForwardSeeking}
             seekType={true}
             seekedTime={forwardedTime}
+            setIsSeeking={setIsForwardSeeking}
+            setSeekedTime={setForwardedTime}
           />
         }
       />
@@ -79,16 +83,29 @@ interface seekFeedbackProps {
   active: boolean;
   seekType: boolean; // false = -10s, true = +10s.
   seekedTime: number;
+  setIsSeeking: (value: boolean) => void;
+  setSeekedTime: (value: number) => void;
 }
 
-function SeekTenFeedback({ active, seekType, seekedTime }: seekFeedbackProps) {
+function SeekTenFeedback({ active, seekType, seekedTime, setIsSeeking, setSeekedTime }: seekFeedbackProps) {
+  const { playerRef } = useContext(PlayerContext);
+
+  const handleSubsequentTaps = () => {
+    if (playerRef?.current) {
+      setIsSeeking(true);
+      setSeekedTime(seekedTime + 10);
+      playerRef.current.currentTime += seekType ? 10 : -10;
+    }
+  }
+
   return (
-    <div
+    <button
       className={`flex fl-a-center fl-j-center ${styles.seekTenFeedback}`}
       data-triggered={active.toString()}
       data-seek-type={seekType.toString()}
+      onClick={() => handleSubsequentTaps()}
     >
       {seekType ? "+" : "-"}{seekedTime}s
-    </div>
+    </button>
   )
 }

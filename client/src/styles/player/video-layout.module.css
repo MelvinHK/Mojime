@@ -95,16 +95,19 @@
   transition: 0.25s ease-out;
   opacity: 0;
   color: transparent;
+  background: transparent;
 }
 
 .seekTenFeedback[data-triggered="true"] {
   opacity: 1;
   color: var(--white);
+  pointer-events: auto;
 }
 
 .seekTenFeedback[data-triggered="false"] {
   opacity: 0;
-  color: transparent
+  color: transparent;
+  pointer-events: none;
 }
 
 /* Seeking forwards */
