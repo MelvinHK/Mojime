@@ -1,4 +1,4 @@
-import { useEffect, useRef, createContext, RefObject, useContext, useMemo } from "react";
+import { useEffect, useRef, createContext, RefObject, useContext, useMemo, MutableRefObject } from "react";
 import { getEpisode } from "../utils/api";
 
 import { ISource, IVideo } from "@consumet/extensions";
@@ -24,10 +24,12 @@ import { playerKeyShortcuts } from "../utils/player/playerKeyShortcuts";
 
 type PlayerContextType = {
   playerRef: RefObject<MediaPlayerInstance> | undefined,
+  isTapGesture: MutableRefObject<boolean>
 }
 
 export const PlayerContext = createContext<PlayerContextType>({
-  playerRef: { current: null }
+  playerRef: { current: null },
+  isTapGesture: { current: false }
 });
 
 export default function Player() {
@@ -55,9 +57,10 @@ export default function Player() {
   );
 
   const playerRef = useRef<MediaPlayerInstance>(null);
-  const qualityContextValues: PlayerContextType = { playerRef };
   const keyShortcuts = playerKeyShortcuts(playerRef);
-  const { bind, y } = usePlayerGesture();
+  const { bind, y, isTapGesture } = usePlayerGesture(playerRef);
+
+  const qualityContextValues: PlayerContextType = { playerRef, isTapGesture };
 
   const isPreloadingAllowed = useRef(true);
 

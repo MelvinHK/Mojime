@@ -1,28 +1,23 @@
-import { useEffect } from "react";
+import { useContext } from "react";
 import { useDebouncedState } from "../../utils/hooks/useDebouncedState";
-import { isMobile } from "react-device-detect";
-import { useMediaRemote, Gesture } from "@vidstack/react";
+import { Gesture, GestureWillTriggerEvent } from "@vidstack/react";
 import styles from '../../styles/player/video-layout.module.css'
+import { PlayerContext } from "../Player";
 
 export default function Gestures() {
+  const { isTapGesture } = useContext(PlayerContext);
+
   const [isForwardSeeking, setIsForwardSeeking] = useDebouncedState(false, 500);
   const [forwardedTime, setForwardedTime] = useDebouncedState(0, 750);
 
   const [isBackSeeking, setIsBackSeeking] = useDebouncedState(false, 500);
   const [backedTime, setBackedTime] = useDebouncedState(0, 750);
 
-  const remote = useMediaRemote();
-
-  useEffect(() => {
-    if (isMobile || window.matchMedia("(pointer: coarse)").matches) {
-      const toggleFullscreen = () => {
-        remote.toggleFullscreen();
-      }
-
-      window.addEventListener('playerdrag', toggleFullscreen);
-      return () => window.removeEventListener('playerdrag', toggleFullscreen);
+  const onControlsWillToggle = (e: GestureWillTriggerEvent) => {
+    if (!isTapGesture.current) {
+      e.preventDefault();
     }
-  }, [])
+  }
 
   return (
     <>
@@ -40,20 +35,41 @@ export default function Gestures() {
         className={styles.gesture}
         event="pointerup"
         action="toggle:controls"
+        onWillTrigger={(_, nativeEvent) =>
+          onControlsWillToggle(nativeEvent)
+        }
       />
       <Gesture
         className={styles.gesture}
         event="dblpointerup"
         action="seek:-10"
-        onTrigger={() => (setIsBackSeeking(true), setBackedTime(backedTime + 10))}
-        children={<SeekTenFeedback active={isBackSeeking} seekType={false} seekedTime={backedTime} />}
+        onTrigger={() => (
+          setIsBackSeeking(true),
+          setBackedTime(backedTime + 10)
+        )}
+        children={
+          <SeekTenFeedback
+            active={isBackSeeking}
+            seekType={false}
+            seekedTime={backedTime}
+          />
+        }
       />
       <Gesture
         className={styles.gesture}
         event="dblpointerup"
         action="seek:10"
-        onTrigger={() => (setIsForwardSeeking(true), setForwardedTime(forwardedTime + 10))}
-        children={<SeekTenFeedback active={isForwardSeeking} seekType={true} seekedTime={forwardedTime} />}
+        onTrigger={() => (
+          setIsForwardSeeking(true),
+          setForwardedTime(forwardedTime + 10)
+        )}
+        children={
+          <SeekTenFeedback
+            active={isForwardSeeking}
+            seekType={true}
+            seekedTime={forwardedTime}
+          />
+        }
       />
     </>
   );
