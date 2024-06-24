@@ -30,7 +30,7 @@ export const usePlayerGesture = (playerRef: RefObject<MediaPlayerInstance>) => {
     },
   }, {
     drag: {
-      axis: 'y',
+      axis: 'lock',
       threshold: threshold,
       filterTaps: true
     }
