@@ -118,8 +118,6 @@ export default function Player() {
       }
     }
     setIsLoadingEpisode(false);
-    playerRef.current.currentTime = 0;
-    isPreloadingAllowed.current = true;
   }
 
   useEffect(() => {
@@ -192,6 +190,7 @@ export default function Player() {
             onTimeUpdate={throttle(() =>
               handlePreloadNextEpisode(), 1000
             )}
+            onCanPlay={() => isPreloadingAllowed.current = true}
             volume={Number(localStorage.getItem("preferredVolume")) * 0.01 || 1}
             keyShortcuts={keyShortcuts}
             controlsDelay={1000}

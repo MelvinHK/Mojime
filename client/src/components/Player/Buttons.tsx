@@ -23,17 +23,17 @@ import { PlayerContext } from '../Player';
 import { useContext } from 'react';
 import { WatchContext } from '../../contexts/WatchProvider';
 import { navigateToEpisode } from '../../utils/navigateToEpisode';
-import useIsMobileMatchMedia from '../../utils/hooks/useIsMobile';
+import useMatchMobileMedia from '../../utils/hooks/useMatchMobileMedia';
 import { Volume } from './Sliders';
 
 export function Play() {
   const { isLoadingEpisode } = useContext(WatchContext);
   const isPaused = useMediaState('paused');
-  const isMobileMatchMedia = useIsMobileMatchMedia();
+  const isMobileMedia = useMatchMobileMedia();
 
   return (
     <PlayButton
-      data-mobile-ep-loading={isLoadingEpisode && isMobileMatchMedia ? "true" : "false"}
+      data-mobile-ep-loading={isLoadingEpisode && isMobileMedia ? "true" : "false"}
       className={`play-button ${buttonStyles.button} ${buttonStyles.playButtonMobile}`}
     >
       {isPaused ? <PlayIcon /> : <PauseIcon />}
