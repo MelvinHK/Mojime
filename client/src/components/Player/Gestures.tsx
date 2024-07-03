@@ -55,10 +55,14 @@ function SeekTenGesture({ isForward = true }: { isForward?: boolean }) {
       "linear-gradient(to right, rgba(0, 0, 0, 0.314) 70%, rgba(0, 0, 0, 0))"
   }
 
+  const handleSeekStates = () => {
+    setIsSeeking(true);
+    setSeekedTime(seekedTime + 10);
+  }
+
   const handleSubsequentTaps = () => {
     if (playerRef?.current) {
-      setIsSeeking(true);
-      setSeekedTime(seekedTime + 10);
+      handleSeekStates();
       playerRef.current.currentTime += isForward ? 10 : -10;
     }
   }
@@ -80,10 +84,7 @@ function SeekTenGesture({ isForward = true }: { isForward?: boolean }) {
       className={styles.gesture}
       event="dblpointerup"
       action={`seek:${isForward ? "" : "-"}10`}
-      onTrigger={() => (
-        setIsSeeking(true),
-        setSeekedTime(seekedTime + 10)
-      )}
+      onTrigger={() => handleSeekStates()}
       children={feedbackArea()}
     />
   );
