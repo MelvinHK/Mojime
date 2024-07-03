@@ -96,28 +96,7 @@
   opacity: 0;
   color: transparent;
   background: transparent;
-}
-
-.seekTenFeedback[data-triggered="true"] {
-  opacity: 1;
-  color: var(--white);
-  pointer-events: auto;
-}
-
-.seekTenFeedback[data-triggered="false"] {
-  opacity: 0;
-  color: transparent;
-  pointer-events: none;
-}
-
-/* Seeking forwards */
-.seekTenFeedback[data-seek-type="true"] {
-  background-image: linear-gradient(to left, rgba(0, 0, 0, 0.314) 70%, rgba(0, 0, 0, 0));
-}
-
-/* Seeking backwards */
-.seekTenFeedback[data-seek-type="false"] {
-  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.314) 70%, rgba(0, 0, 0, 0));
+  border-radius: 0;
 }
 
 /* Remove toggle to pause on touch. */

@@ -7,12 +7,6 @@ import { PlayerContext } from "../Player";
 export default function Gestures() {
   const { isTapGesture } = useContext(PlayerContext);
 
-  const [isForwardSeeking, setIsForwardSeeking] = useDebouncedState(false, 500);
-  const [forwardedTime, setForwardedTime] = useDebouncedState(0, 750);
-
-  const [isBackSeeking, setIsBackSeeking] = useDebouncedState(false, 500);
-  const [backedTime, setBackedTime] = useDebouncedState(0, 750);
-
   const onControlsWillToggle = (e: GestureWillTriggerEvent) => {
     if (!isTapGesture.current) {
       e.preventDefault();
@@ -39,73 +33,58 @@ export default function Gestures() {
           onControlsWillToggle(nativeEvent)
         }
       />
-      <Gesture
-        className={styles.gesture}
-        event="dblpointerup"
-        action="seek:-10"
-        onTrigger={() => (
-          setIsBackSeeking(true),
-          setBackedTime(backedTime + 10)
-        )}
-        children={
-          <SeekTenFeedback
-            active={isBackSeeking}
-            seekType={false}
-            seekedTime={backedTime}
-            setIsSeeking={setIsBackSeeking}
-            setSeekedTime={setBackedTime}
-          />
-        }
-      />
-      <Gesture
-        className={styles.gesture}
-        event="dblpointerup"
-        action="seek:10"
-        onTrigger={() => (
-          setIsForwardSeeking(true),
-          setForwardedTime(forwardedTime + 10)
-        )}
-        children={
-          <SeekTenFeedback
-            active={isForwardSeeking}
-            seekType={true}
-            seekedTime={forwardedTime}
-            setIsSeeking={setIsForwardSeeking}
-            setSeekedTime={setForwardedTime}
-          />
-        }
-      />
+      <SeekTenGesture />
+      <SeekTenGesture isForward={false} />
     </>
   );
 }
 
-interface seekFeedbackProps {
-  active: boolean;
-  seekType: boolean; // false = -10s, true = +10s.
-  seekedTime: number;
-  setIsSeeking: (value: boolean) => void;
-  setSeekedTime: (value: number) => void;
-}
-
-function SeekTenFeedback({ active, seekType, seekedTime, setIsSeeking, setSeekedTime }: seekFeedbackProps) {
+function SeekTenGesture({ isForward = true }: { isForward?: boolean }) {
   const { playerRef } = useContext(PlayerContext);
+
+  const [isSeeking, setIsSeeking] = useDebouncedState(false, 500);
+  const [seekedTime, setSeekedTime] = useDebouncedState(0, 750);
+
+  const feedbackStyle: React.CSSProperties = {
+    opacity: isSeeking ? "1" : "0",
+    pointerEvents: isSeeking ? "auto" : "none",
+    color: isSeeking ? "var(--white)" : "transparent",
+    backgroundImage: isForward ?
+      "linear-gradient(to left, rgba(0, 0, 0, 0.314) 70%, rgba(0, 0, 0, 0))"
+      :
+      "linear-gradient(to right, rgba(0, 0, 0, 0.314) 70%, rgba(0, 0, 0, 0))"
+  }
 
   const handleSubsequentTaps = () => {
     if (playerRef?.current) {
       setIsSeeking(true);
       setSeekedTime(seekedTime + 10);
-      playerRef.current.currentTime += seekType ? 10 : -10;
+      playerRef.current.currentTime += isForward ? 10 : -10;
     }
   }
 
+  const feedbackArea = (): JSX.Element => {
+    return (
+      <button
+        className={`flex fl-a-center fl-j-center ${styles.seekTenFeedback}`}
+        style={feedbackStyle}
+        onClick={() => handleSubsequentTaps()}
+      >
+        {isForward ? "+" : "-"}{seekedTime}s
+      </button>
+    );
+  }
+
   return (
-    <button
-      className={`flex fl-a-center fl-j-center ${styles.seekTenFeedback}`}
-      data-triggered={active.toString()}
-      data-seek-type={seekType.toString()}
-      onClick={() => handleSubsequentTaps()}
-    >
-      {seekType ? "+" : "-"}{seekedTime}s
-    </button>
-  )
+    <Gesture
+      className={styles.gesture}
+      event="dblpointerup"
+      action={`seek:${isForward ? "" : "-"}10`}
+      onTrigger={() => (
+        setIsSeeking(true),
+        setSeekedTime(seekedTime + 10)
+      )}
+      children={feedbackArea()}
+    />
+  );
 }
