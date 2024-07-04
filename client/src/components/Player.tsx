@@ -60,7 +60,7 @@ export default function Player() {
   const keyShortcuts = playerKeyShortcuts(playerRef);
   const { bind, y, isTapGesture } = usePlayerGesture(playerRef);
 
-  const qualityContextValues: PlayerContextType = { playerRef, isTapGesture };
+  const playerContextValues: PlayerContextType = { playerRef, isTapGesture };
 
   const isPreloadingAllowed = useRef(true);
 
@@ -203,7 +203,7 @@ export default function Player() {
             ) : (
               <MediaProvider />
             )}
-            <PlayerContext.Provider value={qualityContextValues}>
+            <PlayerContext.Provider value={playerContextValues}>
               <VideoLayout />
             </PlayerContext.Provider>
             {isLoadingEpisode && (
