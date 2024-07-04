@@ -6,13 +6,11 @@ import { useNavigate } from "react-router-dom";
 import LoadingAnimation from "./LoadingAnimation";
 import { WatchContext } from "../contexts/WatchProvider";
 
-type subDub = "sub" | "dub";
-
 export default function Searchbar() {
   const { setEpisodeNoState } = useContext(WatchContext);
 
   const [searchBarQuery, setSearchbarQuery] = useState<string>("");
-  const [subOrDubOption, setSubOrDubOption] = useState<subDub>("sub");
+  const [subOrDubOption, setSubOrDubOption] = useState<"sub" | "dub">("sub");
 
   const [resultsList, setResultsList] = useState<IAnimeResult[]>();
   const filteredResults = useMemo(() =>

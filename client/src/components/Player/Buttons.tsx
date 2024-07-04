@@ -75,17 +75,13 @@ export function Fullscreen() {
   );
 }
 
-interface SeekProps {
-  seconds?: number;
-}
-
-export function Seek(props: SeekProps) {
+export function Seek({ seconds }: { seconds: number }) {
   return (
     <SeekButton
-      seconds={props.seconds}
+      seconds={seconds}
       className={buttonStyles.seek}
     >
-      +{props.seconds}s
+      +{seconds}s
     </SeekButton>
   );
 }
