@@ -112,6 +112,7 @@ export default function Player() {
         sessionStorage.setItem(id, JSON.stringify(episodeCache));
       } catch (error) {
         if (isAxiosError(error) && error.code === "ERR_CANCELED") {
+          isPreloadingAllowed.current = true;
           return;
         }
         showBoundary(error);
