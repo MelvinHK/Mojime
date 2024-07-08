@@ -84,6 +84,16 @@ export const WatchProvider = (props: GPProps) => {
     setEpisodeNoState(episodeNoParam);
   }, [episodeNoParam]);
 
+  useEffect(() => {
+    const handlePop = () => {
+      if (episodeNoParam !== episodeNoState) {
+        setEpisodeNoState(episodeNoParam);
+      }
+    }
+    window.addEventListener('popstate', handlePop);
+    return () => window.removeEventListener('popstate', handlePop);
+  }, [episodeNoParam, episodeNoState]);
+
   const episodeId = useMemo(() =>
     animeInfo?.episodes?.[Number(episodeNoState) - 1]?.id,
     [animeInfo, episodeNoState]
@@ -105,8 +115,9 @@ export const WatchProvider = (props: GPProps) => {
     if (animeId !== animeInfo?.id) {
       setSources([]);
       setQualities([undefined]);
+      setEpisodeNoState('1');
     }
-  }, [animeId, animeInfo])
+  }, [animeId, animeInfo]);
 
   const GlobalContextValues = {
     animeInfo,

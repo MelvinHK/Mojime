@@ -21,6 +21,7 @@ import { animated } from "@react-spring/web";
 import { isMobile } from "react-device-detect";
 import { usePlayerGesture } from "../utils/player/usePlayerGesture";
 import { playerKeyShortcuts } from "../utils/player/playerKeyShortcuts";
+import { useParams } from "react-router-dom";
 
 type PlayerContextType = {
   playerRef: RefObject<MediaPlayerInstance> | undefined,
@@ -48,6 +49,8 @@ export default function Player() {
     episodeId,
     nextEpisodeId,
   } = useContext(WatchContext);
+
+  const { animeId } = useParams();
 
   const { showBoundary } = useErrorBoundary();
 
@@ -83,22 +86,22 @@ export default function Player() {
     }
   };
 
-  const setEpisode = async (id: string | undefined) => {
-    if (!id || !playerRef.current) { return; }
+  const setEpisode = async (epId: string | undefined) => {
+    if (!epId || !playerRef.current || animeId !== animeInfo?.id) { return; }
 
     const setStates = (sources: IVideo[], qualities: (string | undefined)[]) => {
       setSources(sources);
       setQualities(qualities);
     }
 
-    const preloaded = sessionStorage.getItem(id);
+    const preloaded = sessionStorage.getItem(epId);
     if (preloaded) {
       const parsed: PreloadedEpisode = JSON.parse(preloaded);
       setStates(parsed.sources, parsed.qualities);
     } else {
       try {
         isPreloadingAllowed.current = false;
-        const episode: ISource = await getEpisodeWithAbort(id);
+        const episode: ISource = await getEpisodeWithAbort(epId);
         const sources = episode.sources;
         const qualities = episode.sources
           .map(src => src.quality)
@@ -109,7 +112,7 @@ export default function Player() {
           sources: sources,
           qualities: qualities
         }
-        sessionStorage.setItem(id, JSON.stringify(episodeCache));
+        sessionStorage.setItem(epId, JSON.stringify(episodeCache));
       } catch (error) {
         if (isAxiosError(error) && error.code === "ERR_CANCELED") {
           isPreloadingAllowed.current = true;

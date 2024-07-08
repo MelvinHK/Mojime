@@ -61,7 +61,6 @@ export default function Watch() {
       }
     }
 
-    setAnimeInfo(undefined);
     fetchAnime();
   }, [animeInfo, animeId, episodeNoState])
 
@@ -79,7 +78,7 @@ export default function Watch() {
     width: episodeInput.length + 'ch', // Set width based on the length of the value
   };
 
-  return (animeInfo && episodeNoState ? (
+  return (animeInfo && episodeNoState && animeInfo.id === animeId ? (
     <>
       <Player />
       <p>{animeInfo.title as string}</p>
