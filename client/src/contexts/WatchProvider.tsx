@@ -86,7 +86,7 @@ export const WatchProvider = (props: GPProps) => {
 
   useEffect(() => {
     const handlePop = () => {
-      if (episodeNoParam !== episodeNoState) {
+      if (episodeNoParam && episodeNoParam !== episodeNoState) {
         setEpisodeNoState(episodeNoParam);
       }
     }
