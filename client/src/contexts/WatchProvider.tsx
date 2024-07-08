@@ -119,7 +119,6 @@ export const WatchProvider = (props: GPProps) => {
     if (animeId !== animeInfo?.id) {
       setSources([]);
       setQualities([undefined]);
-      setEpisodeNoState('1');
     }
   }, [animeId, animeInfo]);
 

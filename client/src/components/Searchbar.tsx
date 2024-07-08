@@ -1,11 +1,14 @@
 import { getSearch } from "../utils/api";
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useContext, useMemo } from "react";
 import { IAnimeResult, ISearch } from "@consumet/extensions";
 import useClickAway from "../utils/hooks/useClickAway";
 import { useNavigate } from "react-router-dom";
 import LoadingAnimation from "./LoadingAnimation";
+import { WatchContext } from "../contexts/WatchProvider";
 
 export default function Searchbar() {
+  const { setEpisodeNoState } = useContext(WatchContext);
+
   const [searchBarQuery, setSearchbarQuery] = useState<string>("");
   const [subOrDubOption, setSubOrDubOption] = useState<"sub" | "dub">("sub");
 
@@ -88,6 +91,7 @@ export default function Searchbar() {
       setSearchbarQuery(filteredResults[index].title as string);
       setShowDropdown(false);
       navigate(`/${filteredResults[index].id}/1`);
+      setEpisodeNoState("1");
       searchbarRef?.current?.blur();
     }
   }
