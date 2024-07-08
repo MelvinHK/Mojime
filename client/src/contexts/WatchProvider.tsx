@@ -72,7 +72,7 @@ export const WatchProvider = (props: GPProps) => {
 
   const { episodeNoParam, animeId } = useParams();
   const [episodeNoState, setEpisodeNoState] = useState(episodeNoParam);
-  // Pseudo episode number url parameter (see '../utils/navigateToEpisode.tsx')
+  // 1a. Pseudo episode number url parameter (see '../utils/navigateToEpisode.tsx').
 
   const [sources, setSources] = useState<IVideo[]>([]);
   const [qualities, setQualities] = useState<(string | undefined)[]>([undefined]);
@@ -80,12 +80,16 @@ export const WatchProvider = (props: GPProps) => {
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [isLoadingEpisode, setIsLoadingEpisode] = useState(true);
 
+  // 1b. Synchronise pseudo ep param with useParam().
   useEffect(() => {
     setEpisodeNoState(episodeNoParam);
   }, [episodeNoParam]);
 
+  // 1c. Update pseudo ep param during popstate events, i.e. forward/back page navigation.
   useEffect(() => {
     const handlePop = () => {
+      // Ensure episodeNoParam exists to confirm user is on an episode route,
+      // then synchronise with useParam() if not already.
       if (episodeNoParam && episodeNoParam !== episodeNoState) {
         setEpisodeNoState(episodeNoParam);
       }
