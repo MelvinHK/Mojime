@@ -90,6 +90,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--gray);
 }
 
 .slider[aria-orientation='vertical'] .thumb {
@@ -102,11 +103,6 @@
 .sliderSmall .thumb {
   width: 13px;
   height: 13px;
-}
-
-.thumb:not(.sliderSmall .thumb)::after {
-  color: var(--gray);
-  content: ">∀<";
 }
 
 [data-active]>.thumb {

@@ -38,8 +38,9 @@ export function Time() {
           className={`${styles.trackFill} ${styles.track}`}
         />
       </TimeSlider.Track>
-
-      <TimeSlider.Thumb className={styles.thumb} />
+      <TimeSlider.Thumb className={styles.thumb}>
+        {">∀<"}
+      </TimeSlider.Thumb>
     </TimeSlider.Root>
   );
 }
