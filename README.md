@@ -1,6 +1,13 @@
 # Mojime
 
-Minimalist anime streaming website. Does not host any content; scrapes off of a 3rd party.
+Minimalist anime streaming website. 
+Aimed to reduce as much friction for users who already have an anime in mind to watch.  
+Does not host any content; scrapes off of a 3rd party.
+
+## Main Features
+- Fullscreen episode navigation - Go to next/prev. episodes without leaving fullscreen.
+- Next episode prefetching - Once current episode is watched 75% through, the next episode is fetched in background to eliminate load times.
+- (W.I.P) Search-as-you-type - Quickly find results in the searchbar.
 
 ## Keyboard Shortcuts
 1. Search bar  
