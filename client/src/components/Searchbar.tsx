@@ -1,10 +1,15 @@
-import { getSearch } from "../utils/api";
-import { useState, useEffect, useRef, useContext, useMemo } from "react";
-import { IAnimeResult, ISearch } from "@consumet/extensions";
+import { getSearchV2 } from "../utils/api";
+import { useState, useEffect, useRef, useContext } from "react";
 import useClickAway from "../utils/hooks/useClickAway";
 import { useNavigate } from "react-router-dom";
-import LoadingAnimation from "./LoadingAnimation";
 import { WatchContext } from "../contexts/WatchProvider";
+
+interface AnimeDetails {
+  animeId: string;
+  title: string;
+  subOrDub: "sub" | "dub";
+  otherNames: string[];
+}
 
 export default function Searchbar() {
   const { setEpisodeNoState } = useContext(WatchContext);
@@ -12,23 +17,10 @@ export default function Searchbar() {
   const [searchBarQuery, setSearchbarQuery] = useState<string>("");
   const [subOrDubOption, setSubOrDubOption] = useState<"sub" | "dub">("sub");
 
-  const [resultsList, setResultsList] = useState<IAnimeResult[]>();
-  const filteredResults = useMemo(() =>
-    resultsList?.filter(result => result.subOrDub === subOrDubOption),
-    [resultsList, subOrDubOption]
-  );
-
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [hasNextPage, setHasNextPage] = useState<boolean | undefined>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [resultsList, setResultsList] = useState<AnimeDetails[]>();
 
   // Up/Down key search result selection.
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
-
-  // 1a. Cache results for when navigating back & forth between result pages.
-  const [searchCache, setSearchCache] = useState<ISearch<IAnimeResult>[]>([]);
-  // 1b. Store initial searchbar query in case it is edited before page navigation.
-  const [pageNavQuery, setPageNavQuery] = useState<string>("");
 
   const searchbarRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLUListElement>(null);
@@ -42,55 +34,40 @@ export default function Searchbar() {
     setShowDropdown(false);
   });
 
-  const handleSearch = async (query: string, page: number) => {
-    if (!query.trim()) { return; }
+  const handleAutoComplete = async (value: string) => {
+    setSearchbarQuery(value);
 
-    setIsLoading(true);
-    try {
-      const search = await getSearch(query, page);
-      updateSearchResults(search);
-      // 2. Page === 1 implies a new search; remove existing cache.
-      setSearchCache(page === 1 ? [search] : [...searchCache, search]);
-      if (page === 1) { setPageNavQuery(searchBarQuery); }
-    } catch (error) {
-      return;
-    } finally {
-      setIsLoading(false);
+    if (value.length > 2) {
+      const results = await getSearchV2(value, subOrDubOption);
+      updateSearchResults(results);
     }
-  }
+  };
 
-  const handlePageButton = (page: number) => {
-    if (isLoading) { return; }
-
-    if (searchCache[page - 1]) {
-      updateSearchResults(searchCache[page - 1]);
-    } else {
-      handleSearch(pageNavQuery, page);
-    }
-  }
-
-  const updateSearchResults = (search: ISearch<IAnimeResult>) => {
-    setResultsList(search.results);
-    setCurrentPage(search.currentPage as number);
-    setHasNextPage(search.hasNextPage);
+  const updateSearchResults = (results: AnimeDetails[]) => {
+    setResultsList(results);
     setShowDropdown(true);
+  }
+
+  const handleSubOrDubToggle = async () => {
+    const option = subOrDubOption === "sub" ? "dub" : "sub";
+    if (searchBarQuery.length > 0) {
+      const results = await getSearchV2(searchBarQuery, option);
+      updateSearchResults(results);
+    }
+    setSubOrDubOption(option);
   }
 
   const resetSearchbar = () => {
     setSearchbarQuery("");
     setResultsList(undefined);
-    setCurrentPage(1);
-    setHasNextPage(false);
-    setSearchCache([]);
-    setPageNavQuery("");
     setShowDropdown(false);
   }
 
   const handleNavigate = (index: number) => {
-    if (filteredResults) {
-      setSearchbarQuery(filteredResults[index].title as string);
+    if (resultsList) {
+      setSearchbarQuery(resultsList[index].title as string);
       setShowDropdown(false);
-      navigate(`/${filteredResults[index].id}/1`);
+      navigate(`/${resultsList[index].animeId}/1`);
       setEpisodeNoState("1");
       searchbarRef?.current?.blur();
     }
@@ -110,7 +87,7 @@ export default function Searchbar() {
         return;
       }
 
-      if (!filteredResults) {
+      if (!resultsList) {
         return;
       }
 
@@ -119,14 +96,14 @@ export default function Searchbar() {
         searchbarRef?.current?.focus();
         setSelectedIndex(
           e.key === 'ArrowUp' ?
-            (selectedIndex + filteredResults.length) % (filteredResults.length + 1)
+            (selectedIndex + resultsList.length) % (resultsList.length + 1)
             :
-            (selectedIndex + 1) % (filteredResults.length + 1)
+            (selectedIndex + 1) % (resultsList.length + 1)
         );
         return;
       }
 
-      if (e.key === 'Enter' && filteredResults.hasOwnProperty(selectedIndex)) {
+      if (e.key === 'Enter' && resultsList.hasOwnProperty(selectedIndex)) {
         e.preventDefault();
         handleNavigate(selectedIndex);
         return;
@@ -135,12 +112,12 @@ export default function Searchbar() {
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [filteredResults, selectedIndex, showDropdown]);
+  }, [resultsList, selectedIndex, showDropdown]);
 
   useEffect(() => {
-    if (filteredResults?.hasOwnProperty(selectedIndex)) {
+    if (resultsList?.hasOwnProperty(selectedIndex)) {
       resultsRef.current?.children[selectedIndex]
-        .scrollIntoView(selectedIndex === filteredResults.length - 1);
+        .scrollIntoView(selectedIndex === resultsList.length - 1);
     }
   }, [selectedIndex]);
 
@@ -160,10 +137,7 @@ export default function Searchbar() {
         className='flex fl-a-center'
         spellCheck='false'
         autoComplete="off"
-        onSubmit={(e) => (
-          e.preventDefault(),
-          handleSearch(searchBarQuery, 1)
-        )}
+        onSubmit={(e) => e.preventDefault()}
       >
         <input
           className="w-100"
@@ -171,24 +145,23 @@ export default function Searchbar() {
           value={searchBarQuery}
           onChange={(e) => (
             setSelectedIndex(-1),
-            setSearchbarQuery(e.target.value)
+            setSearchbarQuery(e.target.value),
+            handleAutoComplete(e.target.value)
           )}
           placeholder='Search'
           onClick={() => setShowDropdown(true)}
           onFocus={() => setShowDropdown(true)}
           onBlur={() => setSelectedIndex(-1)}
         />
-        {isLoading && <LoadingAnimation />}
       </form>
-
+      
       {/******** DROPDOWN ********/}
-      {filteredResults && showDropdown && (
+      {resultsList && showDropdown && (
         <div id="dropdown">
-          {/******** PAGE NAVIGATION ********/}
           <div id="page-nav">
             {/* SUB OR DUB TOGGLE */}
             <button
-              onClick={() => setSubOrDubOption(subOrDubOption === "sub" ? "dub" : "sub")}
+              onClick={() => handleSubOrDubToggle()}
             >
               <span className={subOrDubOption !== "sub" ? "o-disabled" : ""}>
                 Sub&nbsp;
@@ -198,34 +171,17 @@ export default function Searchbar() {
                 &nbsp;Dub
               </span>
             </button>
-            {/* NEXT & PREV BUTTONS */}
-            {(hasNextPage || currentPage > 1) && (
-              <div className="ml-auto">
-                <button
-                  onClick={() => handlePageButton(currentPage - 1)}
-                  disabled={currentPage === 1}
-                >
-                  &lt; Prev
-                </button>
-                <button
-                  onClick={() => handlePageButton(currentPage + 1)}
-                  disabled={!hasNextPage}
-                >
-                  Next &gt;
-                </button>
-
-              </div>
-            )}
           </div>
+
           {/******** RESULTS ********/}
           <ul
             id='search-results'
             ref={resultsRef}
           >
-            {filteredResults.length > 0 ? (
-              filteredResults?.map((result, index) =>
+            {resultsList.length > 0 ? (
+              resultsList?.map((result, index) =>
                 <li
-                  key={result.id}
+                  key={result.animeId}
                   className={selectedIndex === index ? 'selected' : ''}
                   onClick={() => handleNavigate(index)}
                 >
@@ -238,6 +194,7 @@ export default function Searchbar() {
               </li>
             )}
           </ul>
+          
           {/******** CLOSE BUTTON ********/}
           <button
             id="close-results"

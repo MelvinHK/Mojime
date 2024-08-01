@@ -2,6 +2,8 @@ import express from 'express';
 import rateLimit from 'express-rate-limit';
 
 import { ANIME } from "@consumet/extensions"
+import { collNames, dbName, mongoClient } from './atlasConfig';
+import { MongoOIDCError } from 'mongodb';
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -26,6 +28,59 @@ app.get('/api/search/:query/page/:pageNumber', limiter, async (req, res, next) =
     res.json(data);
   } catch (error) {
     next(error);
+  }
+});
+
+app.get('/api/searchV2', async (req, res) => {
+  const { query, subOrDub } = req.query;
+
+  if (!query) {
+    return res.status(400).json({ error: 'Query parameter is required' });
+  }
+
+  try {
+    const collection = mongoClient
+      .db(dbName)
+      .collection(collNames.animeDetails);
+
+    const searchResults = await collection.aggregate([
+      {
+        $search: {
+          index: 'AnimeDetailsIndex',
+          compound: {
+            must: [
+              {
+                autocomplete: {
+                  query: subOrDub,
+                  path: "subOrDub"
+                }
+              }
+            ],
+            should: [
+              {
+                autocomplete: {
+                  query: query,
+                  path: "title"
+                }
+              },
+              {
+                text: {
+                  query: query,
+                  path: "title",
+                }
+              },
+            ],
+            minimumShouldMatch: 1
+          }
+        },
+      },
+      { $limit: 10 }, // Limit results
+    ]).toArray();
+
+    res.status(200).json(searchResults);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 

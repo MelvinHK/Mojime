@@ -19,6 +19,17 @@ export const getSearch = async (query: string, page: number) => {
   }
 }
 
+export const getSearchV2 = async (query: string, subOrDub: "sub" | "dub") => {
+  try {
+    const response = await axios.get(`${apiUrl}/api/searchV2`, {
+      params: { query: query, subOrDub: subOrDub },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching suggestions:', error);
+  }
+}
+
 const handlePageContentError = (error: any) => {
   if (error.code === 'ECONNABORTED') {
     throw error;
