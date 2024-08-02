@@ -1,34 +1,16 @@
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
-export const getSearch = async (query: string, page: number) => {
-  try {
-    const results = await axios.get(`${apiUrl}/api/search/${query}/page/${page}`, {
-      timeout: 10000
-    });
-    return results.data;
-  } catch (error: any) {
-    if (axios.isAxiosError(error) && error.code === 'ECONNABORTED') {
-      alert('Connection Error: Request timed out; the search took too long. Maybe try again.');
-    } else if (error.response && error.response.status === 429) {
-      alert('Request Error: Too many search requests... Try again in another minute.')
-    } else {
-      alert(`Uknown Error: Unable to fetch search results... Try again later.`);
-    }
-  }
-}
-
-export const getSearchV2 = async (query: string, subOrDub: "sub" | "dub", signal: AbortSignal) => {
+export const getSearch = async (query: string, subOrDub: "sub" | "dub") => {
   try {
     const response = await axios.get(`${apiUrl}/api/searchV2`, {
       params: { query: query, subOrDub: subOrDub },
-      signal: signal
     });
     return response.data;
-  } catch (error: any) {
-    if (error.code === 'ERR_CANCELED') {
-      return;
+  } catch (error) {
+    if (isAxiosError(error) && error.response?.status === 429) {
+      window.alert("Error 429: Submitted too many search requests... Please try again in a few seconds.");
     }
     console.error('Error fetching suggestions:', error);
   }

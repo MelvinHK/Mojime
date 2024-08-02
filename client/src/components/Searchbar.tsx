@@ -1,8 +1,9 @@
-import { getSearchV2 } from "../utils/api";
+import { getSearch } from "../utils/api";
 import { useState, useEffect, useRef, useContext } from "react";
 import useClickAway from "../utils/hooks/useClickAway";
 import { useNavigate } from "react-router-dom";
 import { WatchContext } from "../contexts/WatchProvider";
+import { throttle } from "lodash-es";
 
 interface AnimeDetails {
   animeId: string;
@@ -28,43 +29,38 @@ export default function Searchbar() {
   const searchContainer = useRef<HTMLDivElement>(null);
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
 
-  const abortControllerRef = useRef<AbortController | null>(null);
-
   const navigate = useNavigate();
 
   useClickAway(searchContainer.current, () => {
     setShowDropdown(false);
   });
 
-  const getSearchWithAbort = async (value: string, subOrDub: "sub" | "dub") => {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
-
-    const newAbortController = new AbortController();
-    abortControllerRef.current = newAbortController;
-
-    return await getSearchV2(value, subOrDub, newAbortController.signal);
-  }
-
-  const handleAutoComplete = async (value: string) => {
-    setSearchbarQuery(value);
-
-    if (value.length > 2) {
-      const results = await getSearchWithAbort(value, subOrDubOption);
-      updateSearchResults(results);
-    }
-  };
-
   const updateSearchResults = (results: AnimeDetails[]) => {
     setResultsList(results);
     setShowDropdown(true);
   }
 
+  const handleAutoComplete = async (value: string) => {
+    if (value.length <= 2) { return; }
+
+    const result = await getSearch(value, subOrDubOption);
+    updateSearchResults(result);
+  };
+
+  const throttledHandleAutoComplete = useRef(throttle((value: string) => {
+    handleAutoComplete(value);
+  }, 300)).current;
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedIndex(-1);
+    setSearchbarQuery(e.target.value);
+    throttledHandleAutoComplete(e.target.value);
+  };
+
   const handleSubOrDubToggle = async () => {
     const option = subOrDubOption === "sub" ? "dub" : "sub";
     if (searchBarQuery.length > 0) {
-      const results = await getSearchWithAbort(searchBarQuery, option);
+      const results = await getSearch(searchBarQuery, option);
       updateSearchResults(results);
     }
     setSubOrDubOption(option);
@@ -128,13 +124,6 @@ export default function Searchbar() {
   }, [resultsList, selectedIndex, showDropdown]);
 
   useEffect(() => {
-    if (resultsList?.hasOwnProperty(selectedIndex)) {
-      resultsRef.current?.children[selectedIndex]
-        .scrollIntoView(selectedIndex === resultsList.length - 1);
-    }
-  }, [selectedIndex]);
-
-  useEffect(() => {
     if (searchBarQuery.length === 0) {
       resetSearchbar();
     }
@@ -156,11 +145,7 @@ export default function Searchbar() {
           className="w-100"
           ref={searchbarRef}
           value={searchBarQuery}
-          onChange={(e) => (
-            setSelectedIndex(-1),
-            setSearchbarQuery(e.target.value),
-            handleAutoComplete(e.target.value)
-          )}
+          onChange={handleChange}
           placeholder='Search'
           onClick={() => setShowDropdown(true)}
           onFocus={() => setShowDropdown(true)}
