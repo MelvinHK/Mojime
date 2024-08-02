@@ -28,17 +28,30 @@ export default function Searchbar() {
   const searchContainer = useRef<HTMLDivElement>(null);
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
 
+  const abortControllerRef = useRef<AbortController | null>(null);
+
   const navigate = useNavigate();
 
   useClickAway(searchContainer.current, () => {
     setShowDropdown(false);
   });
 
+  const getSearchWithAbort = async (value: string, subOrDub: "sub" | "dub") => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    const newAbortController = new AbortController();
+    abortControllerRef.current = newAbortController;
+
+    return await getSearchV2(value, subOrDub, newAbortController.signal);
+  }
+
   const handleAutoComplete = async (value: string) => {
     setSearchbarQuery(value);
 
     if (value.length > 2) {
-      const results = await getSearchV2(value, subOrDubOption);
+      const results = await getSearchWithAbort(value, subOrDubOption);
       updateSearchResults(results);
     }
   };
@@ -51,7 +64,7 @@ export default function Searchbar() {
   const handleSubOrDubToggle = async () => {
     const option = subOrDubOption === "sub" ? "dub" : "sub";
     if (searchBarQuery.length > 0) {
-      const results = await getSearchV2(searchBarQuery, option);
+      const results = await getSearchWithAbort(searchBarQuery, option);
       updateSearchResults(results);
     }
     setSubOrDubOption(option);
@@ -154,7 +167,7 @@ export default function Searchbar() {
           onBlur={() => setSelectedIndex(-1)}
         />
       </form>
-      
+
       {/******** DROPDOWN ********/}
       {resultsList && showDropdown && (
         <div id="dropdown">
@@ -194,7 +207,7 @@ export default function Searchbar() {
               </li>
             )}
           </ul>
-          
+
           {/******** CLOSE BUTTON ********/}
           <button
             id="close-results"

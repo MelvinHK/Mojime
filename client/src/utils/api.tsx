@@ -19,13 +19,17 @@ export const getSearch = async (query: string, page: number) => {
   }
 }
 
-export const getSearchV2 = async (query: string, subOrDub: "sub" | "dub") => {
+export const getSearchV2 = async (query: string, subOrDub: "sub" | "dub", signal: AbortSignal) => {
   try {
     const response = await axios.get(`${apiUrl}/api/searchV2`, {
       params: { query: query, subOrDub: subOrDub },
+      signal: signal
     });
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
+    if (error.code === 'ERR_CANCELED') {
+      return;
+    }
     console.error('Error fetching suggestions:', error);
   }
 }
