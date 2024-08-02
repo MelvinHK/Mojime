@@ -67,6 +67,7 @@ app.get('/api/searchV2', async (req, res) => {
                 text: {
                   query: query,
                   path: "title",
+                  score: { boost: { value: 3 } }
                 }
               },
             ],
