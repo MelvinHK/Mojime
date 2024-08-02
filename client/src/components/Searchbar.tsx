@@ -40,21 +40,17 @@ export default function Searchbar() {
     setShowDropdown(true);
   }
 
-  const handleAutoComplete = async (value: string) => {
+  const handleAutoComplete = useRef(throttle(async (value: string) => {
     if (value.length <= 2) { return; }
 
     const result = await getSearch(value, subOrDubOption);
     updateSearchResults(result);
-  };
-
-  const throttledHandleAutoComplete = useRef(throttle((value: string) => {
-    handleAutoComplete(value);
   }, 300)).current;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedIndex(-1);
     setSearchbarQuery(e.target.value);
-    throttledHandleAutoComplete(e.target.value);
+    handleAutoComplete(e.target.value);
   };
 
   const handleSubOrDubToggle = async () => {

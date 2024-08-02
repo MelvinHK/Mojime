@@ -1,4 +1,4 @@
-import axios, { isAxiosError } from "axios";
+import axios from "axios";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -8,11 +8,12 @@ export const getSearch = async (query: string, subOrDub: "sub" | "dub") => {
       params: { query: query, subOrDub: subOrDub },
     });
     return response.data;
-  } catch (error) {
-    if (isAxiosError(error) && error.response?.status === 429) {
+  } catch (error: any) {
+    if (error.response?.status === 429) {
       window.alert("Error 429: Submitted too many search requests... Please try again in a few seconds.");
+      return;
     }
-    console.error('Error fetching suggestions:', error);
+    window.alert("Unknown Error: An unknown error occured with the search... Maybe try again later.");
   }
 }
 
