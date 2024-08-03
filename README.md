@@ -7,7 +7,7 @@ Does not host any content; scrapes off of a 3rd party.
 ## Main Features
 - Fullscreen episode navigation - Go to next/prev. episodes without leaving fullscreen.
 - Next episode prefetching - Once current episode is watched 75% through, the next episode is fetched in background to eliminate load times.
-- (W.I.P) Search-as-you-type - Quickly find results in the searchbar.
+- Search-as-you-type - Results quickly appear in the searchbar as you type.
 
 ## Keyboard Shortcuts
 1. Search bar  
