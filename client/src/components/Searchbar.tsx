@@ -43,7 +43,8 @@ export default function Searchbar() {
     setResultsList(results);
     setShowDropdown(true);
 
-    if (results[0]) { // Handles edge case where user edits title query whilst a sub/dub query is loading.
+    // Handle edge case where user edits title query whilst a sub/dub query is loading.
+    if (results[0] && subOrDubOption !== results[0].subOrDub) {
       setSubOrDubOption(results[0].subOrDub);
     }
   }
