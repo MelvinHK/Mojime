@@ -3,7 +3,6 @@ import { useState, useEffect, useRef, useContext } from "react";
 import useClickAway from "../utils/hooks/useClickAway";
 import { useNavigate } from "react-router-dom";
 import { WatchContext } from "../contexts/WatchProvider";
-import { throttle } from "lodash-es";
 import LoadingAnimation from "./LoadingAnimation";
 
 interface AnimeDetails {
@@ -45,7 +44,7 @@ export default function Searchbar() {
     setShowDropdown(true);
   }
 
-  const handleAutoComplete = useRef(throttle(async (value: string) => {
+  const handleAutoComplete = useRef(async (value: string) => {
     if (value.length <= 2) { return; }
 
     const newAbortController = new AbortController();
@@ -53,7 +52,7 @@ export default function Searchbar() {
 
     const result = await getSearch(value, subOrDubOption, newAbortController.signal);
     updateSearchResults(result);
-  }, 300)).current;
+  }).current;
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (abortControllerRef.current) {
@@ -62,7 +61,7 @@ export default function Searchbar() {
 
     setSelectedIndex(-1);
     setSearchbarQuery(e.target.value);
-    
+
     setIsLoading(true);
     await handleAutoComplete(e.target.value);
     setIsLoading(false);
