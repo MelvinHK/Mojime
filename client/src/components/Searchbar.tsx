@@ -4,6 +4,7 @@ import useClickAway from "../utils/hooks/useClickAway";
 import { useNavigate } from "react-router-dom";
 import { WatchContext } from "../contexts/WatchProvider";
 import { throttle } from "lodash-es";
+import LoadingAnimation from "./LoadingAnimation";
 
 interface AnimeDetails {
   animeId: string;
@@ -26,6 +27,8 @@ export default function Searchbar() {
   const searchbarRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLUListElement>(null);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const searchContainer = useRef<HTMLDivElement>(null);
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
 
@@ -43,8 +46,10 @@ export default function Searchbar() {
   const handleAutoComplete = useRef(throttle(async (value: string) => {
     if (value.length <= 2) { return; }
 
+    setIsLoading(true);
     const result = await getSearch(value, subOrDubOption);
     updateSearchResults(result);
+    setIsLoading(false);
   }, 300)).current;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -147,6 +152,7 @@ export default function Searchbar() {
           onFocus={() => setShowDropdown(true)}
           onBlur={() => setSelectedIndex(-1)}
         />
+        {isLoading && <LoadingAnimation />}
       </form>
 
       {/******** DROPDOWN ********/}
