@@ -11,7 +11,7 @@ export const getSearch = async (query: string, subOrDub: "sub" | "dub", signal?:
     return response.data;
   } catch (error: any) {
     if (error.code === "ERR_CANCELED") {
-      return;
+      throw error;
     }
     if (error.response?.status === 429) {
       window.alert("Error 429: Submitted too many search requests... Please try again in a few seconds.");

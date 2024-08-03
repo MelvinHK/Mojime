@@ -50,8 +50,16 @@ export default function Searchbar() {
     const newAbortController = new AbortController();
     abortControllerRef.current = newAbortController;
 
-    const result = await getSearch(value, subOrDubOption, newAbortController.signal);
-    updateSearchResults(result);
+    try {
+      const result = await getSearch(value, subOrDubOption, newAbortController.signal);
+      updateSearchResults(result);
+      setIsLoading(false);
+    } catch (error: any) {
+      if (error.code === "ERR_CANCELED") {
+        return;
+      }
+      setIsLoading(false);
+    }
   }).current;
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,7 +72,6 @@ export default function Searchbar() {
 
     setIsLoading(true);
     await handleAutoComplete(e.target.value);
-    setIsLoading(false);
   };
 
   const handleSubOrDubToggle = async () => {
