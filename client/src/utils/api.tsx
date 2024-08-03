@@ -2,20 +2,18 @@ import axios from "axios";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
-export const getSearch = async (query: string, page: number) => {
+export const getSearch = async (query: string, subOrDub: "sub" | "dub") => {
   try {
-    const results = await axios.get(`${apiUrl}/api/search/${query}/page/${page}`, {
-      timeout: 10000
+    const response = await axios.get(`${apiUrl}/api/searchV2`, {
+      params: { query: query, subOrDub: subOrDub },
     });
-    return results.data;
+    return response.data;
   } catch (error: any) {
-    if (axios.isAxiosError(error) && error.code === 'ECONNABORTED') {
-      alert('Connection Error: Request timed out; the search took too long. Maybe try again.');
-    } else if (error.response && error.response.status === 429) {
-      alert('Request Error: Too many search requests... Try again in another minute.')
-    } else {
-      alert(`Uknown Error: Unable to fetch search results... Try again later.`);
+    if (error.response?.status === 429) {
+      window.alert("Error 429: Submitted too many search requests... Please try again in a few seconds.");
+      return;
     }
+    window.alert("Unknown Error: An unknown error occured with the search... Maybe try again later.");
   }
 }
 
