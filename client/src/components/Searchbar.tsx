@@ -87,7 +87,10 @@ export default function Searchbar() {
 
     if (searchBarQuery.length > 0) {
       try {
-        const results = await getSearch(searchBarQuery, option);
+        const newAbortController = new AbortController();
+        abortControllerRef.current = newAbortController;
+
+        const results = await getSearch(searchBarQuery, option, newAbortController.signal);
         updateSearchResults(results);
       } catch (error: any) {
         if (error.code === "ERR_CANCELED") {
