@@ -32,6 +32,8 @@ export default function Searchbar() {
   const searchContainer = useRef<HTMLDivElement>(null);
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
 
+  const abortControllerRef = useRef<AbortController | null>(null);
+
   const navigate = useNavigate();
 
   useClickAway(searchContainer.current, () => {
@@ -46,25 +48,40 @@ export default function Searchbar() {
   const handleAutoComplete = useRef(throttle(async (value: string) => {
     if (value.length <= 2) { return; }
 
-    setIsLoading(true);
-    const result = await getSearch(value, subOrDubOption);
+    const newAbortController = new AbortController();
+    abortControllerRef.current = newAbortController;
+
+    const result = await getSearch(value, subOrDubOption, newAbortController.signal);
     updateSearchResults(result);
-    setIsLoading(false);
   }, 300)).current;
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
     setSelectedIndex(-1);
     setSearchbarQuery(e.target.value);
-    handleAutoComplete(e.target.value);
+    
+    setIsLoading(true);
+    await handleAutoComplete(e.target.value);
+    setIsLoading(false);
   };
 
   const handleSubOrDubToggle = async () => {
+    if (isLoading) { return; }
+
+    setIsLoading(true);
+
     const option = subOrDubOption === "sub" ? "dub" : "sub";
+    setSubOrDubOption(option);
+
     if (searchBarQuery.length > 0) {
       const results = await getSearch(searchBarQuery, option);
       updateSearchResults(results);
     }
-    setSubOrDubOption(option);
+
+    setIsLoading(false);
   }
 
   const resetSearchbar = () => {

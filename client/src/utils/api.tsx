@@ -2,13 +2,17 @@ import axios from "axios";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
-export const getSearch = async (query: string, subOrDub: "sub" | "dub") => {
+export const getSearch = async (query: string, subOrDub: "sub" | "dub", signal?: AbortSignal) => {
   try {
     const response = await axios.get(`${apiUrl}/api/searchV2`, {
       params: { query: query, subOrDub: subOrDub },
+      signal: signal
     });
     return response.data;
   } catch (error: any) {
+    if (error.code === "ERR_CANCELED") {
+      return;
+    }
     if (error.response?.status === 429) {
       window.alert("Error 429: Submitted too many search requests... Please try again in a few seconds.");
       return;
