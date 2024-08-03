@@ -42,12 +42,16 @@ export default function Searchbar() {
   const updateSearchResults = (results: AnimeDetails[]) => {
     setResultsList(results);
     setShowDropdown(true);
+
+    if (results[0]) { // Handles edge case where user edits title query whilst a sub/dub query is loading.
+      setSubOrDubOption(results[0].subOrDub);
+    }
   }
 
   const handleAutoComplete = useRef(async (value: string) => {
-    if (value.length <= 2) { 
+    if (value.length <= 2) {
       setIsLoading(false);
-      return; 
+      return;
     }
 
     const newAbortController = new AbortController();
