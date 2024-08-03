@@ -5,10 +5,12 @@ import { useNavigate } from "react-router-dom";
 import { WatchContext } from "../contexts/WatchProvider";
 import LoadingAnimation from "./LoadingAnimation";
 
+type subOrDub = "sub" | "dub";
+
 interface AnimeDetails {
   animeId: string;
   title: string;
-  subOrDub: "sub" | "dub";
+  subOrDub: subOrDub;
   otherNames: string[];
 }
 
@@ -16,7 +18,7 @@ export default function Searchbar() {
   const { setEpisodeNoState } = useContext(WatchContext);
 
   const [searchBarQuery, setSearchbarQuery] = useState<string>("");
-  const [subOrDubOption, setSubOrDubOption] = useState<"sub" | "dub">("sub");
+  const [subOrDubOption, setSubOrDubOption] = useState<subOrDub>("sub");
 
   const [resultsList, setResultsList] = useState<AnimeDetails[]>();
 
@@ -44,17 +46,31 @@ export default function Searchbar() {
     setShowDropdown(true);
   }
 
-  const handleAutoComplete = useRef(async (value: string) => {
+  const getSearchWithAbort = async (value: string, subOrDub: subOrDub) => {
+    const newAbortController = new AbortController();
+    abortControllerRef.current = newAbortController;
+
+    try {
+      return await getSearch(value, subOrDub, newAbortController.signal);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  const abortPreviousRequest = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+  }
+
+  const handleAutoComplete = useRef(async (value: string, subOrDub: subOrDub) => {
     if (value.length <= 2) {
       setIsLoading(false);
       return;
     }
 
-    const newAbortController = new AbortController();
-    abortControllerRef.current = newAbortController;
-
     try {
-      const result = await getSearch(value, subOrDubOption, newAbortController.signal);
+      const result = await getSearchWithAbort(value, subOrDub);
       updateSearchResults(result);
       setIsLoading(false);
     } catch (error: any) {
@@ -66,37 +82,30 @@ export default function Searchbar() {
   }).current;
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
+    abortPreviousRequest();
 
     setSelectedIndex(-1);
     setSearchbarQuery(e.target.value);
 
     setIsLoading(true);
-    await handleAutoComplete(e.target.value);
+    await handleAutoComplete(e.target.value, subOrDubOption);
   };
 
   const handleSubOrDubToggle = async () => {
-    if (isLoading) { return; }
+    if (isLoading || searchBarQuery.length <= 2) { return; }
 
     setIsLoading(true);
 
     const option = subOrDubOption === "sub" ? "dub" : "sub";
     setSubOrDubOption(option);
 
-    if (searchBarQuery.length > 0) {
-      try {
-        const newAbortController = new AbortController();
-        abortControllerRef.current = newAbortController;
-
-        const results = await getSearch(searchBarQuery, option, newAbortController.signal);
-        updateSearchResults(results);
-      } catch (error: any) {
-        if (error.code === "ERR_CANCELED") {
-          setSubOrDubOption(option === "sub" ? "dub" : "sub");
-          return;
-        }
+    try {
+      const results = await getSearchWithAbort(searchBarQuery, option);
+      updateSearchResults(results);
+    } catch (error: any) {
+      if (error.code === "ERR_CANCELED") {
+        setSubOrDubOption(option === "sub" ? "dub" : "sub");
+        return;
       }
     }
 
