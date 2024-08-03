@@ -42,11 +42,6 @@ export default function Searchbar() {
   const updateSearchResults = (results: AnimeDetails[]) => {
     setResultsList(results);
     setShowDropdown(true);
-
-    // Handle edge case where user edits title query whilst a sub/dub query is loading.
-    if (results[0]) {
-      setSubOrDubOption(results[0].subOrDub);
-    }
   }
 
   const handleAutoComplete = useRef(async (value: string) => {
@@ -91,8 +86,15 @@ export default function Searchbar() {
     setSubOrDubOption(option);
 
     if (searchBarQuery.length > 0) {
-      const results = await getSearch(searchBarQuery, option);
-      updateSearchResults(results);
+      try {
+        const results = await getSearch(searchBarQuery, option);
+        updateSearchResults(results);
+      } catch (error: any) {
+        if (error.code === "ERR_CANCELED") {
+          setSubOrDubOption(option === "sub" ? "dub" : "sub");
+          return;
+        }
+      }
     }
 
     setIsLoading(false);
