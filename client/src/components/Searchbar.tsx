@@ -104,7 +104,6 @@ export default function Searchbar() {
       updateSearchResults(results);
     } catch (error: any) {
       if (error.code === "ERR_CANCELED") {
-        setSubOrDubOption(option === "sub" ? "dub" : "sub");
         return;
       }
     }
