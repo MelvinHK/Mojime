@@ -45,7 +45,10 @@ export default function Searchbar() {
   }
 
   const handleAutoComplete = useRef(async (value: string) => {
-    if (value.length <= 2) { return; }
+    if (value.length <= 2) { 
+      setIsLoading(false);
+      return; 
+    }
 
     const newAbortController = new AbortController();
     abortControllerRef.current = newAbortController;
