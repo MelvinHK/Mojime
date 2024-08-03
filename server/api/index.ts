@@ -67,15 +67,34 @@ app.get('/api/searchV2', async (req, res) => {
                 text: {
                   query: query,
                   path: "title",
-                  score: { boost: { value: 3 } }
+                  score: { boost: { value: 30 } }
                 }
               },
+              {
+                autocomplete: {
+                  query: query,
+                  path: "otherNames",
+                }
+              },
+              {
+                phrase: {
+                  query: query,
+                  path: "otherNames",
+                  score: { boost: { value: 30 } }
+                }
+              },
+              {
+                text: {
+                  query: query,
+                  path: "otherNames",
+                }
+              }
             ],
             minimumShouldMatch: 1
           }
         },
       },
-      { $limit: 10 }, // Limit results
+      { $limit: 15 },
     ]).toArray();
 
     res.status(200).json(searchResults);
