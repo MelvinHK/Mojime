@@ -31,6 +31,7 @@ app.get('/api/search/:query/page/:pageNumber', limiter, async (req, res, next) =
   }
 });
 
+// SEARCH v2
 app.get('/api/searchV2', async (req, res) => {
   const { query, subOrDub } = req.query;
 
@@ -42,11 +43,21 @@ app.get('/api/searchV2', async (req, res) => {
     .split(' ')
     .filter(term => term);
 
+  const fields = ["title", "otherNames"];
+
   const textQueries = queryTerms.map((term) => ({
     text: {
       query: term,
-      path: ["title", "otherNames"],
+      path: fields,
       score: { constant: { value: 1 } },
+    }
+  }));
+
+  const autocompleteQueries = fields.map((field) => ({
+    autocomplete: {
+      query: query,
+      path: field,
+      score: { constant: { value: 1 } }
     }
   }));
 
@@ -70,20 +81,7 @@ app.get('/api/searchV2', async (req, res) => {
             ],
             should: [
               ...textQueries,
-              {
-                autocomplete: {
-                  query: query,
-                  path: "title",
-                  score: { constant: { value: 1 } }
-                }
-              },
-              {
-                autocomplete: {
-                  query: query,
-                  path: "otherNames",
-                  score: { constant: { value: 1 } }
-                }
-              },
+              ...autocompleteQueries
             ],
             minimumShouldMatch: 1
           },
