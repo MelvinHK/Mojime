@@ -63,8 +63,12 @@ export default function Searchbar() {
     }
   }
 
+  const isStringValid = (value: string) => {
+    return value.length > 0 && value.trim();
+  }
+
   const handleAutoComplete = useRef(async (value: string, subOrDub: subOrDub) => {
-    if (value.length <= 2) {
+    if (value.length === 0 || !isStringValid(value)) {
       setIsLoading(false);
       return;
     }
@@ -92,7 +96,7 @@ export default function Searchbar() {
   };
 
   const handleSubOrDubToggle = async () => {
-    if (isLoading || searchBarQuery.length <= 2) { return; }
+    if (isLoading || !isStringValid(searchBarQuery)) { return; }
 
     setIsLoading(true);
 

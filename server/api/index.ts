@@ -38,6 +38,18 @@ app.get('/api/searchV2', async (req, res) => {
     return res.status(400).json({ error: 'Query parameter is required' });
   }
 
+  const queryTerms = String(query)
+    .split(' ')
+    .filter(term => term);
+
+  const textQueries = queryTerms.map((term) => ({
+    text: {
+      query: term,
+      path: ["title", "otherNames"],
+      score: { constant: { value: 1 } },
+    }
+  }));
+
   try {
     const collection = mongoClient
       .db(dbName)
@@ -54,44 +66,27 @@ app.get('/api/searchV2', async (req, res) => {
                   query: subOrDub,
                   path: "subOrDub"
                 }
-              }
+              },
             ],
             should: [
+              ...textQueries,
               {
                 autocomplete: {
-                  query: query,
-                  path: "title"
-                }
-              },
-              {
-                text: {
                   query: query,
                   path: "title",
-                  score: { boost: { value: 30 } }
+                  score: { constant: { value: 1 } }
                 }
               },
               {
                 autocomplete: {
                   query: query,
                   path: "otherNames",
+                  score: { constant: { value: 1 } }
                 }
               },
-              {
-                phrase: {
-                  query: query,
-                  path: "otherNames",
-                  score: { boost: { value: 30 } }
-                }
-              },
-              {
-                text: {
-                  query: query,
-                  path: "otherNames",
-                }
-              }
             ],
             minimumShouldMatch: 1
-          }
+          },
         },
       },
       { $limit: 15 },
