@@ -14,6 +14,11 @@ interface AnimeDetails {
   otherNames: string[];
 }
 
+interface PreviousResults {
+  query: string;
+  results: AnimeDetails[]
+}
+
 export default function Searchbar() {
   const { setEpisodeNoState } = useContext(WatchContext);
 
@@ -21,6 +26,9 @@ export default function Searchbar() {
   const [subOrDubOption, setSubOrDubOption] = useState<subOrDub>(
     (localStorage.getItem("subOrDubPref") as subOrDub) ?? "sub"
   );
+
+  // Prevents unnecessary requests when toggling between sub/dub on the same query.
+  const previousResultsCache = useRef<PreviousResults>({ query: "", results: [] });
 
   const [resultsList, setResultsList] = useState<AnimeDetails[]>();
 
@@ -104,13 +112,24 @@ export default function Searchbar() {
     localStorage.setItem("subOrDubPref", newOption);
     setSubOrDubOption(newOption);
 
-    try {
-      setIsLoading(true);
-      const results = await getSearchWithAbort(searchBarQuery, newOption);
+    const handleResults = (results: AnimeDetails[]) => {
       updateSearchResults(results);
-    } catch (error: any) {
-      if (error.code === "ERR_CANCELED") {
-        return;
+      previousResultsCache.current.query = searchBarQuery;
+      previousResultsCache.current.results = resultsList ?? [];
+    }
+
+    if (searchBarQuery === previousResultsCache.current.query) {
+      handleResults(previousResultsCache.current.results);
+      return;
+    } else {
+      try {
+        setIsLoading(true);
+        const results = await getSearchWithAbort(searchBarQuery, newOption);
+        handleResults(results);
+      } catch (error: any) {
+        if (error.code === "ERR_CANCELED") {
+          return;
+        }
       }
     }
     setIsLoading(false);
