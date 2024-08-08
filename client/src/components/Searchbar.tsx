@@ -18,7 +18,9 @@ export default function Searchbar() {
   const { setEpisodeNoState } = useContext(WatchContext);
 
   const [searchBarQuery, setSearchbarQuery] = useState<string>("");
-  const [subOrDubOption, setSubOrDubOption] = useState<subOrDub>("sub");
+  const [subOrDubOption, setSubOrDubOption] = useState<subOrDub>(
+    (localStorage.getItem("subOrDubPref") as subOrDub) ?? "sub"
+  );
 
   const [resultsList, setResultsList] = useState<AnimeDetails[]>();
 
@@ -46,7 +48,7 @@ export default function Searchbar() {
     setShowDropdown(true);
   }
 
-  const getSearchWithAbort = async (value: string, subOrDub: subOrDub) => {
+  const getSearchWithAbort = async (value: string, subOrDub: subOrDub): Promise<AnimeDetails[]> => {
     const newAbortController = new AbortController();
     abortControllerRef.current = newAbortController;
 
@@ -93,25 +95,24 @@ export default function Searchbar() {
 
     setIsLoading(true);
     await handleAutoComplete(e.target.value, subOrDubOption);
-  };
+  }
 
   const handleSubOrDubToggle = async () => {
     if (isLoading || !isStringValid(searchBarQuery)) { return; }
 
-    setIsLoading(true);
-
-    const option = subOrDubOption === "sub" ? "dub" : "sub";
-    setSubOrDubOption(option);
+    const newOption = subOrDubOption === "sub" ? "dub" : "sub";
+    localStorage.setItem("subOrDubPref", newOption);
+    setSubOrDubOption(newOption);
 
     try {
-      const results = await getSearchWithAbort(searchBarQuery, option);
+      setIsLoading(true);
+      const results = await getSearchWithAbort(searchBarQuery, newOption);
       updateSearchResults(results);
     } catch (error: any) {
       if (error.code === "ERR_CANCELED") {
         return;
       }
     }
-
     setIsLoading(false);
   }
 
