@@ -1,0 +1,15 @@
+name: Ping Routes
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Search Route
+        run: |
+          curl -X POST https://mojime-api.vercel.app/api/searchV2 \
+          -H "Content-Type: application/json" \
+          -d '{"query": "komi", "subOrDub": "sub"}'
