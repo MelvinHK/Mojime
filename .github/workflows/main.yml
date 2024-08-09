@@ -11,6 +11,4 @@ jobs:
     steps:
       - name: Ping Search Route
         run: |
-          curl -X GET https://mojime-api.vercel.app/api/searchV2 \
-          -H "Content-Type: application/json" \
-          -d '{"query": "komi", "subOrDub": "sub"}'
+          curl -X GET "https://mojime-api.vercel.app/api/searchV2?query=komi&subOrDub=sub"
