@@ -11,4 +11,5 @@ jobs:
     steps:
       - name: Ping Search Route
         run: |
-          curl -X GET "https://mojime-api.vercel.app/api/searchV2?query=komi&subOrDub=sub"
+          curl -X GET "https://mojime-api.vercel.app/api/searchV2?query=komi&subOrDub=sub" \
+          -H "User-Agent: Mozilla/5.0" \
