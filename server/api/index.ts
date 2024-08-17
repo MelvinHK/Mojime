@@ -2,8 +2,7 @@ import express from 'express';
 import rateLimit from 'express-rate-limit';
 
 import { ANIME } from "@consumet/extensions"
-import { collNames, dbName, mongoClient } from './atlasConfig';
-import { MongoOIDCError } from 'mongodb';
+import { collNames, dbName, connectToDatabase } from './atlasConfig';
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -62,9 +61,8 @@ app.get('/api/searchV2', async (req, res) => {
   }));
 
   try {
-    const collection = mongoClient
-      .db(dbName)
-      .collection(collNames.animeDetails);
+    const db = await connectToDatabase()
+    const collection = db.collection(collNames.animeDetails);
 
     const searchResults = await collection.aggregate([
       {
