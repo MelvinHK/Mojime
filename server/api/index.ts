@@ -19,16 +19,6 @@ app.use(limiter);
 
 app.get("/api", (req, res) => res.send("Express on Vercel"));
 
-app.get("/api/connect", limiter, async (req, res, next) => {
-  try {
-    await connectToDatabase();
-    res.send("Connection succeeded.");
-  } catch (error) {
-    res.send("Connection failed.")
-    next(error);
-  }
-});
-
 // SEARCH
 app.get('/api/search/:query/page/:pageNumber', limiter, async (req, res, next) => {
   try {

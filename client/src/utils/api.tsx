@@ -2,14 +2,6 @@ import axios from "axios";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
-export const connectToDatabase = async () => {
-  try {
-    await axios.get('/api/connect');
-  } catch (error) {
-    console.error('Error connecting to database:', error);
-  }
-}
-
 export const getSearch = async (query: string, subOrDub: "sub" | "dub", signal?: AbortSignal) => {
   try {
     const response = await axios.get(`${apiUrl}/api/searchV2`, {
