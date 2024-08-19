@@ -3,6 +3,8 @@ import { ErrorBoundary } from "react-error-boundary";
 import Header from "./components/Header";
 import Error from "./pages/Error";
 import { WatchProvider } from "./contexts/WatchProvider";
+import { connectToDatabase } from "./utils/api";
+import { useEffect } from "react";
 
 interface RootProps {
   routeError?: JSX.Element;
@@ -10,6 +12,10 @@ interface RootProps {
 
 function Root(props: RootProps) {
   const location = useLocation();
+
+  useEffect(() => {
+    connectToDatabase();
+  }, [])
 
   return (
     <WatchProvider>
