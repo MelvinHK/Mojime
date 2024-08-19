@@ -4,8 +4,7 @@ const apiUrl = import.meta.env.VITE_API_URL;
 
 export const connectToDatabase = async () => {
   try {
-    const response = await axios.get('/api/connect');
-    console.log(response.data);
+    await axios.get('/api/connect');
   } catch (error) {
     console.error('Error connecting to database:', error);
   }
