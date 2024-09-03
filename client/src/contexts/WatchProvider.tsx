@@ -58,7 +58,7 @@ export const WatchContext = createContext<GlobalContextType>({
   hasPrevious: undefined
 })
 
-interface GPProps {
+interface WatchProps {
   children: React.ReactNode;
 }
 
@@ -67,7 +67,7 @@ export type PreloadedEpisode = {
   qualities: (string | undefined)[]
 }
 
-export const WatchProvider = (props: GPProps) => {
+export const WatchProvider = (props: WatchProps) => {
   const [animeInfo, setAnimeInfo] = useState<IAnimeInfo>();
 
   const { episodeNoParam, animeId } = useParams();
@@ -122,7 +122,7 @@ export const WatchProvider = (props: GPProps) => {
     }
   }, [animeId, animeInfo]);
 
-  const GlobalContextValues = {
+  const WatchContextValues = {
     animeInfo,
     setAnimeInfo,
     sources,
@@ -144,7 +144,7 @@ export const WatchProvider = (props: GPProps) => {
   }
 
   return (
-    <WatchContext.Provider value={GlobalContextValues}>
+    <WatchContext.Provider value={WatchContextValues}>
       {props.children}
     </WatchContext.Provider>
   )

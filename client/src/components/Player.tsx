@@ -133,7 +133,7 @@ export default function Player() {
     return () => {
       abortPreviousRequest();
     };
-  }, [episodeNoState, animeInfo]);
+  }, [episodeNoState, animeInfo?.id]);
 
   useEffect(() => {
     if (qualities) {

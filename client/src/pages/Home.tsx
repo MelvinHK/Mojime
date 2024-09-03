@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
+import { Link } from "react-router-dom";
 
 export default function Home() {
 
@@ -6,11 +7,19 @@ export default function Home() {
     document.title = `Mojime`
   }, [])
 
+  const kaomoji = useMemo(() =>
+    kaomojis[Math.floor(Math.random() * kaomojis.length)], []
+  );
+
   return (
     <>
       <p id="greeting">
-        {kaomojis[Math.floor(Math.random() * kaomojis.length)]}
+        {kaomoji}
       </p>
+      <div className="flex gap">
+        <a href="https://github.com/MelvinHK/Mojime/" target="_blank">GitHub</a>
+        <Link to="/privacy">Privacy</Link>
+      </div>
     </>
   )
 }

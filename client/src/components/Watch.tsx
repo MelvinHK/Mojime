@@ -2,22 +2,21 @@ import { useParams } from "react-router-dom";
 import { useErrorBoundary } from "react-error-boundary";
 import { useEffect, useRef, useState, ChangeEvent, useContext } from "react";
 
-import { getAnime } from "../utils/api";
+import { getAnime, throwNotFoundError } from "../utils/api";
 
 import LoadingAnimation from "./LoadingAnimation";
 import { WatchContext } from "../contexts/WatchProvider";
 import { navigateToEpisode } from "../utils/navigateToEpisode";
 
-import Player from "./Player";
+import { IAnimeInfo } from "@consumet/extensions";
 
 export default function Watch() {
   const { animeInfo, setAnimeInfo, episodeNoState, setEpisodeNoState } = useContext(WatchContext);
-
   const { animeId } = useParams();
 
   const [episodeInput, setEpisodeInput] = useState<string>(episodeNoState ?? "");
-
   const episodeInputRef = useRef<HTMLInputElement>(null);
+  const [isCheckingNewEpisodes, setIsCheckingNewEpisodes] = useState(false);
 
   const { showBoundary } = useErrorBoundary();
 
@@ -38,31 +37,80 @@ export default function Watch() {
     }
   }
 
+  const getQueueStorage = (): IAnimeInfo[] | undefined => {
+    const queueString = localStorage.getItem('cachedAnime');
+    const queue = queueString ? JSON.parse(queueString) : undefined;
+    return queue;
+  }
+
+  const getStoredAnime = (animeId: keyof IAnimeInfo): IAnimeInfo | undefined => {
+    const queue = getQueueStorage();
+    if (queue) {
+      return queue.find(obj => obj.id === animeId);
+    }
+    return undefined;
+  };
+
+  const addAnimeToStorage = (animeInfo: IAnimeInfo, limit: number = 100) => {
+    let queue = getQueueStorage() ?? [];
+    queue.push(animeInfo);
+
+    if (queue.length > limit) {
+      queue.shift();
+    }
+
+    localStorage.setItem('cachedAnime', JSON.stringify(queue));
+  }
+
+  const updateAndPushToBack = (animeId: keyof IAnimeInfo, newAnimeInfo: IAnimeInfo) => {
+    let queue = getQueueStorage() ?? [];
+    let index = queue.findIndex(obj => obj.id === animeId);
+
+    if (index !== -1) {
+      let updatedAnime = { ...queue[index], ...newAnimeInfo };
+      queue.splice(index, 1);
+      queue.push(updatedAnime);
+      localStorage.setItem('cachedAnime', JSON.stringify(queue));
+    }
+  }
+
   useEffect(() => {
     if (!animeId || animeId === animeInfo?.id || !episodeNoState) {
       return;
     }
 
     const fetchAnime = async () => {
+      const cachedAnime = getStoredAnime(animeId);
+
+      if (cachedAnime) {
+        setAnimeInfo(cachedAnime);
+
+        if (cachedAnime.status !== "Completed") {
+          setIsCheckingNewEpisodes(true);
+        } else {
+          return;
+        }
+      }
+
       try {
-        const data = await getAnime(animeId);
+        const data: IAnimeInfo = await getAnime(animeId);
         if (!data.episodes?.hasOwnProperty(Number(episodeNoState) - 1)) {
-          throw new Response(
-            "Error: Not Found",
-            {
-              status: 404,
-              statusText: `Anime/Episode not found`
-            }
-          );
+          throwNotFoundError('Anime/Episode not found');
+        }
+        if (cachedAnime) {
+          updateAndPushToBack(animeId, data);
+        } else {
+          addAnimeToStorage(data);
         }
         setAnimeInfo(data);
+        setIsCheckingNewEpisodes(false);
       } catch (error) {
         showBoundary(error);
       }
     }
 
     fetchAnime();
-  }, [animeInfo, animeId, episodeNoState])
+  }, [animeInfo?.id, animeId, episodeNoState])
 
   useEffect(() => {
     if (episodeNoState && animeInfo)
@@ -75,12 +123,11 @@ export default function Watch() {
   }, [episodeNoState])
 
   const episodeInputStyle = {
-    width: episodeInput.length + 'ch', // Set width based on the length of the value
+    width: episodeInput.length + 'ch'
   };
 
   return (animeInfo && episodeNoState && animeInfo.id === animeId ? (
     <>
-      <Player />
       <p>{animeInfo.title as string}</p>
       <div className="flex gap fl-a-center pb-1p5r">
         <button
@@ -115,11 +162,14 @@ export default function Watch() {
         </div>
         <button
           onClick={() => handleEpisodeNavigate(Number(episodeNoState) + 1)}
-          disabled={Number(episodeNoState) >= (animeInfo.episodes?.length ?? Number(episodeNoState) + 1)}
+          disabled={Number(episodeNoState) >= (animeInfo.episodes?.length ?? Number(episodeNoState))}
         >
           Next &gt;
         </button>
       </div>
+      {isCheckingNewEpisodes && (
+        <p className="o-disabled">Checking for new episodes...</p>
+      )}
     </>
   ) : (
     <span className="abs-center flex fl-a-center fl-j-center">

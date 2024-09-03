@@ -21,6 +21,16 @@ export const getSearch = async (query: string, subOrDub: "sub" | "dub", signal?:
   }
 }
 
+export const throwNotFoundError = (msg: string) => {
+  throw new Response(
+    "Error: Not Found",
+    {
+      status: 404,
+      statusText: msg
+    }
+  );
+}
+
 const handlePageContentError = (error: any) => {
   if (error.code === 'ECONNABORTED') {
     throw error;
@@ -35,13 +45,7 @@ const handlePageContentError = (error: any) => {
       }
     );
   } else {
-    throw new Response(
-      "Error: Not Found",
-      {
-        status: 404,
-        statusText: `Anime/Episode not found`,
-      }
-    );
+    throwNotFoundError('Anime/Episode not found');
   }
 }
 

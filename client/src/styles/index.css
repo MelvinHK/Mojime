@@ -65,10 +65,6 @@ button {
   color: inherit;
 }
 
-button:active {
-  background-color: brightness(0.5);
-}
-
 button:disabled {
   opacity: var(--disabled-opacity);
   cursor: default;
@@ -109,5 +105,5 @@ textarea,
 button,
 select,
 a {
-    -webkit-tap-highlight-color: transparent;
+  -webkit-tap-highlight-color: transparent;
 }
