@@ -84,32 +84,37 @@ export default function Watch() {
 
       if (cachedAnime) {
         setAnimeInfo(cachedAnime);
-
         if (cachedAnime.status !== "Completed") {
           setIsCheckingNewEpisodes(true);
         } else {
-          return;
+          return cachedAnime;
         }
       }
 
-      try {
-        const data: IAnimeInfo = await getAnime(animeId);
-        if (!data.episodes?.hasOwnProperty(Number(episodeNoState) - 1)) {
-          throwNotFoundError('Anime/Episode not found');
-        }
-        if (cachedAnime) {
-          updateAndPushToBack(animeId, data);
-        } else {
-          addAnimeToStorage(data);
-        }
-        setAnimeInfo(data);
+      const fetchedAnime: IAnimeInfo = await getAnime(animeId);
+
+      if (cachedAnime) {
+        updateAndPushToBack(animeId, fetchedAnime);
         setIsCheckingNewEpisodes(false);
-      } catch (error) {
-        showBoundary(error);
+      } else {
+        addAnimeToStorage(fetchedAnime);
       }
+
+      setAnimeInfo(fetchedAnime);
+
+      return fetchedAnime;
     }
 
-    fetchAnime();
+    fetchAnime()
+      .then((animeInfo) => {
+        if (!animeInfo.episodes?.hasOwnProperty(Number(episodeNoState) - 1)) {
+          throwNotFoundError('Anime/Episode not found');
+        }
+      })
+      .catch((error) => {
+        showBoundary(error)
+      });
+
   }, [animeInfo?.id, animeId, episodeNoState])
 
   useEffect(() => {
