@@ -1,4 +1,4 @@
-import React from 'react'
+// import React from 'react'
 import ReactDOM from 'react-dom/client'
 import {
   createBrowserRouter,
@@ -44,7 +44,10 @@ const router = createBrowserRouter([
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
+  // StrictMode breaks the app by causing replaceState() to occur twice in Watch.tsx's fetchAnime().
+  // It also causes double localStorage additions.
+
+  // <React.StrictMode>
     <RouterProvider router={router} />
-  </React.StrictMode>
+  // </React.StrictMode>
 );

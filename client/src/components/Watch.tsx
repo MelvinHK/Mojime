@@ -123,7 +123,7 @@ export default function Watch() {
           setEpisodeNoState(`${animeInfo.episodes[0].number}`);
           return;
         }
-        if (animeInfo.episodes?.findIndex(ep => String(ep.number) === episodeNoState) === -1) {
+        if (episodeNoState && animeInfo.episodes?.findIndex(ep => String(ep.number) === episodeNoState) === -1) {
           throwNotFoundError('Anime/Episode not found');
         }
       })
