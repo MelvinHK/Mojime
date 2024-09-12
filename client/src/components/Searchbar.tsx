@@ -1,8 +1,7 @@
 import { getSearch } from "../utils/api";
-import { useState, useEffect, useRef, useContext } from "react";
+import { useState, useEffect, useRef } from "react";
 import useClickAway from "../utils/hooks/useClickAway";
-import { useNavigate } from "react-router-dom";
-import { WatchContext } from "../contexts/WatchProvider";
+import { useNavigate, useParams } from "react-router-dom";
 import LoadingAnimation from "./LoadingAnimation";
 
 type subOrDub = "sub" | "dub";
@@ -20,7 +19,7 @@ interface PreviousResults {
 }
 
 export default function Searchbar() {
-  const { setEpisodeNoState } = useContext(WatchContext);
+  const { animeId } = useParams();
 
   const [searchBarQuery, setSearchbarQuery] = useState<string>("");
   const [subOrDubOption, setSubOrDubOption] = useState<subOrDub>(
@@ -142,13 +141,17 @@ export default function Searchbar() {
   }
 
   const handleNavigate = (index: number) => {
-    if (resultsList) {
-      setSearchbarQuery(resultsList[index].title as string);
-      setShowDropdown(false);
-      navigate(`/${resultsList[index].animeId}/1`);
-      setEpisodeNoState("1");
-      searchbarRef?.current?.blur();
+    if (!resultsList) {
+      return;
     }
+    // Don't navigate to the same anime that the page is already on,
+    // otherwise it messes up the current url caused by replaceState() in Watch.tsx's fetchAnime().
+    if (resultsList[index].animeId !== animeId) {
+      navigate(`/${resultsList[index].animeId}`);
+    }
+    setSearchbarQuery(resultsList[index].title as string);
+    setShowDropdown(false);
+    searchbarRef?.current?.blur();
   }
 
   useEffect(() => {

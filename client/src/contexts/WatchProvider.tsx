@@ -28,6 +28,8 @@ type GlobalContextType = {
   nextEpisodeId: string | undefined,
   hasNext: boolean | undefined,
   hasPrevious: boolean | undefined
+
+  episodeIndex: number;
 }
 
 export const WatchContext = createContext<GlobalContextType>({
@@ -55,7 +57,9 @@ export const WatchContext = createContext<GlobalContextType>({
   episodeId: undefined,
   nextEpisodeId: undefined,
   hasNext: undefined,
-  hasPrevious: undefined
+  hasPrevious: undefined,
+
+  episodeIndex: -1
 })
 
 interface WatchProps {
@@ -98,20 +102,38 @@ export const WatchProvider = (props: WatchProps) => {
     return () => window.removeEventListener('popstate', handlePop);
   }, [episodeNoParam, episodeNoState]);
 
+  const getEpIndexFromEpNo = (epNo: string) => {
+    return animeInfo?.episodes?.findIndex(ep => String(ep.number) === epNo) || 0;
+  }
+
+  const episodeIndex = useMemo(() =>
+    episodeNoState ?
+      getEpIndexFromEpNo(episodeNoState) :
+      -1,
+    [animeInfo, episodeNoState]
+  );
   const episodeId = useMemo(() =>
-    animeInfo?.episodes?.[Number(episodeNoState) - 1]?.id,
+    episodeNoState ?
+      animeInfo?.episodes?.[episodeIndex]?.id :
+      undefined,
     [animeInfo, episodeNoState]
   );
   const nextEpisodeId = useMemo(() =>
-    animeInfo?.episodes?.[Number(episodeNoState)]?.id,
+    episodeNoState ?
+      animeInfo?.episodes?.[episodeIndex + 1]?.id :
+      undefined,
     [animeInfo, episodeNoState]
   );
   const hasNext = useMemo(() =>
-    animeInfo?.episodes?.hasOwnProperty(Number(episodeNoState)),
+    episodeNoState ?
+      animeInfo?.episodes?.hasOwnProperty(episodeIndex + 1) :
+      undefined,
     [animeInfo, episodeNoState]
   );
   const hasPrevious = useMemo(() =>
-    animeInfo?.episodes?.hasOwnProperty(Number(episodeNoState) - 2),
+    episodeNoState ?
+      animeInfo?.episodes?.hasOwnProperty(episodeIndex - 1) :
+      undefined,
     [animeInfo, episodeNoState]
   );
 
@@ -140,7 +162,8 @@ export const WatchProvider = (props: WatchProps) => {
     episodeId,
     nextEpisodeId,
     hasNext,
-    hasPrevious
+    hasPrevious,
+    episodeIndex
   }
 
   return (

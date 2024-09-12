@@ -11,8 +11,16 @@ import { navigateToEpisode } from "../utils/navigateToEpisode";
 import { IAnimeInfo } from "@consumet/extensions";
 
 export default function Watch() {
-  const { animeInfo, setAnimeInfo, episodeNoState, setEpisodeNoState } = useContext(WatchContext);
-  const { animeId } = useParams();
+  const {
+    animeInfo,
+    setAnimeInfo,
+    episodeNoState,
+    setEpisodeNoState,
+    hasPrevious,
+    hasNext,
+    episodeIndex
+  } = useContext(WatchContext);
+  const { animeId, episodeNoParam } = useParams();
 
   const [episodeInput, setEpisodeInput] = useState<string>(episodeNoState ?? "");
   const episodeInputRef = useRef<HTMLInputElement>(null);
@@ -20,21 +28,18 @@ export default function Watch() {
 
   const { showBoundary } = useErrorBoundary();
 
-  const handleEpisodeNavigate = (ep: number | string) => {
-    if (!ep || !animeInfo?.episodes?.hasOwnProperty(Number(ep) - 1)) {
+  const navigateToEpisodeIndex = (index: number | string) => {
+    if (index === -1) {
       return;
     }
-    navigateToEpisode(ep, setEpisodeNoState);
+    if (animeInfo?.episodes) {
+      navigateToEpisode(animeInfo.episodes[Number(index)].number, setEpisodeNoState);
+    }
   }
 
   const handleEpInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;
-    if (newValue.length > String(animeInfo?.episodes?.length).length) {
-      return;
-    }
-    if (newValue === '' || /^[0-9]*$/.test(newValue)) {
-      setEpisodeInput(newValue);
-    }
+    setEpisodeInput(newValue);
   }
 
   const getQueueStorage = (): IAnimeInfo[] | undefined => {
@@ -75,11 +80,13 @@ export default function Watch() {
   }
 
   useEffect(() => {
-    if (!animeId || animeId === animeInfo?.id || !episodeNoState) {
+    console.log("rendered.")
+    if (!animeId) {
       return;
     }
 
     const fetchAnime = async () => {
+      console.log('fetching...', animeId)
       const cachedAnime = getStoredAnime(animeId);
 
       if (cachedAnime) {
@@ -94,6 +101,7 @@ export default function Watch() {
       const fetchedAnime: IAnimeInfo = await getAnime(animeId);
 
       if (cachedAnime) {
+        console.log('checking new eps...')
         updateAndPushToBack(animeId, fetchedAnime);
         setIsCheckingNewEpisodes(false);
       } else {
@@ -107,25 +115,32 @@ export default function Watch() {
 
     fetchAnime()
       .then((animeInfo) => {
-        if (!animeInfo.episodes?.hasOwnProperty(Number(episodeNoState) - 1)) {
+        if (!episodeNoParam && animeInfo?.episodes) {
+          // Where the url is just the anime ID, e.g. `/naruto`, redirect the user to the first episode, e.g. `/naruto/1`.
+          // Must use replaceState to not add to the browser's history stack,
+          // and more importantly to prevent a rerender of this component, as both routes use it.
+          history.replaceState(null, "", `${animeId}/${animeInfo.episodes[0].number}`);
+          setEpisodeNoState(`${animeInfo.episodes[0].number}`);
+          return;
+        }
+        if (animeInfo.episodes?.findIndex(ep => String(ep.number) === episodeNoState) === -1) {
           throwNotFoundError('Anime/Episode not found');
         }
       })
       .catch((error) => {
-        showBoundary(error)
+        showBoundary(error);
       });
-
-  }, [animeInfo?.id, animeId, episodeNoState])
+  }, [animeId]);
 
   useEffect(() => {
     if (episodeNoState && animeInfo)
       document.title = `${animeInfo?.title} Ep.${episodeNoState} - Mojime`
-  }, [episodeNoState, animeInfo])
+  }, [episodeNoState, animeInfo]);
 
   useEffect(() => {
     if (episodeNoState)
       setEpisodeInput(episodeNoState);
-  }, [episodeNoState])
+  }, [episodeNoState]);
 
   const episodeInputStyle = {
     width: episodeInput.length + 'ch'
@@ -136,8 +151,8 @@ export default function Watch() {
       <p>{animeInfo.title as string}</p>
       <div className="flex gap fl-a-center pb-1p5r">
         <button
-          onClick={() => handleEpisodeNavigate(Number(episodeNoState) - 1)}
-          disabled={Number(episodeNoState) === 1}
+          onClick={() => navigateToEpisodeIndex(episodeIndex - 1)}
+          disabled={!hasPrevious}
         >
           &lt; Prev
         </button>
@@ -145,29 +160,32 @@ export default function Watch() {
           className="flex fl-a-center ul-hover"
           onClick={() => episodeInputRef.current?.focus()}
         >
-          <form onSubmit={(e) => (
-            e.preventDefault(),
-            handleEpisodeNavigate(episodeInput)
-          )}
+          <form
+            spellCheck="false"
+            autoComplete="off"
+            onSubmit={(e) => (
+              e.preventDefault(),
+              navigateToEpisodeIndex(animeInfo.episodes
+                ?.findIndex(ep => String(ep.number) === episodeInput) || 0
+              )
+            )}
           >
             <input
+              id='episode-input'
               className="ul-hover"
+              type="text"
               ref={episodeInputRef}
-              type="number"
               value={episodeInput}
-              onKeyDown={(e) => [',', '.', '+', '-'].includes(e.key) && e.preventDefault()}
               onChange={(e) => handleEpInputChange(e)}
               onBlur={() => setEpisodeInput(episodeNoState)}
               style={episodeInputStyle}
-              min={1}
-              max={animeInfo.episodes?.length}
             />
           </form>
-          <p className="m-0">&nbsp;/ {animeInfo.episodes?.length ?? "?"}</p>
+          <p className="m-0">&nbsp;/ {animeInfo.totalEpisodes ?? "?"}</p>
         </div>
         <button
-          onClick={() => handleEpisodeNavigate(Number(episodeNoState) + 1)}
-          disabled={Number(episodeNoState) >= (animeInfo.episodes?.length ?? Number(episodeNoState))}
+          onClick={() => navigateToEpisodeIndex(episodeIndex + 1)}
+          disabled={!hasNext}
         >
           Next &gt;
         </button>

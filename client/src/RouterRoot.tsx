@@ -26,19 +26,25 @@ const router = createBrowserRouter([
         element: <Home />
       },
       {
-        path: "/privacy",
+        path: "privacy",
         element: <Privacy />
       },
       {
-        path: ":animeId/:episodeNoParam",
-        element: <WatchLayout />
-      }
+        path: ":animeId",
+        element: <WatchLayout />,
+        children: [
+          {
+            path: ":episodeNoParam",
+            element: <WatchLayout />,
+          }
+        ]
+      },
     ]
   }
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <RouterProvider router={router} />
-  </React.StrictMode>,
-)
+  // </React.StrictMode>
+);

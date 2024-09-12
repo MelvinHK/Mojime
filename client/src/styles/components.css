@@ -130,6 +130,14 @@ form .loading {
   outline: none;
 }
 
+/* WATCH LAYOUT */
+
+#episode-input {
+  background-color: transparent;
+  border-radius: 0;
+  padding: 0;
+}
+
 /* PLAYER */
 
 #player-container {

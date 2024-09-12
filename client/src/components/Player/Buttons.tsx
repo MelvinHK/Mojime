@@ -137,10 +137,12 @@ export function Quality() {
 }
 
 export function Next() {
-  const { episodeNoState, setEpisodeNoState, hasNext } = useContext(WatchContext);
+  const { animeInfo, episodeIndex, setEpisodeNoState, hasNext } = useContext(WatchContext);
 
   const handleNavigate = () => {
-    navigateToEpisode(Number(episodeNoState) + 1, setEpisodeNoState);
+    if (animeInfo?.episodes) {
+      navigateToEpisode(animeInfo.episodes[episodeIndex + 1].number, setEpisodeNoState);
+    }
   }
 
   return (
@@ -156,10 +158,12 @@ export function Next() {
 
 
 export function Previous() {
-  const { episodeNoState, setEpisodeNoState, hasPrevious } = useContext(WatchContext);
+  const { animeInfo, episodeIndex, setEpisodeNoState, hasPrevious } = useContext(WatchContext);
 
   const handleNavigate = () => {
-    navigateToEpisode(Number(episodeNoState) - 1, setEpisodeNoState);
+    if (animeInfo?.episodes) {
+      navigateToEpisode(animeInfo.episodes[episodeIndex - 1].number, setEpisodeNoState);
+    }
   }
 
   return (
