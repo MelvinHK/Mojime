@@ -155,8 +155,7 @@ export default function Player() {
   const handlePreloadNextEpisode = async () => {
     if (!playerRef.current ||
       !isPreloadingAllowed.current ||
-      !nextEpisodeId ||
-      sessionStorage.getItem(nextEpisodeId)) {
+      !nextEpisodeId) {
       return;
     }
 
@@ -176,6 +175,7 @@ export default function Player() {
         }
         sessionStorage.setItem(nextEpisodeId, JSON.stringify(episodeCache));
       } catch (error) {
+        console.log("Error preloading next episode: ", error);
         return;
       }
     }
@@ -191,9 +191,7 @@ export default function Player() {
             playsInline
             autoPlay
             ref={playerRef}
-            onTimeUpdate={throttle(() =>
-              handlePreloadNextEpisode(), 1000
-            )}
+            onTimeUpdate={throttle(() => handlePreloadNextEpisode(), 1000)}
             onCanPlay={() => isPreloadingAllowed.current = true}
             volume={Number(localStorage.getItem("preferredVolume")) * 0.01 || 1}
             keyShortcuts={keyShortcuts}

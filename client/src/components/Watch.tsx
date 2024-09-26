@@ -80,13 +80,11 @@ export default function Watch() {
   }
 
   useEffect(() => {
-    console.log("rendered.")
     if (!animeId) {
       return;
     }
 
     const fetchAnime = async () => {
-      console.log('fetching...', animeId)
       const cachedAnime = getStoredAnime(animeId);
 
       if (cachedAnime) {
@@ -101,7 +99,6 @@ export default function Watch() {
       const fetchedAnime: IAnimeInfo = await getAnime(animeId);
 
       if (cachedAnime) {
-        console.log('checking new eps...')
         updateAndPushToBack(animeId, fetchedAnime);
         setIsCheckingNewEpisodes(false);
       } else {
