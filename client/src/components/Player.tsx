@@ -25,12 +25,14 @@ import { useParams } from "react-router-dom";
 
 type PlayerContextType = {
   playerRef: RefObject<MediaPlayerInstance> | undefined,
-  isTapGesture: MutableRefObject<boolean>
+  isTapGesture: MutableRefObject<boolean>,
+  startTime: MutableRefObject<Number>
 }
 
 export const PlayerContext = createContext<PlayerContextType>({
   playerRef: { current: null },
-  isTapGesture: { current: false }
+  isTapGesture: { current: false },
+  startTime: { current: 0 }
 });
 
 export default function Player() {
@@ -42,7 +44,6 @@ export default function Player() {
     setSources,
     selectedQuality,
     setSelectedQuality,
-    currentTime,
     isLoadingEpisode,
     setIsLoadingEpisode,
     episodeNoState,
@@ -59,11 +60,13 @@ export default function Player() {
     [sources, selectedQuality]
   );
 
+  const startTime = useRef(0);
+
   const playerRef = useRef<MediaPlayerInstance>(null);
   const keyShortcuts = playerKeyShortcuts(playerRef);
   const { bind, y, isTapGesture } = usePlayerGesture(playerRef);
 
-  const playerContextValues: PlayerContextType = { playerRef, isTapGesture };
+  const playerContextValues: PlayerContextType = { playerRef, isTapGesture, startTime };
 
   const isPreloadingAllowed = useRef(true);
 
@@ -146,11 +149,12 @@ export default function Player() {
     }
   }, [qualities]);
 
-  useEffect(() => {
-    if (playerRef.current) {
-      playerRef.current.currentTime = currentTime;
+  const applyStartTime = () => {
+    if (playerRef?.current && startTime.current > 0) {
+      playerRef.current.currentTime = startTime.current;
+      startTime.current = 0;
     }
-  }, [currentTime]);
+  }
 
   const handlePreloadNextEpisode = async () => {
     if (!playerRef.current ||
@@ -192,7 +196,10 @@ export default function Player() {
             autoPlay
             ref={playerRef}
             onTimeUpdate={throttle(() => handlePreloadNextEpisode(), 1000)}
-            onCanPlay={() => isPreloadingAllowed.current = true}
+            onCanPlay={() => {
+              isPreloadingAllowed.current = true;
+              applyStartTime();
+            }}
             volume={Number(localStorage.getItem("preferredVolume")) * 0.01 || 1}
             keyShortcuts={keyShortcuts}
             controlsDelay={1000}

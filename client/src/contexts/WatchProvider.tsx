@@ -15,9 +15,6 @@ type GlobalContextType = {
   selectedQuality: string | undefined,
   setSelectedQuality: Dispatch<SetStateAction<(string | undefined)>>,
 
-  currentTime: number,
-  setCurrentTime: Dispatch<SetStateAction<number>>,
-
   episodeNoState: string | undefined,
   setEpisodeNoState: Dispatch<SetStateAction<string | undefined>>,
 
@@ -44,9 +41,6 @@ export const WatchContext = createContext<GlobalContextType>({
 
   selectedQuality: undefined,
   setSelectedQuality: () => { },
-
-  currentTime: 0,
-  setCurrentTime: () => { },
 
   episodeNoState: undefined,
   setEpisodeNoState: () => { },
@@ -81,7 +75,6 @@ export const WatchProvider = (props: WatchProps) => {
   const [sources, setSources] = useState<IVideo[]>([]);
   const [qualities, setQualities] = useState<(string | undefined)[]>([undefined]);
   const [selectedQuality, setSelectedQuality] = useState<(string | undefined)>();
-  const [currentTime, setCurrentTime] = useState<number>(0);
   const [isLoadingEpisode, setIsLoadingEpisode] = useState(true);
 
   // 1b. Synchronise pseudo ep param with useParam().
@@ -153,8 +146,6 @@ export const WatchProvider = (props: WatchProps) => {
     setQualities,
     selectedQuality,
     setSelectedQuality,
-    currentTime,
-    setCurrentTime,
     episodeNoState,
     setEpisodeNoState,
     isLoadingEpisode,

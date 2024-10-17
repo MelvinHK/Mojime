@@ -88,24 +88,24 @@ export function Seek({ seconds }: { seconds: number }) {
 
 export function Quality() {
   const {
-    playerRef
+    playerRef,
+    startTime
   } = useContext(PlayerContext);
 
   const {
     qualities,
     selectedQuality,
     setSelectedQuality,
-    setCurrentTime
   } = useContext(WatchContext);
 
-  const handleSelect = (p: string | undefined) => {
-    if (!p) { return; }
+  const handleSelect = (quality: string | undefined) => {
+    if (!quality) { return; }
 
-    setSelectedQuality(p);
-    localStorage.setItem("preferredVideoQuality", p);
+    setSelectedQuality(quality);
+    localStorage.setItem("preferredVideoQuality", quality);
 
-    if (playerRef && playerRef.current) {
-      setCurrentTime(playerRef.current.currentTime);
+    if (playerRef?.current) {
+      startTime.current = playerRef.current.currentTime;
     }
   }
 
