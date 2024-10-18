@@ -112,16 +112,12 @@ export default function Watch() {
 
     fetchAnime()
       .then((animeInfo) => {
+        // If the url is just the anime ID, e.g. `/naruto`, redirect the user to the first episode, e.g. `/naruto/1`.
+        // Must use replaceState to prevent page reloading and to not add to the history stack.
         if (!episodeNoParam && animeInfo?.episodes) {
-          // Where the url is just the anime ID, e.g. `/naruto`, redirect the user to the first episode, e.g. `/naruto/1`.
-          // Must use replaceState to not add to the browser's history stack,
-          // and more importantly to prevent a rerender of this component, as both routes use it.
           history.replaceState(null, "", `${animeId}/${animeInfo.episodes[0].number}`);
           setEpisodeNoState(`${animeInfo.episodes[0].number}`);
           return;
-        }
-        if (episodeNoState && animeInfo.episodes?.findIndex(ep => String(ep.number) === episodeNoState) === -1) {
-          throwNotFoundError('Anime/Episode not found');
         }
       })
       .catch((error) => {
@@ -130,14 +126,18 @@ export default function Watch() {
   }, [animeId]);
 
   useEffect(() => {
-    if (episodeNoState && animeInfo)
-      document.title = `${animeInfo?.title} Ep.${episodeNoState} - Mojime`
-  }, [episodeNoState, animeInfo]);
+    if (!episodeNoState || !animeInfo) {
+      return;
+    }
 
-  useEffect(() => {
-    if (episodeNoState)
-      setEpisodeInput(episodeNoState);
-  }, [episodeNoState]);
+    if (animeInfo.episodes?.findIndex(ep => String(ep.number) === episodeNoState) === -1) {
+      showBoundary(throwNotFoundError('Anime/Episode not found'));
+    }
+
+    setEpisodeInput(episodeNoState);
+
+    document.title = `${animeInfo?.title} Ep.${episodeNoState} - Mojime`;
+  }, [episodeNoState, animeInfo]);
 
   const episodeInputStyle = {
     width: episodeInput.length + 'ch'
