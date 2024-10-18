@@ -38,27 +38,11 @@ app.get('/api/searchV2', async (req, res) => {
     return res.status(400).json({ error: 'Query parameter is required' });
   }
 
-  const queryTerms = String(query)
+  const queryWords = String(query)
     .split(' ')
-    .filter(term => term);
+    .filter(word => word);
 
-  const fields = ["title", "otherNames"];
-
-  const textQueries = queryTerms.map((term) => ({
-    text: {
-      query: term,
-      path: fields,
-      score: { constant: { value: 1 } },
-    }
-  }));
-
-  const autocompleteQueries = fields.map((field) => ({
-    autocomplete: {
-      query: query,
-      path: field,
-      score: { constant: { value: 1 } }
-    }
-  }));
+  const titleFields = ["title", "otherNames"];
 
   try {
     const db = await connectToDatabase()
@@ -74,12 +58,37 @@ app.get('/api/searchV2', async (req, res) => {
                 autocomplete: {
                   query: subOrDub,
                   path: "subOrDub"
+                },
+              },
+              {
+                compound: {
+                  should: queryWords.flatMap((word) =>
+                    titleFields.map((field) => ({
+                      autocomplete: {
+                        query: word,
+                        path: field,
+                        score: { constant: { value: 1 } }
+                      }
+                    }))
+                  )
                 }
               },
             ],
             should: [
-              ...textQueries,
-              ...autocompleteQueries
+              ...queryWords.map((word) => ({
+                text: {
+                  query: word,
+                  path: titleFields,
+                  score: { constant: { value: 1 } },
+                }
+              })),
+              ...titleFields.map((field) => ({
+                autocomplete: {
+                  query: query,
+                  path: field,
+                  score: { constant: { value: 1 } }
+                }
+              }))
             ],
             minimumShouldMatch: 1
           },
