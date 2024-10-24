@@ -42,9 +42,9 @@ export default function Watch() {
     setEpisodeInput(newValue);
   }
 
-  const getQueueStorage = (): IAnimeInfo[] | undefined => {
+  const getQueueStorage = (): IAnimeInfo[] => {
     const queueString = localStorage.getItem('cachedAnime');
-    const queue = queueString ? JSON.parse(queueString) : undefined;
+    const queue = queueString ? JSON.parse(queueString) : [];
     return queue;
   }
 
@@ -57,7 +57,7 @@ export default function Watch() {
   };
 
   const addAnimeToStorage = (animeInfo: IAnimeInfo, limit: number = 100) => {
-    let queue = getQueueStorage() ?? [];
+    let queue = getQueueStorage();
     queue.push(animeInfo);
 
     if (queue.length > limit) {
@@ -67,17 +67,27 @@ export default function Watch() {
     localStorage.setItem('cachedAnime', JSON.stringify(queue));
   }
 
-  const updateAndPushToBack = (animeId: keyof IAnimeInfo, newAnimeInfo: IAnimeInfo) => {
-    let queue = getQueueStorage() ?? [];
+  const updateQueue = (animeId: keyof IAnimeInfo, newAnimeInfo: IAnimeInfo) => {
+    let queue = getQueueStorage();
     let index = queue.findIndex(obj => obj.id === animeId);
 
     if (index !== -1) {
-      let updatedAnime = { ...queue[index], ...newAnimeInfo };
-      queue.splice(index, 1);
-      queue.push(updatedAnime);
+      console.log(index);
+      queue[index] = newAnimeInfo;
       localStorage.setItem('cachedAnime', JSON.stringify(queue));
     }
-  }
+  };
+
+  const pushToBack = (animeId: keyof IAnimeInfo) => {
+    let queue = getQueueStorage();
+    let index = queue.findIndex(obj => obj.id === animeId);
+
+    if (index !== -1) {
+      const animeToMove = queue.splice(index, 1)[0];
+      queue.push(animeToMove);
+      localStorage.setItem('cachedAnime', JSON.stringify(queue));
+    }
+  };
 
   useEffect(() => {
     if (!animeId) {
@@ -89,40 +99,36 @@ export default function Watch() {
 
       if (cachedAnime) {
         setAnimeInfo(cachedAnime);
-        if (cachedAnime.status !== "Completed") {
-          setIsCheckingNewEpisodes(true);
-        } else {
+        pushToBack(animeId);
+        if (cachedAnime.status === "Completed") {
           return cachedAnime;
         }
-      }
-
-      const fetchedAnime: IAnimeInfo = await getAnime(animeId);
-
-      if (cachedAnime) {
-        updateAndPushToBack(animeId, fetchedAnime);
+        setIsCheckingNewEpisodes(true);
+        const updatedAnime: IAnimeInfo = await getAnime(animeId);
+        if (JSON.stringify(cachedAnime) !== JSON.stringify(updatedAnime)) {
+          updateQueue(animeId, updatedAnime);
+          setAnimeInfo(updatedAnime);
+        }
         setIsCheckingNewEpisodes(false);
-      } else {
-        addAnimeToStorage(fetchedAnime);
+        return updatedAnime;
       }
 
-      setAnimeInfo(fetchedAnime);
+      const freshAnime: IAnimeInfo = await getAnime(animeId);
+      addAnimeToStorage(freshAnime);
+      setAnimeInfo(freshAnime);
+      return freshAnime;
+    }
 
-      return fetchedAnime;
+    const redirectIfNoEpisodeParam = (animeInfo: IAnimeInfo) => {
+      if (!episodeNoParam && animeInfo?.episodes) {
+        history.replaceState(null, "", `${animeId}/${animeInfo.episodes[0].number}`);
+        setEpisodeNoState(`${animeInfo.episodes[0].number}`);
+      }
     }
 
     fetchAnime()
-      .then((animeInfo) => {
-        // If the url is just the anime ID, e.g. `/naruto`, redirect the user to the first episode, e.g. `/naruto/1`.
-        // Must use replaceState to prevent page reloading and to not add to the history stack.
-        if (!episodeNoParam && animeInfo?.episodes) {
-          history.replaceState(null, "", `${animeId}/${animeInfo.episodes[0].number}`);
-          setEpisodeNoState(`${animeInfo.episodes[0].number}`);
-          return;
-        }
-      })
-      .catch((error) => {
-        showBoundary(error);
-      });
+      .then(redirectIfNoEpisodeParam)
+      .catch(showBoundary);
   }, [animeId]);
 
   useEffect(() => {
