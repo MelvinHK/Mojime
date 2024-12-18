@@ -56,7 +56,7 @@ export default function Player() {
   const { showBoundary } = useErrorBoundary();
 
   const source = useMemo(() =>
-    sources?.find(src => src.quality === selectedQuality)?.url,
+    "https://mojime-proxy.vercel.app/" + sources?.find(src => src.quality === selectedQuality)?.url,
     [sources, selectedQuality]
   );
 
@@ -137,6 +137,10 @@ export default function Player() {
       abortPreviousRequest();
     };
   }, [episodeNoState, animeInfo?.id]);
+
+  useEffect(() => {
+    console.log(source);
+  }, [source])
 
   useEffect(() => {
     if (qualities) {
