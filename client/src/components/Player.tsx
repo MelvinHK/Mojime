@@ -139,10 +139,6 @@ export default function Player() {
   }, [episodeNoState, animeInfo?.id]);
 
   useEffect(() => {
-    console.log(source);
-  }, [source])
-
-  useEffect(() => {
     if (qualities) {
       const storedQuality = localStorage.getItem("preferredVideoQuality");
       if (storedQuality && qualities.includes(storedQuality)) {
