@@ -58,7 +58,7 @@ export default function Player() {
   const { showBoundary } = useErrorBoundary();
 
   const source = useMemo(() =>
-    proxyUrl + encodeURIComponent(sources?.find(src => src.quality === selectedQuality)?.url ?? ""),
+    "https://mojime-proxy.vercel.app/proxy/" + encodeURIComponent(sources?.find(src => src.quality === selectedQuality)?.url ?? ""),
     [sources, selectedQuality]
   );
 
