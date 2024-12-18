@@ -23,6 +23,8 @@ import { usePlayerGesture } from "../utils/player/usePlayerGesture";
 import { playerKeyShortcuts } from "../utils/player/playerKeyShortcuts";
 import { useParams } from "react-router-dom";
 
+const proxyUrl = import.meta.env.VITE_PROXY_URL;
+
 type PlayerContextType = {
   playerRef: RefObject<MediaPlayerInstance> | undefined,
   isTapGesture: MutableRefObject<boolean>,
@@ -56,7 +58,7 @@ export default function Player() {
   const { showBoundary } = useErrorBoundary();
 
   const source = useMemo(() =>
-    "https://mojime-proxy.vercel.app/" + sources?.find(src => src.quality === selectedQuality)?.url,
+    proxyUrl + encodeURIComponent(sources?.find(src => src.quality === selectedQuality)?.url ?? ""),
     [sources, selectedQuality]
   );
 
