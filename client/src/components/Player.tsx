@@ -23,8 +23,6 @@ import { usePlayerGesture } from "../utils/player/usePlayerGesture";
 import { playerKeyShortcuts } from "../utils/player/playerKeyShortcuts";
 import { useParams } from "react-router-dom";
 
-const proxyUrl = import.meta.env.VITE_PROXY_URL;
-
 type PlayerContextType = {
   playerRef: RefObject<MediaPlayerInstance> | undefined,
   isTapGesture: MutableRefObject<boolean>,
