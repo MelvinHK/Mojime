@@ -1,7 +1,7 @@
 import express from 'express';
 import rateLimit from 'express-rate-limit';
 
-import { ANIME } from "@consumet/extensions"
+import { ANIME, StreamingServers } from "@consumet/extensions"
 import { collNames, dbName, connectToDatabase } from './atlasConfig';
 
 const app = express();
@@ -118,7 +118,7 @@ app.get('/api/anime/:animeId', limiter, async (req, res, next) => {
 // EPISODE
 app.get('/api/episode/:episodeId', limiter, async (req, res, next) => {
   try {
-    const response = await provider.fetchEpisodeSources(req.params.episodeId);
+    const response = await provider.fetchEpisodeSources(req.params.episodeId, StreamingServers.StreamWish);
     const data = response;
     res.json(data);
   } catch (error) {
