@@ -1,5 +1,7 @@
 # Mojime
 
+(Oudated, see MojimeV2)
+
 Minimalist anime streaming website. 
 Aimed to reduce as much friction for users who already have an anime in mind to watch. 
 
